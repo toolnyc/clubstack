@@ -28,7 +28,7 @@ export interface DJProfile {
   id: string;
   user_id: string;
   name: string;
-  slug: string;
+  slug: string; // Must match pattern: ^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$
   bio: string | null;
   genres: Genre[];
   location: string | null;
