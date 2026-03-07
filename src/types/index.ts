@@ -42,3 +42,27 @@ export interface DJProfile {
   created_at: string;
   updated_at: string;
 }
+
+export interface CalendarConnection {
+  id: string;
+  user_id: string;
+  provider: string;
+  access_token: string;
+  refresh_token: string;
+  token_expires_at: string;
+  calendar_id: string;
+  last_synced_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BusyPeriod {
+  start: string;
+  end: string;
+}
+
+export interface AvailabilityResult {
+  busy: BusyPeriod[];
+  timeMin: string;
+  timeMax: string;
+}
