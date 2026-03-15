@@ -1670,3 +1670,200 @@
   display: flex;
   gap: var(--space-2);
 }
+
+/* ========================================
+   Availability Grid
+   ======================================== */
+
+.avail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.avail-grid__controls {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.avail-grid__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.avail-grid__nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.avail-grid__nav-btn:hover {
+  background: var(--bg-tertiary);
+}
+
+.avail-grid__nav-btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+.avail-grid__range {
+  font: var(--mono-md);
+  color: var(--text-primary);
+  min-width: 180px;
+  text-align: center;
+}
+
+.avail-grid__filters {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.avail-grid__filters .input-group {
+  width: 100px;
+}
+
+.avail-grid__table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+.avail-grid__header-row,
+.avail-grid__row {
+  display: grid;
+  grid-template-columns: 200px repeat(14, 1fr);
+  min-width: 0;
+}
+
+.avail-grid__header-row {
+  border-bottom: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+}
+
+.avail-grid__row {
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.avail-grid__row:last-child {
+  border-bottom: none;
+}
+
+.avail-grid__header-cell {
+  padding: var(--space-2);
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.avail-grid__artist-col {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+}
+
+.avail-grid__artist-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  width: 100%;
+}
+
+.avail-grid__artist-cell:hover {
+  background: var(--bg-tertiary);
+}
+
+.avail-grid__artist-cell:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+.avail-grid__artist-name {
+  font: var(--mono-sm);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.avail-grid__date-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.avail-grid__date-col--today {
+  background: var(--accent-cyan-muted);
+}
+
+.avail-grid__weekday {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  font-size: 0.625rem;
+}
+
+.avail-grid__date-num {
+  font: var(--mono-sm);
+  color: var(--text-primary);
+}
+
+.avail-grid__cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  min-height: 40px;
+}
+
+.avail-grid__cell--today {
+  background: var(--accent-cyan-muted);
+}
+
+.avail-grid__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+}
+
+.avail-grid__dot--available {
+  background: var(--status-available);
+}
+
+.avail-grid__dot--busy {
+  background: var(--status-busy);
+}
+
+.avail-grid__dot--booked {
+  background: var(--status-booked);
+}
+
+.avail-grid__dot--hold {
+  background: var(--status-hold);
+}
+
+.avail-grid__empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  font: var(--body-md);
+  color: var(--text-tertiary);
+  grid-column: 1 / -1;
+}

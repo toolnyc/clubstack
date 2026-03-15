@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { UserPlus, Upload } from "lucide-react";
+import Link from "next/link";
+import { UserPlus, Upload, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RosterList } from "@/components/agency/roster-list";
 import { InviteArtistForm } from "@/components/agency/invite-artist-form";
@@ -41,6 +42,12 @@ function RosterPageClient({ agency, roster }: RosterPageClientProps) {
         </div>
         {view === "list" && (
           <div className="roster-page__actions">
+            <Link href="/roster/availability">
+              <Button variant="ghost" size="sm">
+                <CalendarDays size={16} strokeWidth={1.5} />
+                Availability
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm" onClick={() => setView("csv")}>
               <Upload size={16} strokeWidth={1.5} />
               Import CSV
