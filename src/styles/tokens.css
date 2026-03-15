@@ -1,0 +1,74 @@
+/* ClubStack Design Tokens */
+
+:root {
+  /* Spacing — 4px base unit */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-reveal: 500ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Typography — Font stacks */
+  --font-mono:
+    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+    "DejaVu Sans Mono", monospace;
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  /* Typography — Scale */
+  --display-xl: 600 3rem / 1.1 var(--font-sans);
+  --display-lg: 600 2.25rem / 1.1 var(--font-sans);
+  --display-md: 600 1.75rem / 1.2 var(--font-sans);
+  --heading-lg: 600 1.375rem / 1.2 var(--font-sans);
+  --heading-md: 600 1.125rem / 1.2 var(--font-sans);
+  --heading-sm: 600 0.9375rem / 1.2 var(--font-sans);
+  --body-lg: 400 1rem / 1.5 var(--font-sans);
+  --body-md: 400 0.875rem / 1.5 var(--font-sans);
+  --body-sm: 400 0.8125rem / 1.5 var(--font-sans);
+  --mono-lg: 500 1rem / 1.5 var(--font-mono);
+  --mono-md: 400 0.875rem / 1.5 var(--font-mono);
+  --mono-sm: 400 0.75rem / 1.5 var(--font-mono);
+
+  /* Accent Colors — both modes */
+  --accent-cyan: #0ea5e9;
+  --accent-neon: #d3f707;
+  --status-error: #f7074b;
+
+  /* Status Colors */
+  --status-available: #d3f707;
+  --status-busy: #888888;
+  --status-booked: #0ea5e9;
+  --status-hold: #f59e0b;
+  --status-warning: #f59e0b;
+
+  /* Layout */
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 64px;
+  --topbar-height: 56px;
+  --content-max-width: 1200px;
+  --bottomtab-height: 64px;
+}
