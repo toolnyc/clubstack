@@ -1,4 +1,12 @@
-export type UserType = "dj" | "agency" | "venue" | "promoter";
+export type UserType = "dj" | "agency" | "venue_contact" | "promoter";
+
+export interface Profile {
+  id: string;
+  user_type: UserType;
+  display_name: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export type BookingStatus =
   | "draft"

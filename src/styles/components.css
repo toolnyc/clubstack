@@ -643,3 +643,47 @@
 .bottom-tabs__item--active {
   color: var(--accent-cyan);
 }
+
+/* ========================================
+   Login
+   ======================================== */
+
+.login {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.login__title {
+  font: var(--display-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.login__description {
+  font: var(--body-md);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.login__resend {
+  font: var(--mono-md);
+  color: var(--accent-cyan);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.login__resend:hover {
+  color: var(--accent-cyan-hover);
+}
