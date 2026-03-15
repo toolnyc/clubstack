@@ -47,5 +47,13 @@ export async function createProfile(userType: UserType, displayName: string) {
     return { error: error.message };
   }
 
+  // Auto-create agency record for agency users
+  if (userType === "agency") {
+    await supabase.from("agencies").insert({
+      user_id: user.id,
+      name: displayName,
+    });
+  }
+
   return { error: null };
 }

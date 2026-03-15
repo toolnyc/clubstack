@@ -47,3 +47,33 @@ export interface DJProfile {
   created_at: string;
   updated_at: string;
 }
+
+export interface Agency {
+  id: string;
+  user_id: string;
+  name: string;
+  location: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type AgencyArtistStatus = "pending" | "active" | "revoked";
+
+export interface AgencyArtist {
+  id: string;
+  agency_id: string;
+  dj_profile_id: string;
+  status: AgencyArtistStatus;
+  commission_pct: number;
+  private_notes: string | null;
+  invited_email: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RosterEntry extends AgencyArtist {
+  dj_profile: Pick<
+    DJProfile,
+    "id" | "name" | "slug" | "location" | "rate_min" | "rate_max"
+  >;
+}
