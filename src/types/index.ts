@@ -187,6 +187,42 @@ export interface ContractClause {
 export type SignerRole = "agency" | "artist" | "payer";
 export type SignatureType = "drawn" | "typed";
 
+export type PaymentType = "deposit" | "balance";
+export type PaymentStatus =
+  | "pending"
+  | "processing"
+  | "succeeded"
+  | "failed"
+  | "refunded";
+export type BalanceDueTiming = "day_before" | "week_before" | "day_of";
+
+export interface Payment {
+  id: string;
+  booking_id: string;
+  stripe_payment_intent_id: string | null;
+  type: PaymentType;
+  amount: number;
+  status: PaymentStatus;
+  scheduled_date: string | null;
+  processed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type TransferRecipientType = "dj" | "agency";
+export type TransferStatus = "pending" | "completed" | "failed";
+
+export interface Transfer {
+  id: string;
+  payment_id: string;
+  stripe_transfer_id: string | null;
+  recipient_type: TransferRecipientType;
+  recipient_stripe_account: string;
+  amount: number;
+  status: TransferStatus;
+  created_at: string;
+}
+
 export interface ContractSignature {
   id: string;
   contract_id: string;
