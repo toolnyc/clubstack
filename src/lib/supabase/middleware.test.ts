@@ -53,5 +53,9 @@ describe("middleware route protection", () => {
     it("treats calendar as protected", () => {
       expect(isPublicPath("/calendar")).toBe(false);
     });
+
+    it("treats onboarding as not public (requires auth)", () => {
+      expect(isPublicPath("/onboarding")).toBe(false);
+    });
   });
 });
