@@ -2192,3 +2192,161 @@
 .contract-preview__clause-content p {
   margin: var(--space-1) 0;
 }
+
+/* ========================================
+   Signature Pad
+   ======================================== */
+
+.signature-pad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.signature-pad__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.signature-pad__tab {
+  flex: 1;
+  padding: var(--space-2);
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+}
+
+.signature-pad__tab--active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-cyan);
+}
+
+.signature-pad__typed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.signature-pad__preview {
+  padding: var(--space-4);
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 2rem;
+  color: var(--text-primary);
+  text-align: center;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.signature-pad__drawn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.signature-pad__canvas {
+  width: 100%;
+  max-width: 400px;
+  height: 150px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  cursor: crosshair;
+}
+
+.signature-pad__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.signature-pad__legal {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* ========================================
+   Signing Page
+   ======================================== */
+
+.signing-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.signing-page__title {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.signing-page__desc {
+  font: var(--body-md);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.signing-page__signed {
+  text-align: center;
+  padding: var(--space-12) 0;
+}
+
+.signing-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+}
+
+.signing-page__form-title {
+  font: var(--heading-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.signing-page__role-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.signing-page__select {
+  padding: var(--space-2) var(--space-3);
+  font: var(--mono-md);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+}
+
+.signing-page__error {
+  font: var(--mono-sm);
+  color: var(--status-error);
+  margin: 0;
+}
+
+.signing-page__success {
+  text-align: center;
+  padding: var(--space-12) 0;
+}
+
+.signing-page__success-title {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.signing-page__success-desc {
+  font: var(--body-md);
+  color: var(--text-secondary);
+  margin: var(--space-2) 0 0;
+}

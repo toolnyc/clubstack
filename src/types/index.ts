@@ -183,3 +183,21 @@ export interface ContractClause {
   created_at: string;
   updated_at: string;
 }
+
+export type SignerRole = "agency" | "artist" | "payer";
+export type SignatureType = "drawn" | "typed";
+
+export interface ContractSignature {
+  id: string;
+  contract_id: string;
+  signer_role: SignerRole;
+  signer_name: string;
+  signer_email: string;
+  signer_user_id: string | null;
+  signature_data: string;
+  signature_type: SignatureType;
+  ip_address: string | null;
+  user_agent: string | null;
+  signed_at: string;
+  created_at: string;
+}
