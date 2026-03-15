@@ -47,9 +47,28 @@ export async function createProfile(userType: UserType, displayName: string) {
     return { error: error.message };
   }
 
-  // Auto-create agency record for agency users
+  // Auto-create type-specific records
   if (userType === "agency") {
     await supabase.from("agencies").insert({
+      user_id: user.id,
+      name: displayName,
+    });
+  } else if (userType === "venue_contact") {
+    const { data: venue } = await supabase
+      .from("venues")
+      .insert({ name: displayName })
+      .select("id")
+      .single();
+
+    if (venue) {
+      await supabase.from("venue_contacts").insert({
+        venue_id: venue.id,
+        user_id: user.id,
+        is_primary: true,
+      });
+    }
+  } else if (userType === "promoter") {
+    await supabase.from("promoters").insert({
       user_id: user.id,
       name: displayName,
     });

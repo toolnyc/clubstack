@@ -77,3 +77,30 @@ export interface RosterEntry extends AgencyArtist {
     "id" | "name" | "slug" | "location" | "rate_min" | "rate_max"
   >;
 }
+
+export interface Venue {
+  id: string;
+  name: string;
+  location: string | null;
+  address: string | null;
+  capacity: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VenueContact {
+  id: string;
+  venue_id: string;
+  user_id: string;
+  is_primary: boolean;
+  created_at: string;
+}
+
+export interface Promoter {
+  id: string;
+  user_id: string;
+  name: string;
+  location: string | null;
+  created_at: string;
+  updated_at: string;
+}
