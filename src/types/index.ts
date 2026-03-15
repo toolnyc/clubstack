@@ -104,3 +104,47 @@ export interface Promoter {
   created_at: string;
   updated_at: string;
 }
+
+export interface Booking {
+  id: string;
+  created_by: string;
+  venue_id: string | null;
+  promoter_id: string | null;
+  status: BookingStatus | "cancelled";
+  payer_type: "venue" | "promoter" | null;
+  payer_user_id: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BookingDate {
+  id: string;
+  booking_id: string;
+  date: string;
+  set_time: string | null;
+  load_in_time: string | null;
+  event_name: string | null;
+  created_at: string;
+}
+
+export interface BookingArtist {
+  id: string;
+  booking_id: string;
+  dj_profile_id: string;
+  fee: number;
+  commission_pct: number;
+  payment_split_pct: number;
+  created_at: string;
+}
+
+export type CostCategory = "travel" | "accommodation" | "equipment" | "other";
+
+export interface BookingCost {
+  id: string;
+  booking_id: string;
+  description: string;
+  amount: number;
+  category: CostCategory | null;
+  created_at: string;
+}
