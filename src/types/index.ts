@@ -148,3 +148,38 @@ export interface BookingCost {
   category: CostCategory | null;
   created_at: string;
 }
+
+export type ContractStatus = "draft" | "sent" | "signed" | "voided";
+export type SignatureConfig = "agency_only" | "agency_and_artist";
+
+export interface Contract {
+  id: string;
+  booking_id: string;
+  status: ContractStatus;
+  signature_config: SignatureConfig;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ClauseType =
+  | "parties"
+  | "compensation"
+  | "cancellation"
+  | "rider"
+  | "force_majeure"
+  | "pay_or_play"
+  | "recording_rights"
+  | "independent_contractor"
+  | "modifications";
+
+export interface ContractClause {
+  id: string;
+  contract_id: string;
+  clause_type: ClauseType;
+  title: string;
+  content: string;
+  is_enabled: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}

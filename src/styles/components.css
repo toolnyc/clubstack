@@ -2006,3 +2006,189 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ========================================
+   Contract Builder
+   ======================================== */
+
+.contract-builder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.contract-builder__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: flex-start;
+}
+
+.contract-builder__edit-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.contract-builder__preview-panel {
+  position: sticky;
+  top: var(--space-4);
+}
+
+.contract-builder__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.contract-builder__tab {
+  flex: 1;
+  padding: var(--space-3);
+  font: var(--mono-md);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.contract-builder__tab--active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-cyan);
+}
+
+.contract-builder__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-4);
+}
+
+/* ========================================
+   Clause List
+   ======================================== */
+
+.clause-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.clause-list__item {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.clause-list__item--disabled {
+  opacity: 0.5;
+}
+
+.clause-list__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+}
+
+.clause-list__grip {
+  color: var(--text-tertiary);
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.clause-list__expand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.clause-list__title {
+  font: var(--mono-md);
+  color: var(--text-primary);
+}
+
+.clause-list__editor {
+  width: 100%;
+  min-height: 120px;
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  font: var(--body-sm);
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+
+.clause-list__editor:focus {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -2px;
+}
+
+/* ========================================
+   Contract Preview
+   ======================================== */
+
+.contract-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+}
+
+.contract-preview__header {
+  text-align: center;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.contract-preview__title {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.contract-preview__subtitle {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  margin: var(--space-1) 0 0;
+}
+
+.contract-preview__empty {
+  font: var(--body-md);
+  color: var(--text-tertiary);
+  text-align: center;
+  margin: 0;
+}
+
+.contract-preview__clause {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contract-preview__clause-title {
+  font: var(--heading-sm);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.contract-preview__clause-content {
+  font: var(--body-sm);
+  color: var(--text-secondary);
+}
+
+.contract-preview__clause-content p {
+  margin: var(--space-1) 0;
+}
