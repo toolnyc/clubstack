@@ -16,6 +16,23 @@ export type BookingStatus =
   | "balance_paid"
   | "completed";
 
+export interface CalendarConnection {
+  id: string;
+  user_id: string;
+  provider: "google";
+  access_token: string;
+  refresh_token: string;
+  token_expires_at: string;
+  calendar_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CalendarDay {
+  date: string;
+  status: "available" | "busy";
+}
+
 export interface DJProfile {
   id: string;
   user_id: string;

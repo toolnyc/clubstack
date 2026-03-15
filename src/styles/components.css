@@ -1021,3 +1021,41 @@
     gap: var(--space-4);
   }
 }
+
+/* ========================================
+   Calendar Connect
+   ======================================== */
+
+.calendar-connect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  gap: var(--space-4);
+}
+
+.calendar-connect--active {
+  border-color: var(--accent-cyan-muted);
+}
+
+.calendar-connect__info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-secondary);
+}
+
+.calendar-connect__status {
+  font: var(--body-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.calendar-connect__since {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
