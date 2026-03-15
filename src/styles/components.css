@@ -771,3 +771,144 @@
   justify-content: space-between;
   gap: var(--space-2);
 }
+
+/* ========================================
+   Auto Icon
+   ======================================== */
+
+.auto-icon {
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ========================================
+   Profile Form
+   ======================================== */
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 560px;
+}
+
+.profile-form__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.profile-form__icon-hint {
+  font: var(--body-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.profile-form__rate-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.profile-form__error {
+  font: var(--body-sm);
+  color: var(--status-error);
+  margin: 0;
+}
+
+.profile-form__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ========================================
+   Profile View
+   ======================================== */
+
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 560px;
+}
+
+.profile-view__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.profile-view__name {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.profile-view__location {
+  font: var(--mono-md);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.profile-view__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.profile-view__label {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.profile-view__value {
+  font: var(--mono-lg);
+  color: var(--text-primary);
+}
+
+.profile-view__bio {
+  font: var(--body-md);
+  color: var(--text-secondary);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.profile-view__link {
+  font: var(--mono-md);
+  color: var(--accent-cyan);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.profile-view__link:hover {
+  color: var(--accent-cyan-hover);
+}
+
+/* Profile empty state */
+.profile-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-4);
+  text-align: center;
+}
+
+.profile-empty__title {
+  font: var(--heading-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.profile-empty__desc {
+  font: var(--body-md);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.profile-edit {
+  padding-top: var(--space-4);
+}

@@ -20,14 +20,12 @@ export interface DJProfile {
   id: string;
   user_id: string;
   name: string;
-  slug: string;
-  bio: string | null;
-  location: string | null;
-  soundcloud_url: string | null;
-  instagram_url: string | null;
   rate_min: number | null;
   rate_max: number | null;
-  is_published: boolean;
+  soundcloud_url: string | null;
+  instagram_url: string | null;
+  location: string | null;
+  bio: string | null;
   created_at: string;
   updated_at: string;
 }
