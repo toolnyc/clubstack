@@ -237,3 +237,106 @@ export interface ContractSignature {
   signed_at: string;
   created_at: string;
 }
+
+export interface EquipmentRequirements {
+  cdjs?: boolean;
+  cdj_model?: string;
+  turntables?: boolean;
+  turntable_model?: string;
+  mixer?: boolean;
+  mixer_model?: string;
+  needles_provided?: boolean;
+  usb_required?: boolean;
+  laptop_stand?: boolean;
+  other?: string;
+}
+
+export interface TechnicalRider {
+  id: string;
+  dj_profile_id: string;
+  version: number;
+  equipment: EquipmentRequirements;
+  booth_monitors: string | null;
+  booth_requirements: string | null;
+  power_requirements: string | null;
+  hospitality: string | null;
+  is_current: boolean;
+  created_at: string;
+}
+
+export interface Thread {
+  id: string;
+  booking_id: string;
+  created_at: string;
+}
+
+export interface Message {
+  id: string;
+  thread_id: string;
+  sender_id: string | null;
+  content: string;
+  is_system: boolean;
+  created_at: string;
+}
+
+export interface ManualAvailability {
+  id: string;
+  user_id: string;
+  day_of_week: number | null;
+  specific_date: string | null;
+  is_available: boolean;
+  start_time: string | null;
+  end_time: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type InvoiceStatus = "draft" | "sent" | "paid" | "overdue" | "cancelled";
+
+export type InvoiceLineItemCategory =
+  | "fee"
+  | "travel"
+  | "accommodation"
+  | "equipment"
+  | "other";
+
+export interface Invoice {
+  id: string;
+  booking_id: string;
+  invoice_number: string;
+  total_amount: number;
+  currency: string;
+  status: InvoiceStatus;
+  due_date: string | null;
+  sent_at: string | null;
+  paid_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InvoiceLineItem {
+  id: string;
+  invoice_id: string;
+  description: string;
+  amount: number;
+  category: InvoiceLineItemCategory | null;
+  created_at: string;
+}
+
+export type NotificationType =
+  | "contract_sent"
+  | "contract_signed"
+  | "payment_received"
+  | "payment_due"
+  | "booking_confirmed"
+  | "calendar_conflict"
+  | "agency_invite";
+
+export interface NotificationPreference {
+  id: string;
+  user_id: string;
+  notification_type: NotificationType;
+  email_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
