@@ -323,6 +323,29 @@ export interface InvoiceLineItem {
   created_at: string;
 }
 
+export type TravelType = "flight" | "hotel" | "ground_transport";
+
+export interface BookingTravel {
+  id: string;
+  booking_id: string;
+  type: TravelType;
+  airline: string | null;
+  flight_number: string | null;
+  departure_airport: string | null;
+  arrival_airport: string | null;
+  departure_time: string | null;
+  arrival_time: string | null;
+  hotel_name: string | null;
+  hotel_address: string | null;
+  check_in: string | null;
+  check_out: string | null;
+  transport_details: string | null;
+  notes: string | null;
+  cost: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export type NotificationType =
   | "contract_sent"
   | "contract_signed"
