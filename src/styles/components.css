@@ -912,3 +912,112 @@
 .profile-edit {
   padding-top: var(--space-4);
 }
+
+/* ========================================
+   Public Profile
+   ======================================== */
+
+.public-profile {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-10) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-height: 100vh;
+}
+
+.public-profile__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.public-profile__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.public-profile__name {
+  font: var(--display-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.public-profile__location {
+  font: var(--mono-md);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.public-profile__rate {
+  font: var(--mono-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.public-profile__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.public-profile__section-title {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.public-profile__bio {
+  font: var(--body-lg);
+  color: var(--text-secondary);
+  margin: 0;
+  white-space: pre-wrap;
+  max-width: 65ch;
+}
+
+.public-profile__social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font: var(--mono-md);
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.public-profile__social-link:hover {
+  color: var(--accent-cyan-hover);
+}
+
+.public-profile__footer {
+  margin-top: auto;
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border-secondary);
+}
+
+.public-profile__powered {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* SoundCloud embed */
+.soundcloud-embed {
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 767px) {
+  .public-profile {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .public-profile__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+}

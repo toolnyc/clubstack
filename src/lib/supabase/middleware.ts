@@ -5,8 +5,10 @@ const PUBLIC_PATHS = ["/", "/login", "/auth/callback", "/auth/confirm"];
 const ONBOARDING_PATH = "/onboarding";
 
 function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.some(
-    (path) => pathname === path || pathname.startsWith("/api/")
+  return (
+    PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/dj/")
   );
 }
 

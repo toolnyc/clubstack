@@ -6,8 +6,10 @@ import { describe, it, expect } from "vitest";
 const PUBLIC_PATHS = ["/", "/login", "/auth/callback", "/auth/confirm"];
 
 function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.some(
-    (path) => pathname === path || pathname.startsWith("/api/")
+  return (
+    PUBLIC_PATHS.some((path) => pathname === path) ||
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/dj/")
   );
 }
 
@@ -56,6 +58,11 @@ describe("middleware route protection", () => {
 
     it("treats onboarding as not public (requires auth)", () => {
       expect(isPublicPath("/onboarding")).toBe(false);
+    });
+
+    it("treats public DJ profiles as public", () => {
+      expect(isPublicPath("/dj/dj-shadow")).toBe(true);
+      expect(isPublicPath("/dj/some-artist")).toBe(true);
     });
   });
 });

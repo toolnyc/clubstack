@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { generateSlug } from "@/lib/slug";
 import { z } from "zod";
 
 const djProfileSchema = z.object({
@@ -40,6 +41,40 @@ export async function getDJProfile() {
   return data;
 }
 
+export async function getDJProfileBySlug(slug: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("dj_profiles")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+
+  return data;
+}
+
+async function ensureUniqueSlug(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  baseSlug: string,
+  excludeId?: string
+): Promise<string> {
+  let slug = baseSlug;
+  let suffix = 1;
+
+  while (true) {
+    const query = supabase.from("dj_profiles").select("id").eq("slug", slug);
+
+    if (excludeId) {
+      query.neq("id", excludeId);
+    }
+
+    const { data } = await query.single();
+    if (!data) return slug;
+
+    slug = `${baseSlug}-${suffix}`;
+    suffix++;
+  }
+}
+
 export async function saveDJProfile(input: DJProfileInput) {
   const supabase = await createClient();
   const {
@@ -55,21 +90,25 @@ export async function saveDJProfile(input: DJProfileInput) {
     return { data: null, error: parsed.error.issues[0].message };
   }
 
+  // Check if profile exists
+  const { data: existing } = await supabase
+    .from("dj_profiles")
+    .select("id, slug")
+    .eq("user_id", user.id)
+    .single();
+
+  const baseSlug = generateSlug(parsed.data.name);
+  const slug = await ensureUniqueSlug(supabase, baseSlug, existing?.id);
+
   const profile = {
     ...parsed.data,
     soundcloud_url: parsed.data.soundcloud_url || null,
     instagram_url: parsed.data.instagram_url || null,
     location: parsed.data.location || null,
     bio: parsed.data.bio || null,
+    slug,
     user_id: user.id,
   };
-
-  // Check if profile exists
-  const { data: existing } = await supabase
-    .from("dj_profiles")
-    .select("id")
-    .eq("user_id", user.id)
-    .single();
 
   if (existing) {
     const { data, error } = await supabase

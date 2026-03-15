@@ -20,6 +20,7 @@ export interface DJProfile {
   id: string;
   user_id: string;
   name: string;
+  slug: string;
   rate_min: number | null;
   rate_max: number | null;
   soundcloud_url: string | null;

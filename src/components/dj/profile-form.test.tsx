@@ -43,6 +43,7 @@ describe("ProfileForm", () => {
           id: "1",
           user_id: "u1",
           name: "DJ Shadow",
+          slug: "dj-shadow",
           rate_min: 500,
           rate_max: 2000,
           soundcloud_url: "https://soundcloud.com/shadow",
