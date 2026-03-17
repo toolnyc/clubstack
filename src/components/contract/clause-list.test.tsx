@@ -1,22 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { ClauseList } from "./clause-list";
-import type { ContractClause } from "@/types";
-
-function makeClause(overrides: Partial<ContractClause> = {}): ContractClause {
-  return {
-    id: "clause-1",
-    contract_id: "contract-1",
-    clause_type: "parties",
-    title: "Parties & Event Details",
-    content: "This agreement is entered into...",
-    is_enabled: true,
-    sort_order: 0,
-    created_at: "2026-03-15T00:00:00Z",
-    updated_at: "2026-03-15T00:00:00Z",
-    ...overrides,
-  };
-}
+import { buildClause } from "@/test/factories";
 
 describe("ClauseList", () => {
   const noop = () => {};
@@ -25,8 +10,8 @@ describe("ClauseList", () => {
     render(
       <ClauseList
         clauses={[
-          makeClause(),
-          makeClause({ id: "c2", title: "Force Majeure", sort_order: 1 }),
+          buildClause(),
+          buildClause({ id: "c2", title: "Force Majeure", sort_order: 1 }),
         ]}
         onToggle={noop}
         onContentChange={noop}
@@ -44,7 +29,7 @@ describe("ClauseList", () => {
 
     render(
       <ClauseList
-        clauses={[makeClause()]}
+        clauses={[buildClause()]}
         onToggle={onToggle}
         onContentChange={noop}
         onReorder={noop}
@@ -62,7 +47,7 @@ describe("ClauseList", () => {
 
     render(
       <ClauseList
-        clauses={[makeClause()]}
+        clauses={[buildClause()]}
         onToggle={noop}
         onContentChange={noop}
         onReorder={noop}
@@ -76,17 +61,16 @@ describe("ClauseList", () => {
     );
   });
 
-  it("dims disabled clauses", () => {
-    const { container } = render(
+  it("disables toggle for disabled clauses", () => {
+    render(
       <ClauseList
-        clauses={[makeClause({ is_enabled: false })]}
+        clauses={[buildClause({ is_enabled: false })]}
         onToggle={noop}
         onContentChange={noop}
         onReorder={noop}
       />
     );
-    expect(
-      container.querySelector(".clause-list__item--disabled")
-    ).toBeInTheDocument();
+    const toggle = screen.getByLabelText("Enable Parties & Event Details");
+    expect(toggle).not.toBeChecked();
   });
 });

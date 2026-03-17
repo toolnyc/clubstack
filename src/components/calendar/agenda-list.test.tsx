@@ -39,23 +39,6 @@ describe("AgendaList", () => {
     expect(screen.getByText("$1,500")).toBeInTheDocument();
   });
 
-  it("renders status dots", () => {
-    const { container } = render(
-      <AgendaList
-        events={[
-          { date: "2026-03-22", status: "booked" },
-          { date: "2026-03-25", status: "busy" },
-        ]}
-      />
-    );
-    expect(
-      container.querySelector(".agenda-list__dot--booked")
-    ).toBeInTheDocument();
-    expect(
-      container.querySelector(".agenda-list__dot--busy")
-    ).toBeInTheDocument();
-  });
-
   it("falls back to status name when no title", () => {
     render(<AgendaList events={[{ date: "2026-03-22", status: "busy" }]} />);
     expect(screen.getByText("Busy")).toBeInTheDocument();

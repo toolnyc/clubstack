@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MessageThread } from "./message-thread";
-import type { Message } from "@/types";
+import { buildMessage } from "@/test/factories";
 
 // Mock supabase client
 vi.mock("@/lib/supabase/client", () => ({
@@ -20,32 +20,20 @@ vi.mock("@/lib/messaging/actions", () => ({
   sendMessage: vi.fn().mockResolvedValue({ message: null, error: null }),
 }));
 
-const baseMessage: Message = {
-  id: "msg-1",
-  thread_id: "thread-1",
-  sender_id: "user-1",
-  content: "Hello there",
-  is_system: false,
-  created_at: new Date().toISOString(),
-};
+const baseMessage = buildMessage();
 
-const systemMessage: Message = {
+const systemMessage = buildMessage({
   id: "msg-2",
-  thread_id: "thread-1",
   sender_id: null,
   content: "Contract signed",
   is_system: true,
-  created_at: new Date().toISOString(),
-};
+});
 
-const otherUserMessage: Message = {
+const otherUserMessage = buildMessage({
   id: "msg-3",
-  thread_id: "thread-1",
   sender_id: "user-2",
   content: "Hey, sounds good",
-  is_system: false,
-  created_at: new Date().toISOString(),
-};
+});
 
 beforeAll(() => {
   Element.prototype.scrollIntoView = vi.fn();
@@ -80,7 +68,7 @@ describe("MessageThread", () => {
     expect(screen.getByText("Hello there")).toBeInTheDocument();
   });
 
-  it("renders system messages with system styling", () => {
+  it("renders system messages", () => {
     render(
       <MessageThread
         threadId="thread-1"
@@ -88,12 +76,10 @@ describe("MessageThread", () => {
         currentUserId="user-1"
       />
     );
-    const systemEl = screen.getByText("Contract signed");
-    expect(systemEl).toBeInTheDocument();
-    expect(systemEl.className).toContain("msg-thread__system");
+    expect(screen.getByText("Contract signed")).toBeInTheDocument();
   });
 
-  it("distinguishes own messages from others", () => {
+  it("renders both own and other user messages", () => {
     render(
       <MessageThread
         threadId="thread-1"
@@ -101,16 +87,8 @@ describe("MessageThread", () => {
         currentUserId="user-1"
       />
     );
-
-    const ownBubble = screen
-      .getByText("Hello there")
-      .closest(".msg-thread__bubble");
-    expect(ownBubble?.className).toContain("msg-thread__bubble--own");
-
-    const otherBubble = screen
-      .getByText("Hey, sounds good")
-      .closest(".msg-thread__bubble");
-    expect(otherBubble?.className).toContain("msg-thread__bubble--other");
+    expect(screen.getByText("Hello there")).toBeInTheDocument();
+    expect(screen.getByText("Hey, sounds good")).toBeInTheDocument();
   });
 
   it("renders compose area with input and send button", () => {

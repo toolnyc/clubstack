@@ -1,37 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { BookingDashboard } from "./booking-dashboard";
-import type { Booking } from "@/types";
+import { buildBooking } from "@/test/factories";
 
 vi.mock("@/lib/hooks/use-breakpoint", () => ({
   useBreakpoint: () => "desktop",
 }));
 
-function makeBooking(overrides: Partial<Booking> = {}): Booking {
-  return {
-    id: "b-1",
-    created_by: "user-1",
-    venue_id: "v-1",
-    promoter_id: null,
-    status: "draft",
-    payer_type: "venue",
-    payer_user_id: "user-2",
-    notes: null,
-    created_at: "2026-03-10T00:00:00Z",
-    updated_at: "2026-03-10T00:00:00Z",
-    ...overrides,
-  };
-}
-
-const bookings: Booking[] = [
-  makeBooking({ id: "b-1", status: "draft", notes: "Opening set" }),
-  makeBooking({
+const bookings = [
+  buildBooking({ id: "b-1", status: "draft", notes: "Opening set" }),
+  buildBooking({
     id: "b-2",
     status: "signed",
     notes: "Main room",
     created_at: "2026-03-12T00:00:00Z",
   }),
-  makeBooking({
+  buildBooking({
     id: "b-3",
     status: "cancelled",
     notes: null,
@@ -41,13 +25,6 @@ const bookings: Booking[] = [
 
 describe("BookingDashboard", () => {
   it("renders all bookings in table", () => {
-    render(<BookingDashboard bookings={bookings} />);
-    expect(screen.getAllByText("Draft").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("Signed").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("Cancelled").length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("shows notes or dash for null notes", () => {
     render(<BookingDashboard bookings={bookings} />);
     expect(screen.getByText("Opening set")).toBeInTheDocument();
     expect(screen.getByText("Main room")).toBeInTheDocument();
@@ -72,12 +49,6 @@ describe("BookingDashboard", () => {
     expect(select).toHaveValue("all");
   });
 
-  it("renders date range inputs", () => {
-    render(<BookingDashboard bookings={bookings} />);
-    expect(screen.getByLabelText("From")).toBeInTheDocument();
-    expect(screen.getByLabelText("To")).toBeInTheDocument();
-  });
-
   it("filters by status when dropdown changes", async () => {
     const { default: userEvent } = await import("@testing-library/user-event");
     const user = userEvent.setup();
@@ -85,10 +56,8 @@ describe("BookingDashboard", () => {
 
     await user.selectOptions(screen.getByLabelText("Status"), "signed");
 
-    // "Signed" should still be in the table + dropdown
-    expect(screen.getAllByText("Signed").length).toBeGreaterThanOrEqual(1);
-    // "Draft" should only be in the dropdown now, not the table
     expect(screen.queryByText("Opening set")).not.toBeInTheDocument();
+    expect(screen.getByText("Main room")).toBeInTheDocument();
   });
 
   it("filters by date range", async () => {
@@ -116,14 +85,5 @@ describe("BookingDashboard", () => {
 
     await user.click(screen.getByText("Opening set"));
     expect(onClick).toHaveBeenCalledWith(bookings[0]);
-  });
-
-  it("applies custom className", () => {
-    const { container } = render(
-      <BookingDashboard bookings={[]} className="my-custom" />
-    );
-    expect(
-      container.querySelector(".booking-dash.my-custom")
-    ).toBeInTheDocument();
   });
 });

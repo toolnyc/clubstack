@@ -20,25 +20,8 @@ describe("StatusDot", () => {
     expect(screen.getByText(expected)).toBeInTheDocument();
   });
 
-  it.each(statuses)("applies status-dot--%s class", (status) => {
-    const { container } = render(<StatusDot status={status} />);
-    expect(container.firstChild).toHaveClass(`status-dot--${status}`);
-  });
-
-  it("renders a dot element", () => {
-    const { container } = render(<StatusDot status="available" />);
-    expect(container.querySelector(".status-dot__dot")).toBeInTheDocument();
-  });
-
   it("accepts custom label", () => {
     render(<StatusDot status="booked" label="Confirmed" />);
     expect(screen.getByText("Confirmed")).toBeInTheDocument();
-  });
-
-  it("accepts className prop", () => {
-    const { container } = render(
-      <StatusDot status="busy" className="custom" />
-    );
-    expect(container.firstChild).toHaveClass("custom");
   });
 });

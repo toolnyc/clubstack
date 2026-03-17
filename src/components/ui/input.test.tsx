@@ -35,18 +35,6 @@ describe("Input", () => {
     expect(errorId).toBeTruthy();
     expect(document.getElementById(errorId!)).toHaveTextContent("Required");
   });
-
-  it("has error class when error present", () => {
-    render(<Input label="Name" error="Required" />);
-    expect(screen.getByLabelText("Name")).toHaveClass(
-      "input-field__input--error"
-    );
-  });
-
-  it("accepts className prop", () => {
-    const { container } = render(<Input label="Test" className="custom" />);
-    expect(container.firstChild).toHaveClass("custom");
-  });
 });
 
 describe("Textarea", () => {

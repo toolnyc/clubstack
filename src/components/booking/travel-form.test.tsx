@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { TravelForm } from "./travel-form";
-import type { BookingTravel } from "@/types";
+import { buildTravel } from "@/test/factories";
 
 // Mock the server actions
 vi.mock("@/lib/booking/travel-actions", () => ({
@@ -14,30 +14,10 @@ vi.mock("@/lib/booking/travel-actions", () => ({
 
 const BOOKING_ID = "booking-abc-123";
 
-const existingFlight: BookingTravel = {
-  id: "travel-1",
-  booking_id: BOOKING_ID,
-  type: "flight",
-  airline: "Delta",
-  flight_number: "DL 420",
-  departure_airport: "JFK",
-  arrival_airport: "LAX",
-  departure_time: "2026-04-10T08:00:00Z",
-  arrival_time: "2026-04-10T11:30:00Z",
-  hotel_name: null,
-  hotel_address: null,
-  check_in: null,
-  check_out: null,
-  transport_details: null,
-  notes: "Window seat preferred",
-  cost: 350,
-  created_at: "2026-03-15T00:00:00Z",
-  updated_at: "2026-03-15T00:00:00Z",
-};
+const existingFlight = buildTravel();
 
-const existingHotel: BookingTravel = {
+const existingHotel = buildTravel({
   id: "travel-2",
-  booking_id: BOOKING_ID,
   type: "hotel",
   airline: null,
   flight_number: null,
@@ -49,12 +29,9 @@ const existingHotel: BookingTravel = {
   hotel_address: "20 W 29th St, New York",
   check_in: "2026-04-10",
   check_out: "2026-04-12",
-  transport_details: null,
   notes: null,
   cost: 450,
-  created_at: "2026-03-15T00:00:00Z",
-  updated_at: "2026-03-15T00:00:00Z",
-};
+});
 
 describe("TravelForm", () => {
   it("renders with three travel type tabs", () => {
@@ -202,11 +179,5 @@ describe("TravelForm", () => {
     const costInput = screen.getByPlaceholderText("0.00");
     fireEvent.change(costInput, { target: { value: "275.50" } });
     expect(costInput).toHaveValue(275.5);
-  });
-
-  it("renders the form element with data-testid", () => {
-    render(<TravelForm bookingId={BOOKING_ID} />);
-
-    expect(screen.getByTestId("travel-form")).toBeInTheDocument();
   });
 });

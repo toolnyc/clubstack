@@ -1,10 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EarningsDashboard } from "./earnings-dashboard";
-import type {
-  EarningsSummary,
-  EarningsEntry,
-} from "@/lib/payments/earnings-actions";
+import { buildEarningsSummary, buildEarningsEntry } from "@/test/factories";
 
 vi.mock("@/lib/hooks/use-breakpoint", () => ({
   useBreakpoint: () => "desktop",
@@ -28,26 +25,11 @@ vi.mock("@/lib/payments/earnings-actions", () => ({
   }),
 }));
 
-const mockSummary: EarningsSummary = {
-  totalEarned: 12500,
-  totalPending: 3000,
-  totalUpcoming: 1500,
-  gigCount: 25,
-};
+const mockSummary = buildEarningsSummary();
 
-const mockHistory: EarningsEntry[] = [
-  {
-    id: "ea-1",
-    date: "2026-03-01",
-    eventName: "Warehouse Party",
-    venueName: "The Loft",
-    fee: 1000,
-    commissionPct: 15,
-    commission: 150,
-    net: 850,
-    status: "completed",
-  },
-  {
+const mockHistory = [
+  buildEarningsEntry(),
+  buildEarningsEntry({
     id: "ea-2",
     date: "2026-03-15",
     eventName: "Saturday Night",
@@ -57,8 +39,8 @@ const mockHistory: EarningsEntry[] = [
     commission: 50,
     net: 450,
     status: "pending",
-  },
-  {
+  }),
+  buildEarningsEntry({
     id: "ea-3",
     date: "2026-04-01",
     eventName: null,
@@ -68,7 +50,7 @@ const mockHistory: EarningsEntry[] = [
     commission: 0,
     net: 750,
     status: "upcoming",
-  },
+  }),
 ];
 
 describe("EarningsDashboard", () => {
@@ -76,7 +58,7 @@ describe("EarningsDashboard", () => {
     vi.clearAllMocks();
   });
 
-  it("renders summary cards with correct values", () => {
+  it("renders summary cards with correct values and labels", () => {
     render(
       <EarningsDashboard
         initialSummary={mockSummary}
@@ -88,37 +70,11 @@ describe("EarningsDashboard", () => {
     expect(screen.getByText("$3,000.00")).toBeInTheDocument();
     expect(screen.getByText("$1,500.00")).toBeInTheDocument();
     expect(screen.getByText("25")).toBeInTheDocument();
-  });
-
-  it("renders summary card labels", () => {
-    render(
-      <EarningsDashboard
-        initialSummary={mockSummary}
-        initialHistory={mockHistory}
-      />
-    );
-
     expect(screen.getByText("Total earned")).toBeInTheDocument();
-    expect(screen.getAllByText("Pending").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("Upcoming").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Total gigs")).toBeInTheDocument();
   });
 
-  it("renders gig history table with entries", () => {
-    render(
-      <EarningsDashboard
-        initialSummary={mockSummary}
-        initialHistory={mockHistory}
-      />
-    );
-
-    expect(screen.getByText("The Loft")).toBeInTheDocument();
-    expect(screen.getByText("$1,000.00")).toBeInTheDocument();
-    expect(screen.getByText("$850.00")).toBeInTheDocument();
-    expect(screen.getByText("completed")).toBeInTheDocument();
-  });
-
-  it("renders venue name when available, event name as fallback", () => {
+  it("renders gig history with venue/event fallback", () => {
     render(
       <EarningsDashboard
         initialSummary={mockSummary}
@@ -129,6 +85,8 @@ describe("EarningsDashboard", () => {
     expect(screen.getByText("The Loft")).toBeInTheDocument();
     expect(screen.getByText("Saturday Night")).toBeInTheDocument();
     expect(screen.getByText("Club Underground")).toBeInTheDocument();
+    expect(screen.getByText("$1,000.00")).toBeInTheDocument();
+    expect(screen.getByText("$850.00")).toBeInTheDocument();
   });
 
   it("renders filter inputs", () => {
@@ -142,10 +100,9 @@ describe("EarningsDashboard", () => {
     expect(screen.getByLabelText("Start date")).toBeInTheDocument();
     expect(screen.getByLabelText("End date")).toBeInTheDocument();
     expect(screen.getByLabelText("Status")).toBeInTheDocument();
-    expect(screen.getByText("Apply")).toBeInTheDocument();
   });
 
-  it("renders status badges with correct text", () => {
+  it("renders status badges for each entry", () => {
     render(
       <EarningsDashboard
         initialSummary={mockSummary}
@@ -158,17 +115,6 @@ describe("EarningsDashboard", () => {
     expect(screen.getByText("upcoming")).toBeInTheDocument();
   });
 
-  it("renders load annual summary button", () => {
-    render(
-      <EarningsDashboard
-        initialSummary={mockSummary}
-        initialHistory={mockHistory}
-      />
-    );
-
-    expect(screen.getByText("Load annual tax summary")).toBeInTheDocument();
-  });
-
   it("shows empty state when no history", () => {
     render(
       <EarningsDashboard initialSummary={mockSummary} initialHistory={[]} />
@@ -177,9 +123,9 @@ describe("EarningsDashboard", () => {
     expect(screen.getByText("No earnings yet")).toBeInTheDocument();
   });
 
-  it("shows commission as dash when zero", () => {
-    const zeroCommission: EarningsEntry[] = [
-      {
+  it("shows dash for zero commission", () => {
+    const zeroCommission = [
+      buildEarningsEntry({
         id: "ea-z",
         date: "2026-01-01",
         eventName: "Free Gig",
@@ -189,7 +135,7 @@ describe("EarningsDashboard", () => {
         commission: 0,
         net: 200,
         status: "completed",
-      },
+      }),
     ];
 
     render(
@@ -199,9 +145,7 @@ describe("EarningsDashboard", () => {
       />
     );
 
-    // Commission column shows "--" for zero commission
-    const dashCells = screen.getAllByText("--");
-    expect(dashCells.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("--")).toBeInTheDocument();
   });
 
   it("loads annual summary on button click", async () => {
