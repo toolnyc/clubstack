@@ -75,4 +75,24 @@
   --topbar-height: 56px;
   --content-max-width: 1200px;
   --bottomtab-height: 64px;
+
+  /* Letter Spacing
+     Tailwind overrides: tight (-0.025em → -0.02em), new mono (0.01em) */
+  --tracking-tight: -0.02em; /* display/heading sizes */
+  --tracking-normal: 0em; /* body text */
+  --tracking-mono: 0.01em; /* mono-sm: status badges, timestamps, metadata */
+
+  /* Z-index Scale — centralized to prevent overlay collisions */
+  --z-base: 0;
+  --z-raised: 1; /* cards on hover, floating elements */
+  --z-dropdown: 100; /* dropdowns, popovers, command menus */
+  --z-sticky: 200; /* sticky headers, top bar */
+  --z-overlay: 300; /* backdrop overlays */
+  --z-modal: 400; /* modals, drawers */
+  --z-toast: 500; /* toasts, notifications (always on top) */
+
+  /* Glow Effects — default none. Dark theme activates backlit equipment feel.
+     Used only on focused/active states, never resting. */
+  --glow-cyan: none;
+  --glow-neon: none;
 }
