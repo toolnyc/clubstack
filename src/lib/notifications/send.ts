@@ -19,7 +19,7 @@ function getResend(): Resend {
   return resendClient;
 }
 
-const FROM_ADDRESS = "ClubStack <notifications@clubstack.com>";
+const FROM_ADDRESS = "Clubstack <notifications@clubstack.studio>";
 
 interface SendNotificationResult {
   sent: boolean;

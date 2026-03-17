@@ -1,5 +1,5 @@
 /**
- * Architecture tests — mechanical enforcement of ClubStack conventions.
+ * Architecture tests — mechanical enforcement of Clubstack conventions.
  *
  * These tests make it impossible for agents (or humans) to violate
  * project invariants. They run in CI and locally via `pnpm test`.

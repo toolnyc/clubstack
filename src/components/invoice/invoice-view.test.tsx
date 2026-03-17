@@ -113,6 +113,6 @@ describe("InvoiceView", () => {
 
   it("renders brand name", () => {
     render(<InvoiceView invoice={buildInvoice()} lineItems={[]} mode="full" />);
-    expect(screen.getByText("ClubStack")).toBeInTheDocument();
+    expect(screen.getByText("Clubstack")).toBeInTheDocument();
   });
 });

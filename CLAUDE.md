@@ -1,4 +1,4 @@
-# ClubStack
+# Clubstack
 
 DJ booking platform for underground clubs. DJs get free profiles + calendar sync. Venues pay subscription for booking tools. Escrow payments guarantee DJs get paid.
 

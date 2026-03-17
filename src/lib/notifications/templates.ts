@@ -27,10 +27,10 @@ function wrapHtml(body: string): string {
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:32px 16px;font-family:system-ui,-apple-system,sans-serif;background:#0a0a0a;color:#e5e5e5;">
   <div style="max-width:560px;margin:0 auto;">
-    <div style="font-size:14px;font-weight:600;color:#06b6d4;margin-bottom:24px;">ClubStack</div>
+    <div style="font-size:14px;font-weight:600;color:#06b6d4;margin-bottom:24px;">Clubstack</div>
     ${body}
     <div style="margin-top:32px;padding-top:16px;border-top:1px solid #262626;font-size:12px;color:#737373;">
-      You received this because of your ClubStack notification settings.
+      You received this because of your Clubstack notification settings.
     </div>
   </div>
 </body>
@@ -121,7 +121,7 @@ function agencyInvite(data: TemplateData): TemplateResult {
     html: wrapHtml(`
       <h1 style="font-size:20px;margin:0 0 16px;">Agency Invite</h1>
       <p style="margin:0 0 12px;line-height:1.5;">
-        <strong>${data.agencyName ?? "An agency"}</strong> has invited you to join their roster on ClubStack.
+        <strong>${data.agencyName ?? "An agency"}</strong> has invited you to join their roster on Clubstack.
       </p>
       ${data.inviteUrl ? `<a href="${data.inviteUrl}" style="display:inline-block;padding:10px 20px;background:#06b6d4;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:500;">View Invite</a>` : ""}
     `),

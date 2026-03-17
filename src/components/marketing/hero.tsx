@@ -2,7 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
-import { Button } from "@/components/ui/button";
+import { WaitlistForm } from "./waitlist-form";
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -46,20 +46,15 @@ export function Hero() {
     <section ref={sectionRef} className="hero">
       <div className="hero__container">
         <p className="hero__animate hero__eyebrow">
-          The booking platform for underground music
+          Built for New York&apos;s club scene
         </p>
-        <h1 className="hero__animate hero__headline">DJs keep 100%</h1>
+        <h1 className="hero__animate hero__headline">Clubstack</h1>
         <p className="hero__animate hero__subtitle">
-          Guaranteed payment. No platform fees. Calendar sync, contracts, and
-          escrow &mdash; so you get paid every time.
+          Booking management, contracts, calendar sync, and guaranteed payment.
+          Tools for working DJs, promoters, and agencies.
         </p>
-        <div className="hero__animate hero__actions">
-          <Button variant="primary" size="lg">
-            Get started &mdash; free
-          </Button>
-          <Button variant="secondary" size="lg">
-            For venues
-          </Button>
+        <div className="hero__animate hero__form-wrapper">
+          <WaitlistForm />
         </div>
       </div>
     </section>
