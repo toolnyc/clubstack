@@ -27,8 +27,10 @@
   --color-status-booked: var(--status-booked);
   --color-status-hold: var(--status-hold);
   --color-status-warning: var(--status-warning);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
 /* System preference default — when no data-theme is set */
@@ -73,7 +75,7 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
 }
 
 /* Max reading width for body text */
