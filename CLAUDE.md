@@ -41,27 +41,32 @@ src/
 ## Coding Conventions
 
 ### Components
+
 - **Server Components by default.** Only add `'use client'` when the component needs browser APIs, event handlers, or React hooks.
 - One component per file. Name files in kebab-case matching the export: `dj-card.tsx` exports `DJCard`.
 - Colocate related files: `dj-card.tsx`, `dj-card.test.tsx` in the same directory.
 
 ### Supabase
+
 - **Always import from the wrappers** in `@/lib/supabase/`, never import `@supabase/ssr` or `@supabase/supabase-js` directly in components or pages.
 - Server Components / Route Handlers / Server Actions: `import { createClient } from "@/lib/supabase/server"`
 - Client Components: `import { createClient } from "@/lib/supabase/client"`
 - **RLS is mandatory** on every table. Never disable RLS, even for testing.
 
 ### Styling
+
 - Tailwind utility classes only. No inline styles, no CSS modules, no styled-components.
 - Use the `cn()` utility (from `@/lib/utils`) for conditional class merging.
 - Keep class strings readable — break long className onto multiple lines.
 
 ### TypeScript
+
 - Strict mode is on. No `any` types — use `unknown` and narrow.
 - Define shared types in `src/types/`. Co-locate component-specific types with the component.
 - Use `interface` for object shapes, `type` for unions/intersections.
 
 ### Database Schema Conventions
+
 - Table names: plural, snake_case (`dj_profiles`, `bookings`)
 - Primary keys: `id uuid default gen_random_uuid()`
 - Every table gets `created_at timestamptz default now()` and `updated_at timestamptz default now()`
@@ -70,6 +75,7 @@ src/
 - Slugs must be unique and URL-safe (lowercase, hyphens only)
 
 ### File Naming
+
 - Components: `kebab-case.tsx` (e.g., `dj-card.tsx`)
 - Utilities: `kebab-case.ts` (e.g., `format-date.ts`)
 - Types: `kebab-case.ts` or in `index.ts`
@@ -78,8 +84,10 @@ src/
 ## Environment Variables
 
 Copy `.env.local.example` to `.env.local` and fill in values:
+
 - `NEXT_PUBLIC_SUPABASE_URL` — Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Supabase anon/public key
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — Supabase publishable key
+- `SUPABASE_SECRET_KEY` — Supabase secret key (server-only)
 
 ## Commands
 
