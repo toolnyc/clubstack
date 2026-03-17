@@ -1,3 +1,5 @@
+import { round2 } from "@/lib/math";
+
 interface ArtistDeal {
   fee: number;
   commission_pct: number;
@@ -68,8 +70,4 @@ export function calculateDealSummary(
     totalOwed: round2(totalOwed),
     artists: breakdowns,
   };
-}
-
-function round2(n: number): number {
-  return Math.round(n * 100) / 100;
 }

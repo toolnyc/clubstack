@@ -1,3 +1,4 @@
+import { round2 } from "@/lib/math";
 import type { BalanceDueTiming } from "@/types";
 
 export interface PaymentSchedule {
@@ -59,8 +60,4 @@ export function calculateTransferSplit(
   const artistAmount = round2(paymentAmount - agencyAmount);
 
   return { artistAmount, agencyAmount };
-}
-
-function round2(n: number): number {
-  return Math.round(n * 100) / 100;
 }
