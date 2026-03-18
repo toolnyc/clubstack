@@ -50,7 +50,8 @@ function buildConfirmationEmail(role: string, name?: string): string {
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;">
           <tr>
             <td style="padding-bottom:32px;border-bottom:1px solid #1e1e1e;">
-              <span style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;font-weight:600;color:#d3f707;letter-spacing:0.1em;text-transform:uppercase;">CLUBSTACK</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="52" height="33" viewBox="0 0 1005.3 637.26" aria-hidden="true" style="display:block;margin:0 0 10px;"><polygon fill="#d3f707" points="1005.3 308.02 738.06 308.02 738.06 462.03 513.26 462.03 513.26 308.02 267.24 308.02 267.24 175.23 780.5 175.23 780.5 0 246.02 0 246.02 154.01 0 154.01 0 329.24 246.02 329.24 246.02 483.25 492.04 483.25 492.04 637.26 759.28 637.26 759.28 483.25 1005.3 483.25 1005.3 308.02"/></svg>
+              <img src="https://clubstack.studio/brand/icon/email-logo.png" alt="Clubstack" width="140" height="25" style="display:block;border:0;" />
             </td>
           </tr>
           <tr>

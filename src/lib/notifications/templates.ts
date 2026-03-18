@@ -30,6 +30,7 @@ function wrapHtml(body: string): string {
 <body style="margin:0;padding:32px 16px;font-family:system-ui,-apple-system,sans-serif;background:#0a0a0a;color:#e5e5e5;">
   <div style="max-width:560px;margin:0 auto;">
     <div style="margin-bottom:24px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="52" height="33" viewBox="0 0 1005.3 637.26" aria-hidden="true" style="display:block;margin:0 0 10px;"><polygon fill="#e5e5e5" points="1005.3 308.02 738.06 308.02 738.06 462.03 513.26 462.03 513.26 308.02 267.24 308.02 267.24 175.23 780.5 175.23 780.5 0 246.02 0 246.02 154.01 0 154.01 0 329.24 246.02 329.24 246.02 483.25 492.04 483.25 492.04 637.26 759.28 637.26 759.28 483.25 1005.3 483.25 1005.3 308.02"/></svg>
       <img src="${APP_URL}/brand/icon/email-logo.png" alt="Clubstack" width="140" height="25" style="display:block;border:0;" />
     </div>
     ${body}
