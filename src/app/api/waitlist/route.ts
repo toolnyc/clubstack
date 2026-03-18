@@ -50,8 +50,7 @@ function buildConfirmationEmail(role: string, name?: string): string {
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;">
           <tr>
             <td style="padding-bottom:32px;border-bottom:1px solid #1e1e1e;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="52" height="33" viewBox="0 0 1005.3 637.26" aria-hidden="true" style="display:block;margin:0 0 10px;"><polygon fill="#d3f707" points="1005.3 308.02 738.06 308.02 738.06 462.03 513.26 462.03 513.26 308.02 267.24 308.02 267.24 175.23 780.5 175.23 780.5 0 246.02 0 246.02 154.01 0 154.01 0 329.24 246.02 329.24 246.02 483.25 492.04 483.25 492.04 637.26 759.28 637.26 759.28 483.25 1005.3 483.25 1005.3 308.02"/></svg>
-              <img src="https://clubstack.studio/brand/icon/email-logo.png" alt="Clubstack" width="140" height="25" style="display:block;border:0;" />
+              <img src="https://clubstack.studio/brand/logo/logo-long-white.svg" alt="Clubstack Studio" width="220" height="64" style="display:block;border:0;" />
             </td>
           </tr>
           <tr>
@@ -62,7 +61,8 @@ function buildConfirmationEmail(role: string, name?: string): string {
               ${featuresBlock}
               <p style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#555555;margin:24px 0 0;">— The Clubstack team</p>
               <div style="margin-top:40px;padding-top:16px;border-top:1px solid #1a1a1a;">
-                <p style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#444444;margin:0;line-height:1.6;">You received this because you signed up at clubstack.studio</p>
+                <p style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#444444;margin:0 0 8px;line-height:1.6;">You received this because you signed up at clubstack.studio</p>
+                <a href="mailto:unsubscribe@clubstack.studio?subject=Unsubscribe" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#d3f707;text-decoration:underline;">Unsubscribe</a>
               </div>
             </td>
           </tr>
@@ -85,17 +85,33 @@ async function sendConfirmationEmail(
   const { Resend } = await import("resend");
   const resend = new Resend(apiKey);
 
-  const firstName = name ? name.split(" ")[0] : undefined;
+  const nameParts = name?.trim().split(" ") ?? [];
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(" ") || undefined;
+
   const subject = firstName
     ? `Hey ${firstName}, you're on the Clubstack waitlist`
     : "You're on the Clubstack waitlist";
 
-  await resend.emails.send({
-    from: "Clubstack <notifications@clubstack.studio>",
-    to: email,
-    subject,
-    html: buildConfirmationEmail(role, name),
-  });
+  const audienceId = process.env.RESEND_AUDIENCE_ID;
+
+  await Promise.all([
+    resend.emails.send({
+      from: "Clubstack <notifications@clubstack.studio>",
+      to: email,
+      subject,
+      html: buildConfirmationEmail(role, name),
+    }),
+    audienceId
+      ? resend.contacts.create({
+          email,
+          firstName,
+          lastName,
+          unsubscribed: false,
+          audienceId,
+        })
+      : Promise.resolve(),
+  ]);
 }
 
 export async function POST(request: NextRequest) {
