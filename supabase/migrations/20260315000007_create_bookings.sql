@@ -37,17 +37,6 @@ create policy "Payer can read bookings"
   on bookings for select
   using (payer_user_id = auth.uid());
 
--- DJs on the booking can read it
-create policy "Booking artists can read bookings"
-  on bookings for select
-  using (
-    id in (
-      select ba.booking_id from booking_artists ba
-      join dj_profiles dp on dp.id = ba.dj_profile_id
-      where dp.user_id = auth.uid()
-    )
-  );
-
 -- Create booking_dates
 create table booking_dates (
   id uuid primary key default gen_random_uuid(),
@@ -120,6 +109,17 @@ create policy "Creator can delete booking artists"
   on booking_artists for delete
   using (
     booking_id in (select id from bookings where created_by = auth.uid())
+  );
+
+-- DJs on the booking can read it (defined after booking_artists table)
+create policy "Booking artists can read bookings"
+  on bookings for select
+  using (
+    id in (
+      select ba.booking_id from booking_artists ba
+      join dj_profiles dp on dp.id = ba.dj_profile_id
+      where dp.user_id = auth.uid()
+    )
   );
 
 -- Create booking_costs

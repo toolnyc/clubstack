@@ -69,7 +69,7 @@ export function Pricing() {
         <p className="pricing__eyebrow">For venues</p>
         <h2 className="pricing__heading">Simple pricing, no booking fees</h2>
         <p className="pricing__subheading">
-          DJs are free forever. Venues pay a flat monthly rate &mdash; no
+          Accessible pricing for DJs. Venues pay a flat monthly rate &mdash; no
           percentage of bookings, no hidden fees.
         </p>
         <div className="pricing__grid">

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const PUBLIC_PATHS = ["/", "/login", "/auth/callback", "/auth/confirm"];
 const ONBOARDING_PATH = "/onboarding";
 
-function isPublicPath(pathname: string): boolean {
+export function isPublicPath(pathname: string): boolean {
   return (
     PUBLIC_PATHS.some((path) => pathname === path) ||
     pathname.startsWith("/api/") ||
@@ -20,7 +20,7 @@ export async function updateSession(request: NextRequest) {
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
         getAll() {
@@ -66,13 +66,13 @@ export async function updateSession(request: NextRequest) {
 
   // For authenticated users on app routes, check if they have a profile
   if (user && !isPublicPath(pathname) && pathname !== ONBOARDING_PATH) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id")
       .eq("id", user.id)
       .single();
 
-    if (!profile) {
+    if (profileError || !profile) {
       return NextResponse.redirect(new URL(ONBOARDING_PATH, request.url));
     }
   }

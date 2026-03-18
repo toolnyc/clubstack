@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { canTransition, type BookingStatusOrCancelled } from "./status-machine";
 import type { Booking } from "@/types";
 
 const bookingSchema = z.object({
@@ -223,12 +224,34 @@ export async function getBookings(): Promise<Booking[]> {
   return (data as Booking[]) ?? [];
 }
 
-export async function updateBookingStatus(bookingId: string, status: string) {
+export async function updateBookingStatus(
+  bookingId: string,
+  newStatus: string
+) {
   const supabase = await createClient();
+
+  const { data: booking } = await supabase
+    .from("bookings")
+    .select("status")
+    .eq("id", bookingId)
+    .single();
+
+  if (!booking) return { error: "Booking not found" };
+
+  if (
+    !canTransition(
+      booking.status as BookingStatusOrCancelled,
+      newStatus as BookingStatusOrCancelled
+    )
+  ) {
+    return {
+      error: `Cannot transition from ${booking.status} to ${newStatus}`,
+    };
+  }
 
   const { error } = await supabase
     .from("bookings")
-    .update({ status })
+    .update({ status: newStatus })
     .eq("id", bookingId);
 
   if (error) return { error: error.message };

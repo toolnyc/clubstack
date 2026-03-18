@@ -29,7 +29,7 @@ export function InvoiceView({ invoice, lineItems, mode }: InvoiceViewProps) {
   return (
     <div className="invoice-view">
       <div className="invoice-view__header">
-        <div className="invoice-view__brand">ClubStack</div>
+        <div className="invoice-view__brand">Clubstack</div>
         <div className="invoice-view__meta">
           <span className="invoice-view__number">{invoice.invoice_number}</span>
           <span

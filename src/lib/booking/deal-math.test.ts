@@ -2,12 +2,13 @@ import { describe, it, expect } from "vitest";
 import { calculateArtistBreakdown, calculateDealSummary } from "./deal-math";
 
 describe("calculateArtistBreakdown", () => {
-  it("calculates single artist with standard commission", () => {
+  it("calculates standard 15% commission on full fee", () => {
     const result = calculateArtistBreakdown({
       fee: 1000,
       commission_pct: 15,
       payment_split_pct: 100,
     });
+
     expect(result.fee).toBe(1000);
     expect(result.splitFee).toBe(1000);
     expect(result.commission).toBe(150);
@@ -15,126 +16,121 @@ describe("calculateArtistBreakdown", () => {
     expect(result.netToBooker).toBe(150);
   });
 
-  it("handles 0% commission", () => {
+  it("applies payment split before commission", () => {
     const result = calculateArtistBreakdown({
-      fee: 2000,
-      commission_pct: 0,
-      payment_split_pct: 100,
-    });
-    expect(result.commission).toBe(0);
-    expect(result.netToArtist).toBe(2000);
-    expect(result.netToBooker).toBe(0);
-  });
-
-  it("handles B2B split (50/50)", () => {
-    const result = calculateArtistBreakdown({
-      fee: 2000,
+      fee: 1000,
       commission_pct: 15,
       payment_split_pct: 50,
     });
-    expect(result.splitFee).toBe(1000);
-    expect(result.commission).toBe(150);
-    expect(result.netToArtist).toBe(850);
+
+    expect(result.splitFee).toBe(500);
+    expect(result.commission).toBe(75);
+    expect(result.netToArtist).toBe(425);
+    expect(result.netToBooker).toBe(75);
   });
 
-  it("handles uneven B2B split (60/40)", () => {
+  it("handles zero commission", () => {
     const result = calculateArtistBreakdown({
-      fee: 1000,
-      commission_pct: 10,
-      payment_split_pct: 60,
+      fee: 500,
+      commission_pct: 0,
+      payment_split_pct: 100,
     });
-    expect(result.splitFee).toBe(600);
-    expect(result.commission).toBe(60);
-    expect(result.netToArtist).toBe(540);
+
+    expect(result.commission).toBe(0);
+    expect(result.netToArtist).toBe(500);
+    expect(result.netToBooker).toBe(0);
+  });
+
+  it("handles zero fee", () => {
+    const result = calculateArtistBreakdown({
+      fee: 0,
+      commission_pct: 15,
+      payment_split_pct: 100,
+    });
+
+    expect(result.fee).toBe(0);
+    expect(result.splitFee).toBe(0);
+    expect(result.commission).toBe(0);
+    expect(result.netToArtist).toBe(0);
+    expect(result.netToBooker).toBe(0);
   });
 
   it("rounds to 2 decimal places", () => {
     const result = calculateArtistBreakdown({
-      fee: 1000,
-      commission_pct: 33.33,
+      fee: 333,
+      commission_pct: 33,
       payment_split_pct: 100,
     });
-    expect(result.commission).toBe(333.3);
-    expect(result.netToArtist).toBe(666.7);
+
+    expect(result.commission).toBe(109.89);
+    expect(result.netToArtist).toBe(223.11);
   });
 
-  it("handles 100% commission (agency keeps all)", () => {
+  it("handles 100% commission (booker takes all)", () => {
     const result = calculateArtistBreakdown({
-      fee: 500,
+      fee: 1000,
       commission_pct: 100,
       payment_split_pct: 100,
     });
-    expect(result.commission).toBe(500);
+
+    expect(result.commission).toBe(1000);
     expect(result.netToArtist).toBe(0);
-    expect(result.netToBooker).toBe(500);
+    expect(result.netToBooker).toBe(1000);
   });
 });
 
 describe("calculateDealSummary", () => {
-  it("calculates single artist deal with no costs", () => {
-    const result = calculateDealSummary(
-      [{ fee: 1500, commission_pct: 15, payment_split_pct: 100 }],
-      []
-    );
+  it("aggregates multiple artists and costs", () => {
+    const artists = [
+      { fee: 1000, commission_pct: 15, payment_split_pct: 100 },
+      { fee: 500, commission_pct: 10, payment_split_pct: 100 },
+    ];
+    const costs = [{ amount: 200 }, { amount: 100 }];
+
+    const result = calculateDealSummary(artists, costs);
+
     expect(result.grossFees).toBe(1500);
-    expect(result.totalCosts).toBe(0);
-    expect(result.totalCommission).toBe(225);
-    expect(result.totalDueToArtists).toBe(1275);
-    expect(result.totalDueToBooker).toBe(225);
-    expect(result.totalOwed).toBe(1500);
-  });
-
-  it("calculates deal with costs", () => {
-    const result = calculateDealSummary(
-      [{ fee: 1000, commission_pct: 15, payment_split_pct: 100 }],
-      [{ amount: 300 }, { amount: 200 }]
-    );
-    expect(result.totalCosts).toBe(500);
-    expect(result.totalOwed).toBe(1500); // fees + costs
-  });
-
-  it("calculates B2B deal with two artists", () => {
-    const result = calculateDealSummary(
-      [
-        { fee: 2000, commission_pct: 15, payment_split_pct: 50 },
-        { fee: 2000, commission_pct: 15, payment_split_pct: 50 },
-      ],
-      []
-    );
-    expect(result.grossFees).toBe(2000); // 1000 + 1000
-    expect(result.totalCommission).toBe(300); // 150 + 150
-    expect(result.totalDueToArtists).toBe(1700); // 850 + 850
+    expect(result.totalCosts).toBe(300);
+    expect(result.totalCommission).toBe(200);
+    expect(result.totalDueToArtists).toBe(1300);
+    expect(result.totalDueToBooker).toBe(200);
+    expect(result.totalOwed).toBe(1800);
     expect(result.artists).toHaveLength(2);
-    expect(result.artists[0].splitFee).toBe(1000);
-    expect(result.artists[1].splitFee).toBe(1000);
   });
 
-  it("calculates deal with different commission rates per artist", () => {
-    const result = calculateDealSummary(
-      [
-        { fee: 1000, commission_pct: 10, payment_split_pct: 100 },
-        { fee: 2000, commission_pct: 20, payment_split_pct: 100 },
-      ],
-      []
-    );
-    expect(result.totalCommission).toBe(500); // 100 + 400
-    expect(result.totalDueToArtists).toBe(2500); // 900 + 1600
-    expect(result.grossFees).toBe(3000);
-  });
+  it("handles empty artists and costs", () => {
+    const result = calculateDealSummary([], []);
 
-  it("handles empty artists", () => {
-    const result = calculateDealSummary([], [{ amount: 100 }]);
     expect(result.grossFees).toBe(0);
-    expect(result.totalCosts).toBe(100);
-    expect(result.totalOwed).toBe(100);
+    expect(result.totalCosts).toBe(0);
+    expect(result.totalOwed).toBe(0);
+    expect(result.artists).toHaveLength(0);
   });
 
-  it("handles empty costs", () => {
-    const result = calculateDealSummary(
-      [{ fee: 500, commission_pct: 10, payment_split_pct: 100 }],
-      []
-    );
-    expect(result.totalCosts).toBe(0);
+  it("handles costs with no artists", () => {
+    const result = calculateDealSummary([], [{ amount: 500 }]);
+
+    expect(result.grossFees).toBe(0);
+    expect(result.totalCosts).toBe(500);
     expect(result.totalOwed).toBe(500);
+  });
+
+  it("artist breakdowns sum to totals", () => {
+    const artists = [
+      { fee: 750, commission_pct: 20, payment_split_pct: 100 },
+      { fee: 1250, commission_pct: 12, payment_split_pct: 80 },
+      { fee: 300, commission_pct: 0, payment_split_pct: 100 },
+    ];
+
+    const result = calculateDealSummary(artists, []);
+
+    const sumNetToArtist = result.artists.reduce(
+      (s, a) => s + a.netToArtist,
+      0
+    );
+    const sumCommission = result.artists.reduce((s, a) => s + a.commission, 0);
+
+    expect(result.totalDueToArtists).toBeCloseTo(sumNetToArtist, 2);
+    expect(result.totalCommission).toBeCloseTo(sumCommission, 2);
   });
 });

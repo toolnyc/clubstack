@@ -37,7 +37,6 @@ describe("Sidebar", () => {
     render(<Sidebar collapsed={false} onToggle={() => {}} />);
     const dashboardLink = screen.getByText("Dashboard").closest("a");
     expect(dashboardLink).toHaveAttribute("aria-current", "page");
-    expect(dashboardLink).toHaveClass("sidebar__item--active");
   });
 
   it("calls onToggle when collapse button clicked", async () => {

@@ -112,7 +112,7 @@ describe("notification templates", () => {
     for (const type of ALL_TYPES) {
       const result = getTemplate(type, {});
       expect(result.subject).toBeTruthy();
-      expect(result.html).toContain("ClubStack");
+      expect(result.html).toContain("Clubstack");
     }
   });
 });

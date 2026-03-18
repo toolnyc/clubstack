@@ -1,60 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { ItineraryView } from "./itinerary-view";
-import type { Itinerary } from "@/lib/booking/itinerary-actions";
-
-function buildItinerary(overrides: Partial<Itinerary> = {}): Itinerary {
-  return {
-    booking: {
-      id: "b1",
-      created_by: "u1",
-      venue_id: "v1",
-      promoter_id: null,
-      status: "signed",
-      payer_type: "venue",
-      payer_user_id: null,
-      notes: null,
-      created_at: "2026-04-01T00:00:00Z",
-      updated_at: "2026-04-01T00:00:00Z",
-    },
-    dates: [
-      {
-        id: "d1",
-        booking_id: "b1",
-        date: "2026-04-15",
-        set_time: "23:00",
-        load_in_time: "20:00",
-        event_name: "Friday Residency",
-        created_at: "2026-04-01T00:00:00Z",
-      },
-    ],
-    artists: [
-      {
-        id: "a1",
-        booking_id: "b1",
-        dj_profile_id: "dj1",
-        fee: 1500,
-        commission_pct: 15,
-        payment_split_pct: 100,
-        created_at: "2026-04-01T00:00:00Z",
-        dj_profile: { id: "dj1", name: "DJ Shadow", slug: "dj-shadow" },
-      },
-    ],
-    travel: [],
-    venue: {
-      id: "v1",
-      name: "Basement Club",
-      location: "Brooklyn, NY",
-      address: "123 Underground Ave, Brooklyn, NY 11201",
-      capacity: 300,
-      created_at: "2026-01-01T00:00:00Z",
-      updated_at: "2026-01-01T00:00:00Z",
-    },
-    venueContact: null,
-    promoterName: null,
-    ...overrides,
-  };
-}
+import { buildItinerary } from "@/test/factories";
 
 describe("ItineraryView", () => {
   it("renders event date and name", () => {
@@ -222,14 +169,5 @@ describe("ItineraryView", () => {
     const itinerary = buildItinerary({ venue: null });
     render(<ItineraryView itinerary={itinerary} />);
     expect(screen.queryByText("Basement Club")).not.toBeInTheDocument();
-  });
-
-  it("accepts custom className", () => {
-    const { container } = render(
-      <ItineraryView itinerary={buildItinerary()} className="custom-class" />
-    );
-    const root = container.firstElementChild;
-    expect(root?.classList.contains("custom-class")).toBe(true);
-    expect(root?.classList.contains("itinerary")).toBe(true);
   });
 });

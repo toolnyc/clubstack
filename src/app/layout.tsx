@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { neueMontreal, inter, khInterference } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Clubstack",
@@ -12,7 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${neueMontreal.variable} ${inter.variable} ${khInterference.variable}`}
+    >
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -21,6 +26,8 @@ export default function RootLayout({
                 var theme = localStorage.getItem('theme');
                 if (theme === 'light' || theme === 'dark') {
                   document.documentElement.setAttribute('data-theme', theme);
+                } else {
+                  document.documentElement.setAttribute('data-theme', 'dark');
                 }
               })();
             `,

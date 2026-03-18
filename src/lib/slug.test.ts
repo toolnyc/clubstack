@@ -6,27 +6,27 @@ describe("generateSlug", () => {
     expect(generateSlug("DJ Shadow")).toBe("dj-shadow");
   });
 
-  it("strips accents", () => {
+  it("strips diacritics", () => {
     expect(generateSlug("Âme")).toBe("ame");
   });
 
-  it("removes special characters", () => {
-    expect(generateSlug("DJ $hadow!")).toBe("dj-hadow");
+  it("handles multiple spaces and special chars", () => {
+    expect(generateSlug("Nina  Kraviz!!!")).toBe("nina-kraviz");
   });
 
-  it("collapses multiple hyphens", () => {
-    expect(generateSlug("DJ   Shadow")).toBe("dj-shadow");
-  });
-
-  it("trims leading/trailing hyphens", () => {
-    expect(generateSlug("  DJ Shadow  ")).toBe("dj-shadow");
-  });
-
-  it("handles single word", () => {
-    expect(generateSlug("Shadow")).toBe("shadow");
+  it("strips leading and trailing hyphens", () => {
+    expect(generateSlug("---test---")).toBe("test");
   });
 
   it("handles numbers", () => {
     expect(generateSlug("DJ 3000")).toBe("dj-3000");
+  });
+
+  it("handles empty string", () => {
+    expect(generateSlug("")).toBe("");
+  });
+
+  it("handles ampersands and symbols", () => {
+    expect(generateSlug("Above & Beyond")).toBe("above-beyond");
   });
 });

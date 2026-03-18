@@ -3,6 +3,22 @@
 @import "../styles/themes/light.css";
 @import "../styles/themes/dark.css";
 @import "../styles/components.css";
+@import "../styles/animations.css";
+
+/* Static theme overrides — these values don't change with light/dark theme.
+   Tailwind v4 reads --radius-* and --tracking-* directly from here to generate
+   rounded-* and tracking-* utilities. */
+@theme {
+  /* Border radius — override Tailwind defaults (sm=2px, md=6px, lg=8px) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Letter spacing — override tight, add mono variant for data labels */
+  --tracking-tight: -0.02em;
+  --tracking-mono: 0.01em;
+}
 
 @theme inline {
   --color-bg-primary: var(--bg-primary);
@@ -27,8 +43,10 @@
   --color-status-booked: var(--status-booked);
   --color-status-hold: var(--status-hold);
   --color-status-warning: var(--status-warning);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
 /* System preference default — when no data-theme is set */
@@ -48,14 +66,16 @@
     --accent-cyan-hover: #38bdf8;
     --accent-cyan-muted: rgba(14, 165, 233, 0.08);
     --accent-neon-muted: rgba(211, 247, 7, 0.08);
+    --glow-cyan: none;
+    --glow-neon: none;
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #141414;
-    --bg-tertiary: #1e1e1e;
+    --bg-primary: #0c0b0a;
+    --bg-secondary: #151412;
+    --bg-tertiary: #1f1d1b;
     --bg-inverse: #f0f0f0;
     --text-primary: #f0f0f0;
     --text-secondary: #a0a0a0;
@@ -67,13 +87,29 @@
     --accent-cyan-hover: #7dd3fc;
     --accent-cyan-muted: rgba(14, 165, 233, 0.12);
     --accent-neon-muted: rgba(211, 247, 7, 0.1);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.6);
+    --glow-cyan: 0 0 8px rgba(14, 165, 233, 0.3);
+    --glow-neon: 0 0 8px rgba(211, 247, 7, 0.25);
   }
 }
 
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  opacity: 0.03;
 }
 
 /* Max reading width for body text */

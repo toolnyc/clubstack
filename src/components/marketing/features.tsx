@@ -24,7 +24,7 @@ const FEATURES: Feature[] = [
     icon: <FileText className="features__icon" aria-hidden="true" />,
     title: "Contract builder",
     description:
-      "9 clause types, e-signatures, and a paper trail. Every gig documented before you show up.",
+      "Generate contracts with e-signatures and a full paper trail. Every gig documented before you show up.",
   },
   {
     icon: <ShieldCheck className="features__icon" aria-hidden="true" />,

@@ -1,29 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { createClient } from "@supabase/supabase-js";
 
 function getStripe() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const Stripe = require("stripe").default;
   return new Stripe(process.env.STRIPE_SECRET_KEY || "");
 }
 
 function getServiceClient() {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { createClient } = require("@supabase/supabase-js");
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.SUPABASE_SECRET_KEY!
   );
-}
-
-interface WebhookEvent {
-  type: string;
-  data: {
-    object: {
-      id: string;
-      charges_enabled?: boolean;
-      metadata?: Record<string, string>;
-    };
-  };
 }
 
 export async function POST(request: NextRequest) {
@@ -37,7 +24,7 @@ export async function POST(request: NextRequest) {
   const stripe = getStripe();
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
-  let event: WebhookEvent;
+  let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
@@ -48,7 +35,7 @@ export async function POST(request: NextRequest) {
 
   switch (event.type) {
     case "account.updated": {
-      const account = event.data.object;
+      const account = event.data.object as Stripe.Account;
       const status = account.charges_enabled ? "active" : "restricted";
 
       await supabase
@@ -59,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     case "payment_intent.succeeded": {
-      const pi = event.data.object;
+      const pi = event.data.object as Stripe.PaymentIntent;
       const bookingId = pi.metadata?.booking_id;
       const type = pi.metadata?.type;
 
@@ -82,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 
     case "payment_intent.payment_failed": {
-      const pi = event.data.object;
+      const pi = event.data.object as Stripe.PaymentIntent;
       await supabase
         .from("payments")
         .update({ status: "failed" })

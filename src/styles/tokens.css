@@ -1,4 +1,4 @@
-/* ClubStack Design Tokens */
+/* Clubstack Design Tokens */
 
 :root {
   /* Spacing — 4px base unit */
@@ -31,24 +31,28 @@
   --transition-slow: 300ms ease;
   --transition-reveal: 500ms cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Typography — Font stacks */
+  /* Typography — Font stacks
+     --font-display  PP Neue Montreal  → headings, display text
+     --font-body     Inter             → body copy, descriptions
+     --font-mono     KH Interference   → nav labels, status, dates, fees, data tables
+     Fallbacks used before fonts load (font-display: swap) */
+  --font-display: "PP Neue Montreal", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Inter", "Helvetica Neue", Arial, sans-serif;
   --font-mono:
-    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
-    "DejaVu Sans Mono", monospace;
-  --font-sans:
-    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    "KH Interference", ui-monospace, "Cascadia Code", Menlo, monospace;
+  /* Legacy alias — components using --font-sans keep working */
+  --font-sans: var(--font-body);
 
   /* Typography — Scale */
-  --display-xl: 600 3rem / 1.1 var(--font-sans);
-  --display-lg: 600 2.25rem / 1.1 var(--font-sans);
-  --display-md: 600 1.75rem / 1.2 var(--font-sans);
-  --heading-lg: 600 1.375rem / 1.2 var(--font-sans);
-  --heading-md: 600 1.125rem / 1.2 var(--font-sans);
-  --heading-sm: 600 0.9375rem / 1.2 var(--font-sans);
-  --body-lg: 400 1rem / 1.5 var(--font-sans);
-  --body-md: 400 0.875rem / 1.5 var(--font-sans);
-  --body-sm: 400 0.8125rem / 1.5 var(--font-sans);
+  --display-xl: 600 3rem / 1.1 var(--font-display);
+  --display-lg: 600 2.25rem / 1.1 var(--font-display);
+  --display-md: 600 1.75rem / 1.2 var(--font-display);
+  --heading-lg: 600 1.375rem / 1.2 var(--font-display);
+  --heading-md: 600 1.125rem / 1.2 var(--font-display);
+  --heading-sm: 600 0.9375rem / 1.2 var(--font-display);
+  --body-lg: 400 1rem / 1.5 var(--font-body);
+  --body-md: 400 0.875rem / 1.5 var(--font-body);
+  --body-sm: 400 0.8125rem / 1.5 var(--font-body);
   --mono-lg: 500 1rem / 1.5 var(--font-mono);
   --mono-md: 400 0.875rem / 1.5 var(--font-mono);
   --mono-sm: 400 0.75rem / 1.5 var(--font-mono);
@@ -71,4 +75,24 @@
   --topbar-height: 56px;
   --content-max-width: 1200px;
   --bottomtab-height: 64px;
+
+  /* Letter Spacing
+     Tailwind overrides: tight (-0.025em → -0.02em), new mono (0.01em) */
+  --tracking-tight: -0.02em; /* display/heading sizes */
+  --tracking-normal: 0em; /* body text */
+  --tracking-mono: 0.01em; /* mono-sm: status badges, timestamps, metadata */
+
+  /* Z-index Scale — centralized to prevent overlay collisions */
+  --z-base: 0;
+  --z-raised: 1; /* cards on hover, floating elements */
+  --z-dropdown: 100; /* dropdowns, popovers, command menus */
+  --z-sticky: 200; /* sticky headers, top bar */
+  --z-overlay: 300; /* backdrop overlays */
+  --z-modal: 400; /* modals, drawers */
+  --z-toast: 500; /* toasts, notifications (always on top) */
+
+  /* Glow Effects — default none. Dark theme activates backlit equipment feel.
+     Used only on focused/active states, never resting. */
+  --glow-cyan: none;
+  --glow-neon: none;
 }
