@@ -4209,6 +4209,7 @@
 
   .waitlist-form__name,
   .waitlist-form__email {
+    flex: none;
     height: 56px;
   }
 }
