@@ -5,6 +5,12 @@ import { neueMontreal, inter, khInterference } from "./fonts";
 export const metadata: Metadata = {
   title: "Clubstack",
   description: "DJ booking tool for underground clubs.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({

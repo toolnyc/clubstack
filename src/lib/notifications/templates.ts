@@ -21,13 +21,17 @@ interface TemplateResult {
   html: string;
 }
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://clubstack.studio";
+
 function wrapHtml(body: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
 <body style="margin:0;padding:32px 16px;font-family:system-ui,-apple-system,sans-serif;background:#0a0a0a;color:#e5e5e5;">
   <div style="max-width:560px;margin:0 auto;">
-    <div style="font-size:14px;font-weight:600;color:#06b6d4;margin-bottom:24px;">Clubstack</div>
+    <div style="margin-bottom:24px;">
+      <img src="${APP_URL}/brand/icon/email-logo.png" alt="Clubstack" width="140" height="25" style="display:block;border:0;" />
+    </div>
     ${body}
     <div style="margin-top:32px;padding-top:16px;border-top:1px solid #262626;font-size:12px;color:#737373;">
       You received this because of your Clubstack notification settings.
