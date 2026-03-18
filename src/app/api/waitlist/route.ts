@@ -159,10 +159,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Best-effort confirmation email — don't fail the request if this errors
-  sendConfirmationEmail(normalizedEmail, role, normalizedName).catch((err) => {
-    console.error("Waitlist confirmation email error:", err);
-  });
+  try {
+    await sendConfirmationEmail(normalizedEmail, role, normalizedName);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Waitlist confirmation email error:", message, {
+      email: normalizedEmail,
+      role,
+    });
+  }
 
   return NextResponse.json({ success: true });
 }
