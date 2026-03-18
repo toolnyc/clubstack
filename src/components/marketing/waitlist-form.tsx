@@ -18,6 +18,7 @@ interface WaitlistFormProps {
 
 export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
   const [role, setRole] = useState<Role>(defaultRole);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -33,7 +34,7 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, role }),
+        body: JSON.stringify({ email, role, name: name.trim() || undefined }),
       });
       const data = await res.json();
       if (data.success) {
@@ -74,6 +75,16 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
           </button>
         ))}
       </div>
+      <input
+        type="text"
+        className="waitlist-form__name"
+        placeholder="Your name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        autoComplete="name"
+        disabled={status === "loading"}
+        aria-label="Your name"
+      />
       <div className="waitlist-form__input-row">
         <input
           type="email"

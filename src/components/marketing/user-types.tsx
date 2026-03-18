@@ -23,7 +23,7 @@ const USER_TYPES: UserType[] = [
   {
     role: "For DJs",
     heading: "Manage the operational side of getting booked.",
-    sub: "Free forever.",
+    sub: "Accessible pricing for working DJs.",
     features: [
       {
         label: "Availability",
@@ -33,7 +33,7 @@ const USER_TYPES: UserType[] = [
       {
         label: "Contracts",
         description:
-          "Generate and sign before every gig. 9 clause types, e-signatures, paper trail.",
+          "Generate and sign before every gig. E-signatures, customizable terms, full paper trail.",
       },
       {
         label: "Invoicing",

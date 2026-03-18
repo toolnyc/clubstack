@@ -112,6 +112,16 @@
   }
 }
 
+@keyframes ambient-breathe {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* ========================================
    Input
    ======================================== */
@@ -3630,6 +3640,7 @@
   -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 68%);
   pointer-events: none;
   z-index: 0;
+  animation: dot-drift 28s ease-in-out infinite;
 }
 
 .hero__container {
@@ -3682,6 +3693,53 @@
 
 .hero__animate {
   opacity: 0;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 60% 50% at 50% 40%,
+    rgba(211, 247, 7, 0.06) 0%,
+    transparent 70%
+  );
+  animation: ambient-breathe 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero__city-placeholder {
+  display: inline-block;
+  width: 6ch;
+  height: 0.85em;
+  vertical-align: middle;
+  background-color: var(--accent-cyan);
+  border-radius: 1px;
+  opacity: 1;
+  animation: hero-cursor-blink 1s step-end infinite;
+}
+
+.hero__city-placeholder--static {
+  animation: none;
+  opacity: 0.6;
+}
+
+@keyframes hero-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__city-placeholder {
+    animation: none;
+    opacity: 0.6;
+  }
 }
 
 /* ========================================
@@ -4000,13 +4058,14 @@
 .waitlist-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 0;
 }
 
 .waitlist-form__roles {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
+  margin-bottom: var(--space-6);
 }
 
 .waitlist-form__role-btn {
@@ -4034,9 +4093,34 @@
   background: rgba(211, 247, 7, 0.07);
 }
 
+.waitlist-form__name {
+  height: 44px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-primary);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font: var(--body-md);
+  outline: none;
+  transition: border-color var(--transition-base);
+  min-width: 0;
+  /* Override parent gap: roles→name = space-5, name→email-row = space-2 */
+  margin-top: calc(var(--space-5) - var(--space-3));
+  margin-bottom: calc(var(--space-2) - var(--space-3));
+}
+
+.waitlist-form__name::placeholder {
+  color: var(--text-tertiary);
+}
+
+.waitlist-form__name:focus {
+  border-color: var(--accent-neon);
+}
+
 .waitlist-form__input-row {
   display: flex;
   gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
 .waitlist-form__email {
@@ -4123,7 +4207,36 @@
    ======================================== */
 
 .user-types {
+  position: relative;
   border-top: 1px solid var(--border-primary);
+}
+
+.user-types::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(211, 247, 7, 0.07) 1px,
+    transparent 1px
+  );
+  background-size: 32px 32px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 80%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 12%,
+    black 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 0;
 }
 
 .user-types__container {
