@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FormTransition } from "@/components/ui/form-transition";
 
 type Role = "dj" | "promoter" | "agency" | "venue";
 type Status = "idle" | "loading" | "success" | "error";
@@ -49,67 +50,73 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
     }
   }
 
-  if (status === "success") {
-    return (
-      <div className="waitlist-form__success">
-        <p className="waitlist-form__success-text">You&apos;re on the list.</p>
-        <p className="waitlist-form__success-sub">
-          We&apos;ll reach out as we roll out access in New York.
-        </p>
-      </div>
-    );
-  }
-
   return (
-    <form className="waitlist-form" onSubmit={handleSubmit}>
-      <div className="waitlist-form__roles" role="group" aria-label="I am a">
-        {ROLES.map((r) => (
-          <button
-            key={r.value}
-            type="button"
-            className={`waitlist-form__role-btn${role === r.value ? " waitlist-form__role-btn--active" : ""}`}
-            onClick={() => setRole(r.value)}
-            aria-pressed={role === r.value}
+    <FormTransition stateKey={status === "success" ? "success" : "form"}>
+      {status === "success" ? (
+        <div className="waitlist-form__success">
+          <p className="waitlist-form__success-text">
+            You&apos;re on the list.
+          </p>
+          <p className="waitlist-form__success-sub">
+            We&apos;ll reach out as we roll out access in New York.
+          </p>
+        </div>
+      ) : (
+        <form className="waitlist-form" onSubmit={handleSubmit}>
+          <div
+            className="waitlist-form__roles"
+            role="group"
+            aria-label="I am a"
           >
-            {r.label}
-          </button>
-        ))}
-      </div>
-      <input
-        type="text"
-        className="waitlist-form__name"
-        placeholder="Your name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        autoComplete="name"
-        disabled={status === "loading"}
-        aria-label="Your name"
-      />
-      <div className="waitlist-form__input-row">
-        <input
-          type="email"
-          className="waitlist-form__email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          autoComplete="email"
-          disabled={status === "loading"}
-          aria-label="Email address"
-        />
-        <button
-          type="submit"
-          className="waitlist-form__submit"
-          disabled={status === "loading"}
-        >
-          {status === "loading" ? "Joining..." : "Join waitlist"}
-        </button>
-      </div>
-      {status === "error" && (
-        <p className="waitlist-form__error" role="alert">
-          {errorMessage}
-        </p>
+            {ROLES.map((r) => (
+              <button
+                key={r.value}
+                type="button"
+                className={`waitlist-form__role-btn${role === r.value ? " waitlist-form__role-btn--active" : ""}`}
+                onClick={() => setRole(r.value)}
+                aria-pressed={role === r.value}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <input
+            type="text"
+            className="waitlist-form__name"
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+            disabled={status === "loading"}
+            aria-label="Your name"
+          />
+          <div className="waitlist-form__input-row">
+            <input
+              type="email"
+              className="waitlist-form__email"
+              placeholder="your@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              disabled={status === "loading"}
+              aria-label="Email address"
+            />
+            <button
+              type="submit"
+              className="waitlist-form__submit"
+              disabled={status === "loading"}
+            >
+              {status === "loading" ? "Joining..." : "Join waitlist"}
+            </button>
+          </div>
+          {status === "error" && (
+            <p className="waitlist-form__error" role="alert">
+              {errorMessage}
+            </p>
+          )}
+        </form>
       )}
-    </form>
+    </FormTransition>
   );
 }
