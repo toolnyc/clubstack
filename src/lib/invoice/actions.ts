@@ -131,6 +131,92 @@ export async function getInvoices(bookingId: string) {
   return (invoices ?? []) as Invoice[];
 }
 
+export interface InvoiceListEntry {
+  id: string;
+  invoiceNumber: string;
+  totalAmount: number;
+  currency: string;
+  status: InvoiceStatus;
+  dueDate: string | null;
+  sentAt: string | null;
+  paidAt: string | null;
+  createdAt: string;
+  bookingId: string;
+  venueName: string | null;
+  eventName: string | null;
+  bookingDate: string | null;
+}
+
+/**
+ * Fetch all invoices for the current user's bookings,
+ * joined with booking/venue/date info for display.
+ */
+export async function getAllInvoices(): Promise<{
+  data: InvoiceListEntry[];
+  error: string | null;
+}> {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { data: [], error: "Not authenticated" };
+
+  const { data: rows, error } = await supabase
+    .from("invoices")
+    .select(
+      `
+      id,
+      invoice_number,
+      total_amount,
+      currency,
+      status,
+      due_date,
+      sent_at,
+      paid_at,
+      created_at,
+      booking_id,
+      booking:bookings!inner(
+        id,
+        venue:venues(name),
+        booking_dates(date, event_name)
+      )
+    `
+    )
+    .order("created_at", { ascending: false });
+
+  if (error) return { data: [], error: error.message };
+
+  const result: InvoiceListEntry[] = (rows ?? []).map((row) => {
+    const booking = row.booking as unknown as {
+      id: string;
+      venue: { name: string } | null;
+      booking_dates: { date: string; event_name: string | null }[];
+    };
+
+    const firstDate = booking.booking_dates[0] ?? null;
+
+    return {
+      id: row.id as string,
+      invoiceNumber: row.invoice_number as string,
+      totalAmount: Number(row.total_amount),
+      currency: row.currency as string,
+      status: row.status as InvoiceStatus,
+      dueDate: row.due_date as string | null,
+      sentAt: row.sent_at as string | null,
+      paidAt: row.paid_at as string | null,
+      createdAt: row.created_at as string,
+      bookingId: row.booking_id as string,
+      venueName: booking.venue?.name ?? null,
+      eventName: firstDate?.event_name ?? null,
+      bookingDate: firstDate?.date ?? null,
+    };
+  });
+
+  return { data: result, error: null };
+}
+
 export async function updateInvoiceStatus(
   invoiceId: string,
   status: InvoiceStatus
