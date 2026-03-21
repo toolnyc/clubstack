@@ -93,5 +93,3 @@ export async function updatePreference(
   if (error) return { error: error.message };
   return { error: null };
 }
-
-export { NOTIFICATION_TYPES };
