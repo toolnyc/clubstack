@@ -64,10 +64,9 @@ describe("GET /api/cron/fund-release", () => {
     expect(ranTime).toBeLessThanOrEqual(after);
   });
 
-  it("returns 401 when a different valid-looking token is provided", async () => {
-    const response = await GET(
-      makeRequest("Bearer test-cron-secret-but-wrong")
-    );
+  it("returns 401 when CRON_SECRET env is unset", async () => {
+    vi.stubEnv("CRON_SECRET", "");
+    const response = await GET(makeRequest("Bearer any-token"));
     expect(response.status).toBe(401);
   });
 });

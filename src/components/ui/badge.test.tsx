@@ -3,16 +3,30 @@ import { describe, it, expect } from "vitest";
 import { Badge } from "./badge";
 
 describe("Badge", () => {
-  it("renders children", () => {
-    render(<Badge>PAID</Badge>);
-    expect(screen.getByText("PAID")).toBeInTheDocument();
+  it("applies default variant class when no variant is specified", () => {
+    const { container } = render(<Badge>PAID</Badge>);
+    expect(container.firstChild).toHaveClass("badge--default");
   });
 
-  it("renders with different variants", () => {
-    const { rerender } = render(<Badge variant="cyan">Active</Badge>);
-    expect(screen.getByText("Active")).toBeInTheDocument();
+  it.each(["cyan", "neon", "error"] as const)(
+    "applies badge--%s class for variant=%s",
+    (variant) => {
+      const { container } = render(<Badge variant={variant}>Label</Badge>);
+      expect(container.firstChild).toHaveClass(`badge--${variant}`);
+    }
+  );
 
-    rerender(<Badge variant="error">Failed</Badge>);
-    expect(screen.getByText("Failed")).toBeInTheDocument();
+  it("merges custom className without overriding variant class", () => {
+    const { container } = render(
+      <Badge variant="cyan" className="ml-2">
+        Active
+      </Badge>
+    );
+    expect(container.firstChild).toHaveClass("badge--cyan", "ml-2");
+  });
+
+  it("renders children", () => {
+    render(<Badge>OVERDUE</Badge>);
+    expect(screen.getByText("OVERDUE")).toBeInTheDocument();
   });
 });

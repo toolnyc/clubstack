@@ -60,13 +60,16 @@ describe("canTransition", () => {
 });
 
 describe("getNextStatuses", () => {
-  it("returns valid next statuses for draft", () => {
-    expect(getNextStatuses("draft")).toEqual(["contract_sent", "cancelled"]);
-  });
-
-  it("returns empty array for terminal states", () => {
-    expect(getNextStatuses("completed")).toEqual([]);
-    expect(getNextStatuses("cancelled")).toEqual([]);
+  it.each([
+    ["draft", ["contract_sent", "cancelled"]],
+    ["contract_sent", ["signed", "cancelled"]],
+    ["signed", ["deposit_paid", "cancelled"]],
+    ["deposit_paid", ["balance_paid", "cancelled"]],
+    ["balance_paid", ["completed", "cancelled"]],
+    ["completed", []],
+    ["cancelled", []],
+  ] as const)("returns correct next statuses for %s", (status, expected) => {
+    expect(getNextStatuses(status)).toEqual(expected);
   });
 });
 

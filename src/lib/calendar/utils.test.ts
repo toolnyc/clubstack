@@ -18,9 +18,14 @@ describe("getMonthDays", () => {
     expect(days[30].getDate()).toBe(31);
   });
 
-  it("returns correct days for February 2026", () => {
+  it("returns correct days for February 2026 (non-leap year)", () => {
     const days = getMonthDays(2026, 1);
     expect(days).toHaveLength(28);
+  });
+
+  it("returns 29 days for February in a leap year", () => {
+    const days = getMonthDays(2024, 1);
+    expect(days).toHaveLength(29);
   });
 });
 
@@ -33,6 +38,17 @@ describe("getMonthGridDays", () => {
   it("starts on Sunday", () => {
     const days = getMonthGridDays(2026, 2);
     expect(days[0].getDay()).toBe(0);
+  });
+
+  it("ends on Saturday", () => {
+    const days = getMonthGridDays(2026, 2);
+    expect(days[days.length - 1].getDay()).toBe(6);
+  });
+
+  it("contains all days of the target month", () => {
+    const days = getMonthGridDays(2026, 2);
+    const marchDays = days.filter((d) => d.getMonth() === 2);
+    expect(marchDays).toHaveLength(31);
   });
 });
 

@@ -64,15 +64,9 @@ describe("GET /api/cron/calendar-sync", () => {
     expect(ranTime).toBeLessThanOrEqual(after);
   });
 
-  it("returns 401 when CRON_SECRET env is not set", async () => {
+  it("returns 401 when CRON_SECRET env is unset", async () => {
     vi.stubEnv("CRON_SECRET", "");
-    const response = await GET(makeRequest("Bearer "));
-    // empty string Bearer matches empty secret — still valid auth check
-    // the point is: when secret is empty, a non-empty token must fail
-    await vi.unstubAllEnvs();
-    vi.stubEnv("CRON_SECRET", "test-cron-secret");
-
-    const response2 = await GET(makeRequest("Bearer some-token"));
-    expect(response2.status).toBe(401);
+    const response = await GET(makeRequest("Bearer any-token"));
+    expect(response.status).toBe(401);
   });
 });
