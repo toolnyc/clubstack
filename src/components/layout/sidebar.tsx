@@ -21,6 +21,7 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  agencyOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -28,7 +29,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Calendar", href: "/calendar", icon: Calendar },
   { label: "Bookings", href: "/bookings", icon: FileText },
   { label: "Invoices", href: "/invoices", icon: Receipt },
-  { label: "Roster", href: "/roster", icon: Users },
+  { label: "Roster", href: "/roster", icon: Users, agencyOnly: true },
 ];
 
 const THEME_OPTIONS: {
@@ -44,11 +45,15 @@ const THEME_OPTIONS: {
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  userType?: string | null;
 }
 
-function Sidebar({ collapsed, onToggle }: SidebarProps) {
+function Sidebar({ collapsed, onToggle, userType }: SidebarProps) {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => !item.agencyOnly || userType === "agency"
+  );
 
   return (
     <aside className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
@@ -59,7 +64,7 @@ function Sidebar({ collapsed, onToggle }: SidebarProps) {
       </div>
 
       <nav className="sidebar__nav" aria-label="Main navigation">
-        {NAV_ITEMS.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
             <Link

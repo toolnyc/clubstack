@@ -14,6 +14,7 @@ interface TabItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  agencyOnly?: boolean;
 }
 
 const TAB_ITEMS: TabItem[] = [
@@ -21,15 +22,22 @@ const TAB_ITEMS: TabItem[] = [
   { label: "Calendar", href: "/calendar", icon: Calendar },
   { label: "Bookings", href: "/bookings", icon: FileText },
   { label: "Invoices", href: "/invoices", icon: Receipt },
-  { label: "Roster", href: "/roster", icon: Users },
+  { label: "Roster", href: "/roster", icon: Users, agencyOnly: true },
 ];
 
-function BottomTabs() {
+interface BottomTabsProps {
+  userType?: string | null;
+}
+
+function BottomTabs({ userType }: BottomTabsProps) {
   const pathname = usePathname();
+  const visibleItems = TAB_ITEMS.filter(
+    (item) => !item.agencyOnly || userType === "agency"
+  );
 
   return (
     <nav className="bottom-tabs" aria-label="Main navigation">
-      {TAB_ITEMS.map((item) => {
+      {visibleItems.map((item) => {
         const isActive = pathname.startsWith(item.href);
         return (
           <Link

@@ -7,9 +7,10 @@ import { BottomTabs } from "./bottom-tabs";
 
 interface AppShellProps {
   children: ReactNode;
+  userType?: string | null;
 }
 
-function AppShell({ children }: AppShellProps) {
+function AppShell({ children, userType }: AppShellProps) {
   const breakpoint = useBreakpoint();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -23,6 +24,7 @@ function AppShell({ children }: AppShellProps) {
         <Sidebar
           collapsed={collapsed}
           onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+          userType={userType}
         />
       )}
 
@@ -38,7 +40,7 @@ function AppShell({ children }: AppShellProps) {
         <div className="app-shell__content">{children}</div>
       </div>
 
-      {isMobile && <BottomTabs />}
+      {isMobile && <BottomTabs userType={userType} />}
     </div>
   );
 }

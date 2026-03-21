@@ -9,13 +9,23 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("Sidebar", () => {
-  it("renders navigation items", () => {
-    render(<Sidebar collapsed={false} onToggle={() => {}} />);
+  it("renders navigation items for non-agency user", () => {
+    render(<Sidebar collapsed={false} onToggle={() => {}} userType="dj" />);
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Calendar")).toBeInTheDocument();
     expect(screen.getByText("Bookings")).toBeInTheDocument();
     expect(screen.getByText("Invoices")).toBeInTheDocument();
+    expect(screen.queryByText("Roster")).not.toBeInTheDocument();
+  });
+
+  it("shows Roster only for agency users", () => {
+    render(<Sidebar collapsed={false} onToggle={() => {}} userType="agency" />);
     expect(screen.getByText("Roster")).toBeInTheDocument();
+  });
+
+  it("hides Roster when userType is null", () => {
+    render(<Sidebar collapsed={false} onToggle={() => {}} userType={null} />);
+    expect(screen.queryByText("Roster")).not.toBeInTheDocument();
   });
 
   it("shows logo text when expanded", () => {

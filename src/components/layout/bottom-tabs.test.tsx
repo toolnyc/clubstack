@@ -7,12 +7,17 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("BottomTabs", () => {
-  it("renders all 5 tab items", () => {
-    render(<BottomTabs />);
+  it("renders 4 tabs for non-agency user", () => {
+    render(<BottomTabs userType="dj" />);
     expect(screen.getByText("Home")).toBeInTheDocument();
     expect(screen.getByText("Calendar")).toBeInTheDocument();
     expect(screen.getByText("Bookings")).toBeInTheDocument();
     expect(screen.getByText("Invoices")).toBeInTheDocument();
+    expect(screen.queryByText("Roster")).not.toBeInTheDocument();
+  });
+
+  it("renders Roster tab for agency users", () => {
+    render(<BottomTabs userType="agency" />);
     expect(screen.getByText("Roster")).toBeInTheDocument();
   });
 
