@@ -183,6 +183,7 @@ describe("database migrations", () => {
       "messages",
       "technical_riders",
       "waitlist_signups",
+      "booking_access_tokens", // one-time-use tokens — created once, never updated
     ]);
 
     for (const file of files) {
