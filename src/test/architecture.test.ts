@@ -182,6 +182,7 @@ describe("database migrations", () => {
       "threads",
       "messages",
       "technical_riders",
+      "waitlist_signups",
     ]);
 
     for (const file of files) {

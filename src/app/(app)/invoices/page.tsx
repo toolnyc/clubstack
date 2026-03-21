@@ -1,8 +1,14 @@
-export default function InvoicesPage() {
+import { InvoiceList } from "@/components/invoice/invoice-list";
+import { getAllInvoices } from "@/lib/invoice/actions";
+
+export default async function InvoicesPage() {
+  const result = await getAllInvoices();
+  const invoices = result.data ?? [];
+
   return (
-    <div className="invoices-page">
+    <main className="invoices-page">
       <h1 className="invoices-page__title">Invoices</h1>
-      <p className="invoices-page__empty-text">No invoices yet.</p>
-    </div>
+      <InvoiceList invoices={invoices} />
+    </main>
   );
 }
