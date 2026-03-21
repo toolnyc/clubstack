@@ -3,6 +3,7 @@ create table waitlist_signups (
   email text not null,
   role text not null check (role in ('dj', 'promoter', 'agency', 'venue')),
   created_at timestamptz default now(),
+  updated_at timestamptz default now(),
   constraint waitlist_signups_email_key unique (email)
 );
 

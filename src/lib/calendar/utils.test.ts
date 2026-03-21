@@ -4,6 +4,7 @@ import {
   getMonthGridDays,
   formatDateShort,
   formatDateLong,
+  formatMonthYear,
   toDateString,
   isToday,
   isSameMonth,
@@ -46,6 +47,18 @@ describe("formatDateLong", () => {
   it("formats as 'Month DD, YYYY'", () => {
     const result = formatDateLong(new Date(2026, 2, 22));
     expect(result).toBe("March 22, 2026");
+  });
+});
+
+describe("formatMonthYear", () => {
+  it("formats as 'Month YYYY'", () => {
+    const result = formatMonthYear(new Date(2026, 2, 1));
+    expect(result).toBe("March 2026");
+  });
+
+  it("formats January correctly", () => {
+    const result = formatMonthYear(new Date(2026, 0, 15));
+    expect(result).toBe("January 2026");
   });
 });
 
