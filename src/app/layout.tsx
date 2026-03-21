@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { neueMontreal, inter, khInterference } from "./fonts";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "Clubstack",
@@ -40,7 +42,11 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
