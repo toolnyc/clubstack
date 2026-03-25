@@ -4830,17 +4830,316 @@
    Dashboard Page
    ======================================== */
 
-.dashboard-page {
+.dashboard {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-6);
 }
 
-.dashboard-page__empty-text {
+.dashboard__greeting {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+.dashboard__col-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.dashboard__col-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-4);
+}
+
+.dashboard__bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+
+/* Stat card */
+.dashboard__stat-card .card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.dashboard__stat-value {
+  font: var(--mono-lg);
+  color: var(--text-primary);
+}
+
+.dashboard__stat-label {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono);
+}
+
+/* Section titles */
+.dashboard__section-title {
+  font: var(--heading-md);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.dashboard__view-all {
+  font: var(--mono-sm);
+  color: var(--accent-cyan);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-mono);
+}
+
+.dashboard__view-all:hover {
+  text-decoration: underline;
+}
+
+.dashboard__empty-text {
   font: var(--body-md);
   color: var(--text-tertiary);
   margin: 0;
+}
+
+/* Upcoming bookings */
+.dashboard__booking-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashboard__booking-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-secondary);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.dashboard__booking-item:hover {
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard__booking-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dashboard__booking-date {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+}
+
+.dashboard__booking-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.dashboard__booking-artists {
+  font: var(--body-md);
+  color: var(--text-primary);
+}
+
+.dashboard__booking-venue {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+}
+
+.dashboard__booking-venue::before {
+  content: "@ ";
+}
+
+.dashboard__booking-event {
+  font: var(--body-sm);
+  color: var(--text-tertiary);
+}
+
+/* Recent invoices */
+.dashboard__invoice-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashboard__invoice-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-secondary);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.dashboard__invoice-item:hover {
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard__invoice-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.dashboard__invoice-number {
+  font: var(--mono-md);
+  color: var(--text-primary);
+}
+
+.dashboard__invoice-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.dashboard__invoice-amount {
+  font: var(--mono-md);
+  color: var(--text-primary);
+}
+
+.dashboard__invoice-due {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+}
+
+/* Action items */
+.dashboard__action-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashboard__action-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-secondary);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.dashboard__action-item:hover {
+  border-color: var(--border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard__action-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  font: var(--mono-sm);
+  flex-shrink: 0;
+}
+
+.dashboard__action-item--pending_invite .dashboard__action-indicator {
+  background: var(--accent-cyan-muted);
+  color: var(--accent-cyan);
+}
+
+.dashboard__action-item--stale_draft .dashboard__action-indicator {
+  background: rgba(245, 158, 11, 0.08);
+  color: var(--status-warning);
+}
+
+.dashboard__action-label {
+  font: var(--body-md);
+  color: var(--text-primary);
+}
+
+/* Calendar status */
+.dashboard__calendar-connected {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashboard__calendar-id {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard__calendar-disconnected {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dashboard__calendar-link {
+  font: var(--mono-sm);
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.dashboard__calendar-link:hover {
+  text-decoration: underline;
+}
+
+/* Mobile: single column */
+@media (max-width: 768px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__stats {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 /* ========================================
