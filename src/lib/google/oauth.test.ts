@@ -24,8 +24,9 @@ describe("buildAuthUrl", () => {
     vi.unstubAllEnvs();
   });
 
-  it("uses only freebusy scope", () => {
+  it("includes calendar.events and calendar.freebusy scopes", () => {
     expect(SCOPES).toEqual([
+      "https://www.googleapis.com/auth/calendar.events",
       "https://www.googleapis.com/auth/calendar.freebusy",
     ]);
   });

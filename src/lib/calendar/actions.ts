@@ -17,7 +17,9 @@ export async function getCalendarConnection() {
 
   const { data } = await supabase
     .from("calendar_connections")
-    .select("id, provider, calendar_id, created_at")
+    .select(
+      "id, provider, calendar_id, created_at, sync_status, last_synced_at"
+    )
     .eq("user_id", user.id)
     .eq("provider", "google")
     .single();

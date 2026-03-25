@@ -2,6 +2,16 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { GET } from "./route";
 import { NextRequest } from "next/server";
 
+// Mock the service client — return empty connections list by default
+const mockSelect = vi.fn().mockReturnValue({
+  neq: vi.fn().mockResolvedValue({ data: [], error: null }),
+});
+const mockFrom = vi.fn().mockReturnValue({ select: mockSelect });
+
+vi.mock("@/lib/supabase/service", () => ({
+  createServiceClient: () => ({ from: mockFrom }),
+}));
+
 function makeRequest(authHeader?: string): NextRequest {
   const headers: Record<string, string> = {};
   if (authHeader !== undefined) {
@@ -46,10 +56,14 @@ describe("GET /api/cron/calendar-sync", () => {
     expect(response.status).toBe(200);
   });
 
-  it("returns ok:true with valid auth", async () => {
+  it("returns ok:true with valid auth and sync summary", async () => {
     const response = await GET(makeRequest("Bearer test-cron-secret"));
     const body = await response.json();
     expect(body.ok).toBe(true);
+    expect(body.synced).toBe(0);
+    expect(body.errors).toBe(0);
+    expect(body.total).toBe(0);
+    expect(body.results).toEqual([]);
   });
 
   it("returns ran timestamp with valid auth", async () => {
