@@ -2,11 +2,6 @@ import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { ActionItem } from "@/lib/dashboard/actions";
 
-const TYPE_ICONS: Record<string, string> = {
-  pending_invite: "!",
-  stale_draft: "!",
-};
-
 interface ActionItemsProps {
   items: ActionItem[];
 }
@@ -15,25 +10,27 @@ function ActionItems({ items }: ActionItemsProps) {
   if (items.length === 0) return null;
 
   return (
-    <Card className="dashboard__actions">
-      <CardHeader>
-        <h2 className="dashboard__section-title">Action items</h2>
+    <Card className="bg-bg-secondary border border-border-primary rounded-lg p-4">
+      <CardHeader className="pb-3">
+        <h2 className="font-[var(--font-display)] text-lg font-semibold text-text-primary">
+          Action items
+        </h2>
       </CardHeader>
       <CardContent>
-        <ul className="dashboard__action-list">
+        <ul className="flex flex-col gap-2">
           {items.map((item, idx) => (
             <li key={`${item.type}-${idx}`}>
               <Link
                 href={item.href}
-                className={`dashboard__action-item dashboard__action-item--${item.type}`}
+                className="flex items-center gap-3 p-2 rounded-md text-text-primary hover:bg-bg-tertiary transition-colors duration-150"
               >
                 <span
-                  className="dashboard__action-indicator"
+                  className="font-mono text-sm text-accent-cyan flex-shrink-0"
                   aria-hidden="true"
                 >
-                  {TYPE_ICONS[item.type] ?? "!"}
+                  !
                 </span>
-                <span className="dashboard__action-label">{item.label}</span>
+                <span className="font-body text-sm">{item.label}</span>
               </Link>
             </li>
           ))}

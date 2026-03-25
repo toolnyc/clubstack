@@ -29,33 +29,38 @@ interface UpcomingBookingsProps {
 
 function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
   return (
-    <Card className="dashboard__upcoming">
-      <CardHeader>
-        <h2 className="dashboard__section-title">Upcoming bookings</h2>
-        <Link href="/bookings" className="dashboard__view-all">
+    <Card className="bg-bg-secondary border border-border-primary rounded-lg p-4">
+      <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <h2 className="font-[var(--font-display)] text-lg font-semibold text-text-primary">
+          Upcoming bookings
+        </h2>
+        <Link
+          href="/bookings"
+          className="font-mono text-sm text-accent-cyan hover:text-accent-cyan-hover"
+        >
           View all
         </Link>
       </CardHeader>
       <CardContent>
         {bookings.length === 0 ? (
-          <p className="dashboard__empty-text">
+          <p className="font-body text-sm text-text-tertiary">
             No bookings in the next 7 days.
           </p>
         ) : (
-          <ul className="dashboard__booking-list">
+          <ul className="flex flex-col">
             {bookings.map((booking) => (
               <li key={booking.id}>
                 <Link
                   href={`/bookings/${booking.id}`}
-                  className="dashboard__booking-item"
+                  className="block py-3 border-b border-border-secondary hover:bg-bg-tertiary transition-colors duration-150"
                 >
-                  <div className="dashboard__booking-header">
+                  <div className="flex items-center gap-3 mb-2">
                     <Badge
                       variant={STATUS_VARIANTS[booking.status] ?? "default"}
                     >
                       {STATUS_LABELS[booking.status] ?? booking.status}
                     </Badge>
-                    <span className="dashboard__booking-date">
+                    <span className="font-mono text-sm text-text-tertiary">
                       {booking.dates
                         .map((d) =>
                           new Date(d.date + "T00:00:00").toLocaleDateString(
@@ -66,19 +71,19 @@ function UpcomingBookings({ bookings }: UpcomingBookingsProps) {
                         .join(", ")}
                     </span>
                   </div>
-                  <div className="dashboard__booking-details">
+                  <div className="flex flex-col gap-1">
                     {booking.artists.length > 0 && (
-                      <span className="dashboard__booking-artists">
+                      <span className="font-mono text-sm text-text-primary">
                         {booking.artists.map((a) => a.name).join(", ")}
                       </span>
                     )}
                     {booking.venue_name && (
-                      <span className="dashboard__booking-venue">
+                      <span className="font-body text-sm text-text-secondary">
                         {booking.venue_name}
                       </span>
                     )}
                     {booking.dates[0]?.event_name && (
-                      <span className="dashboard__booking-event">
+                      <span className="font-mono text-xs text-text-tertiary">
                         {booking.dates[0].event_name}
                       </span>
                     )}

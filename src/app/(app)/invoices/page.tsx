@@ -9,7 +9,7 @@ export default async function InvoicesPage() {
   return (
     <>
       <TopBar title="Invoices" />
-      <main className="invoices-page">
+      <main className="flex flex-col gap-6 p-6">
         <InvoiceList invoices={invoices} />
       </main>
     </>

@@ -15,25 +15,25 @@ interface Feature {
 
 const FEATURES: Feature[] = [
   {
-    icon: <Calendar className="features__icon" aria-hidden="true" />,
+    icon: <Calendar size={24} strokeWidth={1.5} />,
     title: "Calendar sync",
     description:
       "Connect Google Calendar. Your availability updates in real time — no double-bookings, no back-and-forth.",
   },
   {
-    icon: <FileText className="features__icon" aria-hidden="true" />,
+    icon: <FileText size={24} strokeWidth={1.5} />,
     title: "Contract builder",
     description:
       "Generate contracts with e-signatures and a full paper trail. Every gig documented before you show up.",
   },
   {
-    icon: <ShieldCheck className="features__icon" aria-hidden="true" />,
+    icon: <ShieldCheck size={24} strokeWidth={1.5} />,
     title: "Guaranteed payment",
     description:
       "Funds held in escrow and released automatically. No more chasing promoters at 2am.",
   },
   {
-    icon: <LayoutDashboard className="features__icon" aria-hidden="true" />,
+    icon: <LayoutDashboard size={24} strokeWidth={1.5} />,
     title: "One dashboard",
     description:
       "Bookings, invoices, availability, and contacts in one place. Built for DJs, not accountants.",
@@ -84,17 +84,26 @@ export function Features() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="features">
-      <div className="features__container">
-        <h2 className="features__heading">
+    <section ref={sectionRef} className="py-20 px-6">
+      <div className="max-w-[1200px] mx-auto">
+        <h2 className="font-[var(--font-display)] text-3xl font-semibold text-text-primary text-center mb-12">
           Everything you need to get booked and get paid
         </h2>
-        <div className="features__grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURES.map((feature) => (
-            <div key={feature.title} className="features__card">
-              {feature.icon}
-              <h3 className="features__title">{feature.title}</h3>
-              <p className="features__description">{feature.description}</p>
+            <div
+              key={feature.title}
+              className="features__card flex flex-col gap-3 p-4"
+            >
+              <span className="w-10 h-10 text-accent-cyan" aria-hidden="true">
+                {feature.icon}
+              </span>
+              <h3 className="font-[var(--font-display)] text-lg font-semibold text-text-primary">
+                {feature.title}
+              </h3>
+              <p className="font-body text-sm text-text-secondary leading-relaxed">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>

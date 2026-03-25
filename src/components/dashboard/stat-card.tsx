@@ -8,10 +8,14 @@ interface StatCardProps {
 
 function StatCard({ label, value, className = "" }: StatCardProps) {
   return (
-    <Card className={`dashboard__stat-card ${className}`}>
-      <CardContent>
-        <span className="dashboard__stat-value">{value}</span>
-        <span className="dashboard__stat-label">{label}</span>
+    <Card
+      className={`bg-bg-secondary border border-border-primary rounded-lg p-4 ${className}`}
+    >
+      <CardContent className="flex flex-col gap-1">
+        <span className="font-[var(--font-display)] text-2xl font-semibold text-text-primary">
+          {value}
+        </span>
+        <span className="font-mono text-sm text-text-secondary">{label}</span>
       </CardContent>
     </Card>
   );

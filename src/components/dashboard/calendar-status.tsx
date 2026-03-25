@@ -9,22 +9,29 @@ interface CalendarStatusProps {
 
 function CalendarStatus({ connected, calendarId }: CalendarStatusProps) {
   return (
-    <Card className="dashboard__calendar">
-      <CardHeader>
-        <h2 className="dashboard__section-title">Calendar</h2>
+    <Card className="bg-bg-secondary border border-border-primary rounded-lg p-4">
+      <CardHeader className="pb-3">
+        <h2 className="font-[var(--font-display)] text-lg font-semibold text-text-primary">
+          Calendar
+        </h2>
       </CardHeader>
       <CardContent>
         {connected ? (
-          <div className="dashboard__calendar-connected">
+          <div className="flex flex-col gap-2">
             <StatusDot status="available" label="Connected" />
             {calendarId && (
-              <span className="dashboard__calendar-id">{calendarId}</span>
+              <span className="font-mono text-xs text-text-tertiary truncate">
+                {calendarId}
+              </span>
             )}
           </div>
         ) : (
-          <div className="dashboard__calendar-disconnected">
+          <div className="flex flex-col gap-3">
             <StatusDot status="error" label="Not connected" />
-            <Link href="/settings" className="dashboard__calendar-link">
+            <Link
+              href="/settings"
+              className="font-mono text-sm text-accent-cyan hover:text-accent-cyan-hover"
+            >
               Connect Google Calendar
             </Link>
           </div>

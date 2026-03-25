@@ -44,26 +44,26 @@ export default async function BookingsPage() {
           </Link>
         }
       />
-      <div className="bookings-page">
+      <div className="flex flex-col gap-6 p-6">
         {bookings.length === 0 ? (
-          <div className="bookings-page__empty">
-            <p className="bookings-page__empty-text">
+          <div className="py-12 text-center">
+            <p className="font-body text-sm text-text-tertiary">
               No bookings yet. Create your first booking to get started.
             </p>
           </div>
         ) : (
-          <div className="bookings-page__list">
+          <div className="flex flex-col">
             {bookings.map((booking) => (
               <Link
                 key={booking.id}
                 href={`/bookings/${booking.id}`}
-                className="bookings-page__item"
+                className="flex flex-col gap-2 py-4 border-b border-border-secondary hover:bg-bg-tertiary transition-colors duration-150"
               >
-                <div className="bookings-page__item-info">
+                <div className="flex items-center gap-3">
                   <Badge variant={STATUS_VARIANTS[booking.status] ?? "default"}>
                     {STATUS_LABELS[booking.status] ?? booking.status}
                   </Badge>
-                  <span className="bookings-page__item-date">
+                  <span className="font-mono text-sm text-text-tertiary">
                     {new Date(booking.created_at).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
@@ -72,7 +72,9 @@ export default async function BookingsPage() {
                   </span>
                 </div>
                 {booking.notes && (
-                  <p className="bookings-page__item-notes">{booking.notes}</p>
+                  <p className="font-body text-sm text-text-secondary overflow-hidden text-ellipsis whitespace-nowrap">
+                    {booking.notes}
+                  </p>
                 )}
               </Link>
             ))}

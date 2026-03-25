@@ -148,27 +148,42 @@ export function UserTypes() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="user-types">
-      <div className="user-types__container">
+    <section
+      ref={sectionRef}
+      className="py-20 px-6 border-t border-b border-border-primary"
+    >
+      <div className="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
         {USER_TYPES.map((type) => (
           <div
             key={type.role}
-            className={`user-type${type.comingSoon ? " user-type--coming-soon" : ""}`}
+            className={`user-type flex flex-col gap-4 p-6 rounded-lg border border-border-primary bg-bg-secondary transition-colors duration-200 ${
+              type.comingSoon ? "opacity-60" : ""
+            }`}
           >
-            <div className="user-type__header">
-              <span className="user-type__role">{type.role}</span>
-              <h2 className="user-type__heading">{type.heading}</h2>
-              {type.sub && <p className="user-type__sub">{type.sub}</p>}
+            <div className="flex flex-col gap-1">
+              <span className="font-mono text-sm text-accent-cyan uppercase tracking-wider">
+                {type.role}
+              </span>
+              <h2 className="font-[var(--font-display)] text-2xl font-semibold text-text-primary leading-tight">
+                {type.heading}
+              </h2>
+              {type.sub && (
+                <p className="font-body text-sm text-text-secondary">
+                  {type.sub}
+                </p>
+              )}
             </div>
             {type.features.length > 0 && (
               <ul
-                className="user-type__features"
+                className="flex flex-col gap-3 mt-2"
                 aria-label={`${type.role} features`}
               >
                 {type.features.map((f) => (
-                  <li key={f.label} className="user-type__feature">
-                    <span className="user-type__feature-label">{f.label}</span>
-                    <span className="user-type__feature-desc">
+                  <li key={f.label} className="flex flex-col gap-0.5">
+                    <span className="font-mono text-sm text-text-primary font-medium">
+                      {f.label}
+                    </span>
+                    <span className="font-body text-sm text-text-secondary">
                       {f.description}
                     </span>
                   </li>

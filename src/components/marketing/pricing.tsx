@@ -64,35 +64,52 @@ const TIERS: Tier[] = [
 
 export function Pricing() {
   return (
-    <section className="pricing">
-      <div className="pricing__container">
-        <p className="pricing__eyebrow">For venues</p>
-        <h2 className="pricing__heading">Simple pricing, no booking fees</h2>
-        <p className="pricing__subheading">
+    <section className="py-20 px-6">
+      <div className="max-w-[1200px] mx-auto">
+        <p className="font-mono text-sm text-accent-cyan uppercase tracking-wider text-center mb-2">
+          For venues
+        </p>
+        <h2 className="font-[var(--font-display)] text-3xl font-semibold text-text-primary text-center mb-4">
+          Simple pricing, no booking fees
+        </h2>
+        <p className="font-body text-base text-text-secondary text-center max-w-2xl mx-auto mb-12">
           Accessible pricing for DJs. Venues pay a flat monthly rate &mdash; no
           percentage of bookings, no hidden fees.
         </p>
-        <div className="pricing__grid">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {TIERS.map((tier) => (
             <div
               key={tier.name}
-              className={`pricing__card ${
-                tier.highlighted ? "pricing__card--highlighted" : ""
+              className={`pricing__card flex flex-col p-6 rounded-lg border bg-bg-secondary ${
+                tier.highlighted
+                  ? "border-accent-cyan"
+                  : "border-border-primary"
               }`}
             >
-              <div className="pricing__card-header">
-                <h3 className="pricing__tier-name">{tier.name}</h3>
-                <div className="pricing__price">
-                  <span className="pricing__amount">{tier.price}</span>
-                  <span className="pricing__interval">{tier.interval}</span>
+              <div className="flex flex-col gap-3 mb-6">
+                <h3 className="font-[var(--font-display)] text-xl font-semibold text-text-primary">
+                  {tier.name}
+                </h3>
+                <div className="flex items-baseline gap-1">
+                  <span className="font-[var(--font-display)] text-4xl font-semibold text-text-primary">
+                    {tier.price}
+                  </span>
+                  <span className="font-body text-sm text-text-secondary">
+                    {tier.interval}
+                  </span>
                 </div>
-                <p className="pricing__tier-description">{tier.description}</p>
+                <p className="font-body text-sm text-text-secondary">
+                  {tier.description}
+                </p>
               </div>
-              <ul className="pricing__feature-list">
+              <ul className="flex flex-col gap-3 mb-6 flex-1">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="pricing__feature-item">
+                  <li
+                    key={feature}
+                    className="flex items-center gap-2 font-body text-sm text-text-primary"
+                  >
                     <svg
-                      className="pricing__check-icon"
+                      className="w-4 h-4 text-accent-cyan flex-shrink-0"
                       viewBox="0 0 16 16"
                       fill="none"
                       aria-hidden="true"
@@ -112,7 +129,7 @@ export function Pricing() {
               <Button
                 variant={tier.highlighted ? "primary" : "secondary"}
                 size="lg"
-                className="pricing__cta"
+                className="w-full"
               >
                 {tier.cta}
               </Button>
