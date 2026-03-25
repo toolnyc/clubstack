@@ -15,6 +15,7 @@
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
+    "sync-instructions": "npx ts-node scripts/sync-instructions.ts",
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
