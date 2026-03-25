@@ -81,13 +81,17 @@ export default async function CalendarPage() {
     <>
       <TopBar title="Calendar" />
       <div className="calendar-page">
-        <CalendarConnect
-          connected={!!connection}
-          connectedSince={connection?.created_at}
-          syncStatus={connection?.sync_status ?? undefined}
-          lastSyncedAt={connection?.last_synced_at ?? undefined}
-        />
-        <CalendarView statuses={mergedStatuses} events={events} />
+        <div className="animate-fade-in-up">
+          <CalendarConnect
+            connected={!!connection}
+            connectedSince={connection?.created_at}
+            syncStatus={connection?.sync_status ?? undefined}
+            lastSyncedAt={connection?.last_synced_at ?? undefined}
+          />
+        </div>
+        <div className="animate-fade-in-up stagger-2">
+          <CalendarView statuses={mergedStatuses} events={events} />
+        </div>
       </div>
     </>
   );

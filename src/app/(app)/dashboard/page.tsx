@@ -29,11 +29,11 @@ export default async function DashboardPage() {
     <>
       <TopBar title="Dashboard" />
       <main className="dashboard">
-        <p className="dashboard__greeting">{greeting}</p>
+        <p className="dashboard__greeting animate-fade-in-up">{greeting}</p>
 
-        <div className="dashboard__grid">
+        <div className="dashboard__grid animate-fade-in-up stagger-1">
           {/* Left column: upcoming bookings */}
-          <div className="dashboard__col-left">
+          <div className="dashboard__col-left animate-fade-in-up stagger-2">
             <UpcomingBookings bookings={data.upcomingBookings} />
           </div>
 
@@ -41,26 +41,34 @@ export default async function DashboardPage() {
           <div className="dashboard__col-right">
             <div className="dashboard__stats">
               <StatCard
+                className="animate-fade-in-up stagger-2"
                 label="Active bookings"
                 value={data.stats.activeBookings}
               />
               {isAgency && (
-                <StatCard label="Roster size" value={data.stats.rosterSize} />
+                <StatCard
+                  className="animate-fade-in-up stagger-3"
+                  label="Roster size"
+                  value={data.stats.rosterSize}
+                />
               )}
               <StatCard
+                className="animate-fade-in-up stagger-3"
                 label="Revenue this month"
                 value={formatCurrency(data.stats.revenueThisMonth)}
               />
             </div>
-            <CalendarStatus
-              connected={data.calendarConnected}
-              calendarId={data.calendarId}
-            />
+            <div className="animate-fade-in-up stagger-4">
+              <CalendarStatus
+                connected={data.calendarConnected}
+                calendarId={data.calendarId}
+              />
+            </div>
           </div>
         </div>
 
         {/* Bottom row: action items + recent invoices */}
-        <div className="dashboard__bottom">
+        <div className="dashboard__bottom animate-fade-in-up stagger-5">
           <ActionItems items={data.actionItems} />
           <RecentInvoices invoices={data.recentInvoices} />
         </div>

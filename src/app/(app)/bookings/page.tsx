@@ -46,18 +46,18 @@ export default async function BookingsPage() {
       />
       <div className="bookings-page">
         {bookings.length === 0 ? (
-          <div className="bookings-page__empty">
+          <div className="bookings-page__empty animate-fade-in-up">
             <p className="bookings-page__empty-text">
               No bookings yet. Create your first booking to get started.
             </p>
           </div>
         ) : (
           <div className="bookings-page__list">
-            {bookings.map((booking) => (
+            {bookings.map((booking, idx) => (
               <Link
                 key={booking.id}
                 href={`/bookings/${booking.id}`}
-                className="bookings-page__item"
+                className={`bookings-page__item animate-fade-in-up stagger-${Math.min(idx + 1, 6)}`}
               >
                 <div className="bookings-page__item-info">
                   <Badge variant={STATUS_VARIANTS[booking.status] ?? "default"}>

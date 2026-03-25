@@ -10,7 +10,9 @@ export default async function InvoicesPage() {
     <>
       <TopBar title="Invoices" />
       <main className="invoices-page">
-        <InvoiceList invoices={invoices} />
+        <div className="animate-fade-in-up">
+          <InvoiceList invoices={invoices} />
+        </div>
       </main>
     </>
   );
