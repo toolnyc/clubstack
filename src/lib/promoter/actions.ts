@@ -26,6 +26,19 @@ export async function getPromoter(): Promise<Promoter | null> {
   return data;
 }
 
+export async function getPromoters(): Promise<Promoter[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data } = await supabase.from("promoters").select("*").order("name");
+
+  return (data as Promoter[]) ?? [];
+}
+
 export async function createPromoter(formData: FormData) {
   const supabase = await createClient();
   const {

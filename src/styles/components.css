@@ -4869,10 +4869,322 @@
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-6);
+  max-width: 720px;
 }
 
 .new-booking-page__empty-text {
   font: var(--body-md);
   color: var(--text-tertiary);
   margin: 0;
+}
+
+/* ========================================
+   Booking Form
+   ======================================== */
+
+.booking-form {
+  gap: var(--space-8);
+}
+
+/* ========================================
+   Step: Event Details
+   ======================================== */
+
+.step-event {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.step-event__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.step-event__payer-options {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.step-event__payer-btn {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.step-event__payer-btn:hover {
+  border-color: var(--text-secondary);
+}
+
+.step-event__payer-btn--active {
+  background: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+  color: #000;
+}
+
+/* ========================================
+   Step: Dates
+   ======================================== */
+
+.step-dates {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.step-dates__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+}
+
+.step-dates__row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.step-dates__row-label {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+}
+
+.step-dates__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.step-dates__remove:hover {
+  border-color: var(--status-error);
+  color: var(--status-error);
+}
+
+.step-dates__fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .step-dates__fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   Step: Artists
+   ======================================== */
+
+.step-artists {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.step-artists__empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+}
+
+.step-artists__empty-text {
+  font: var(--body-md);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+.step-artists__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+}
+
+.step-artists__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.step-artists__card-name {
+  font: var(--heading-sm);
+  color: var(--text-primary);
+}
+
+.step-artists__remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.step-artists__remove:hover {
+  border-color: var(--status-error);
+  color: var(--status-error);
+}
+
+.step-artists__card-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .step-artists__card-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step-artists__add {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.step-artists__total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--border-secondary);
+}
+
+.step-artists__total-label {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+}
+
+.step-artists__total-value {
+  font: var(--mono-lg);
+  color: var(--text-primary);
+}
+
+/* ========================================
+   Step: Costs & Review
+   ======================================== */
+
+.step-costs-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.step-costs-review__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.step-costs-review__section-title {
+  font: var(--heading-sm);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.step-costs-review__cost-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.step-costs-review__cost-fields {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .step-costs-review__cost-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step-costs-review__cost-category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.step-costs-review__cost-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 24px;
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.step-costs-review__cost-remove:hover {
+  border-color: var(--status-error);
+  color: var(--status-error);
+}
+
+.step-costs-review__summary-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.step-costs-review__detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-1) 0;
+}
+
+.step-costs-review__detail-label {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+}
+
+.step-costs-review__detail-value {
+  font: var(--body-md);
+  color: var(--text-primary);
+}
+
+.step-costs-review__deal-summary {
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-secondary);
+}
+
+.step-costs-review__error {
+  font: var(--body-md);
+  color: var(--status-error);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--status-error);
+  border-radius: var(--radius-md);
 }

@@ -81,6 +81,19 @@ export async function createVenue(formData: FormData) {
   return { error: null };
 }
 
+export async function getVenues(): Promise<Venue[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return [];
+
+  const { data } = await supabase.from("venues").select("*").order("name");
+
+  return (data as Venue[]) ?? [];
+}
+
 export async function updateVenue(formData: FormData) {
   const supabase = await createClient();
   const {
