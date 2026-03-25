@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "build/**",
     ".claude/worktrees/**",
     "next-env.d.ts",
+    // Generated Supabase types use PascalCase properties
+    "src/types/database.ts",
   ]),
 ]);
 

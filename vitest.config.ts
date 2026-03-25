@@ -11,6 +11,23 @@ export default defineConfig({
     include: ["src/**/*.test.{ts,tsx}"],
     globals: true,
     passWithNoTests: true,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov"],
+      exclude: [
+        "node_modules/**",
+        "src/test/**",
+        "**/*.d.ts",
+        "**/*.test.{ts,tsx}",
+        "src/mocks/**",
+      ],
+      thresholds: {
+        lines: 50,
+        functions: 50,
+        branches: 50,
+        statements: 50,
+      },
+    },
   },
   resolve: {
     alias: {
