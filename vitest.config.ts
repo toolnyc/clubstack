@@ -3,7 +3,8 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- vite/plugin-react type mismatch with vitest
+  plugins: [react() as any],
   test: {
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],

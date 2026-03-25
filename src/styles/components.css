@@ -3622,6 +3622,47 @@
 }
 
 /* ========================================
+   Marketing Nav
+   ======================================== */
+
+.marketing-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+}
+
+.marketing-nav__wordmark {
+  font: var(--mono-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.marketing-nav__sign-in {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-sm);
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+
+.marketing-nav__sign-in:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+/* ========================================
    Hero
    ======================================== */
 
