@@ -4859,6 +4859,291 @@
 }
 
 /* ========================================
+   Dashboard
+   ======================================== */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.dashboard__greeting {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .dashboard__grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.dashboard__col-left {
+  min-width: 0;
+}
+
+.dashboard__col-right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.dashboard__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .dashboard__stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard__bottom {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+}
+
+@media (min-width: 1024px) {
+  .dashboard__bottom {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dashboard__section-title {
+  font: var(--heading-sm);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.dashboard__view-all {
+  font: var(--mono-sm);
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.dashboard__view-all:hover {
+  color: var(--accent-cyan-hover);
+}
+
+.dashboard__empty-text {
+  font: var(--body-md);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* Stat Card */
+
+.dashboard__stat-card .card__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.dashboard__stat-value {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+}
+
+.dashboard__stat-label {
+  font: var(--mono-sm);
+  color: var(--text-secondary);
+}
+
+/* Upcoming Bookings */
+
+.dashboard__booking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard__booking-item {
+  display: block;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-secondary);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.dashboard__booking-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.dashboard__booking-item:last-child {
+  border-bottom: none;
+}
+
+.dashboard__booking-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.dashboard__booking-date {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+}
+
+.dashboard__booking-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.dashboard__booking-artists {
+  font: var(--mono-md);
+  color: var(--text-primary);
+}
+
+.dashboard__booking-venue {
+  font: var(--body-sm);
+  color: var(--text-secondary);
+}
+
+.dashboard__booking-event {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+}
+
+/* Recent Invoices */
+
+.dashboard__invoice-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard__invoice-item {
+  display: block;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-secondary);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.dashboard__invoice-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.dashboard__invoice-item:last-child {
+  border-bottom: none;
+}
+
+.dashboard__invoice-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.dashboard__invoice-number {
+  font: var(--mono-md);
+  color: var(--text-primary);
+}
+
+.dashboard__invoice-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard__invoice-amount {
+  font: var(--mono-md);
+  color: var(--text-secondary);
+}
+
+.dashboard__invoice-due {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+}
+
+/* Action Items */
+
+.dashboard__action-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashboard__action-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+
+.dashboard__action-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.dashboard__action-indicator {
+  font: var(--mono-sm);
+  color: var(--accent-cyan);
+  flex-shrink: 0;
+}
+
+.dashboard__action-label {
+  font: var(--body-sm);
+  color: var(--text-primary);
+}
+
+/* Calendar Status */
+
+.dashboard__calendar-connected {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dashboard__calendar-id {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard__calendar-disconnected {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dashboard__calendar-link {
+  font: var(--mono-sm);
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.dashboard__calendar-link:hover {
+  color: var(--accent-cyan-hover);
+}
+
+/* ========================================
    Invoices Page
    ======================================== */
 
