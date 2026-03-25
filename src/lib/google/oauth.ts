@@ -8,6 +8,9 @@ const SCOPES = [
 ];
 
 function getRedirectUri(): string {
+  const configuredRedirectUri = process.env.GOOGLE_REDIRECT_URI;
+  if (configuredRedirectUri) return configuredRedirectUri;
+
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   return `${appUrl}/api/calendar/callback`;
 }

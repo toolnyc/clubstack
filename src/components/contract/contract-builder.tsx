@@ -14,11 +14,10 @@ import { useBreakpoint } from "@/lib/hooks/use-breakpoint";
 import type { ContractClause } from "@/types";
 
 interface ContractBuilderProps {
-  contractId: string;
   initialClauses: ContractClause[];
 }
 
-function ContractBuilder({ contractId, initialClauses }: ContractBuilderProps) {
+function ContractBuilder({ initialClauses }: ContractBuilderProps) {
   const router = useRouter();
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "mobile";

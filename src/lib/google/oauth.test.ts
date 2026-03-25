@@ -4,6 +4,10 @@ import { buildAuthUrl, SCOPES } from "./oauth";
 describe("buildAuthUrl", () => {
   it("builds a Google OAuth URL with correct params", () => {
     vi.stubEnv("GOOGLE_CLIENT_ID", "test-client-id");
+    vi.stubEnv(
+      "GOOGLE_REDIRECT_URI",
+      "http://localhost:3000/api/calendar/callback"
+    );
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
 
     const url = buildAuthUrl("user-123");
@@ -19,6 +23,24 @@ describe("buildAuthUrl", () => {
     expect(parsed.searchParams.get("state")).toBe("user-123");
     expect(parsed.searchParams.get("redirect_uri")).toBe(
       "http://localhost:3000/api/calendar/callback"
+    );
+
+    vi.unstubAllEnvs();
+  });
+
+  it("prefers the configured redirect uri when present", () => {
+    vi.stubEnv("GOOGLE_CLIENT_ID", "test-client-id");
+    vi.stubEnv(
+      "GOOGLE_REDIRECT_URI",
+      "https://example.com/api/calendar/callback"
+    );
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
+
+    const url = buildAuthUrl("user-123");
+    const parsed = new URL(url);
+
+    expect(parsed.searchParams.get("redirect_uri")).toBe(
+      "https://example.com/api/calendar/callback"
     );
 
     vi.unstubAllEnvs();

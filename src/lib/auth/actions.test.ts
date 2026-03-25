@@ -27,10 +27,6 @@ function chainSelect(result: { data: unknown; error?: unknown }) {
   mockSingle.mockResolvedValue(result);
 }
 
-function chainInsert(result: { error: unknown }) {
-  mockInsert.mockResolvedValue(result);
-}
-
 describe("getProfile", () => {
   beforeEach(() => {
     vi.clearAllMocks();

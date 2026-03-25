@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import type { BookingTravel, TravelType } from "@/types";
+import type { BookingTravel } from "@/types";
 
 const travelTypeSchema = z.enum(["flight", "hotel", "ground_transport"]);
 

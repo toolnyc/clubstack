@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { generateAutoIcon } from "@/lib/auto-icon";
 
 interface AutoIconProps {
@@ -10,13 +11,14 @@ function AutoIcon({ name, size = 40, className = "" }: AutoIconProps) {
   const src = generateAutoIcon(name, size);
 
   return (
-    <img
+    <Image
       src={src}
       alt=""
       width={size}
       height={size}
       className={`auto-icon ${className}`}
       aria-hidden="true"
+      unoptimized
     />
   );
 }
