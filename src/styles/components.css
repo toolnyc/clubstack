@@ -1145,7 +1145,8 @@
 .calendar-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
+  padding: var(--space-6);
 }
 
 /* ========================================
@@ -2020,7 +2021,7 @@
 .bookings-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
   padding: var(--space-6);
 }
 
@@ -2037,12 +2038,12 @@
 }
 
 .bookings-page__empty {
-  padding: var(--space-12) var(--space-4);
+  padding: var(--space-16) var(--space-4);
   text-align: center;
 }
 
 .bookings-page__empty-text {
-  font: var(--body-md);
+  font: var(--body-lg);
   color: var(--text-tertiary);
   margin: 0;
 }
@@ -2059,6 +2060,7 @@
   padding: var(--space-4);
   border-bottom: 1px solid var(--border-secondary);
   text-decoration: none;
+  border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
 }
 
@@ -2078,7 +2080,7 @@
 }
 
 .bookings-page__item-notes {
-  font: var(--body-sm);
+  font: var(--body-md);
   color: var(--text-secondary);
   margin: 0;
   overflow: hidden;
@@ -4865,20 +4867,27 @@
 .dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
   padding: var(--space-6);
 }
 
 .dashboard__greeting {
-  font: var(--heading-lg);
+  font: var(--display-md);
   color: var(--text-primary);
+  letter-spacing: -0.01em;
   margin: 0;
 }
 
 .dashboard__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6);
+  gap: var(--space-8);
+}
+
+@media (min-width: 768px) {
+  .dashboard__grid {
+    grid-template-columns: 3fr 2fr;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -4912,17 +4921,24 @@
 .dashboard__bottom {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-6);
+  gap: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-primary);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .dashboard__bottom {
     grid-template-columns: 1fr 1fr;
   }
 }
 
+/* Dashboard cards — override base card padding for breathing room */
+.dashboard .card {
+  padding: var(--space-6);
+}
+
 .dashboard__section-title {
-  font: var(--heading-sm);
+  font: var(--heading-md);
   color: var(--text-primary);
   margin: 0;
 }
@@ -4931,6 +4947,7 @@
   font: var(--mono-sm);
   color: var(--accent-cyan);
   text-decoration: none;
+  letter-spacing: var(--tracking-mono);
 }
 
 .dashboard__view-all:hover {
@@ -4948,17 +4965,20 @@
 .dashboard__stat-card .card__content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .dashboard__stat-value {
-  font: var(--heading-lg);
+  font: var(--display-md);
   color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .dashboard__stat-label {
   font: var(--mono-sm);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* Upcoming Bookings */
@@ -4973,9 +4993,10 @@
 
 .dashboard__booking-item {
   display: block;
-  padding: var(--space-3) 0;
+  padding: var(--space-4) var(--space-2);
   border-bottom: 1px solid var(--border-secondary);
   text-decoration: none;
+  border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
 }
 
@@ -5008,6 +5029,7 @@
 .dashboard__booking-artists {
   font: var(--mono-md);
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .dashboard__booking-venue {
@@ -5032,9 +5054,10 @@
 
 .dashboard__invoice-item {
   display: block;
-  padding: var(--space-3) 0;
+  padding: var(--space-4) var(--space-2);
   border-bottom: 1px solid var(--border-secondary);
   text-decoration: none;
+  border-radius: var(--radius-sm);
   transition: background var(--transition-fast);
 }
 
@@ -5050,12 +5073,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 
 .dashboard__invoice-number {
   font: var(--mono-md);
   color: var(--text-primary);
+  font-weight: 500;
 }
 
 .dashboard__invoice-meta {
@@ -5066,7 +5090,7 @@
 
 .dashboard__invoice-amount {
   font: var(--mono-md);
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .dashboard__invoice-due {
@@ -5089,7 +5113,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-2);
+  padding: var(--space-3);
   border-radius: var(--radius-md);
   text-decoration: none;
   color: var(--text-primary);
@@ -5101,13 +5125,15 @@
 }
 
 .dashboard__action-indicator {
-  font: var(--mono-sm);
-  color: var(--accent-cyan);
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent-cyan);
   flex-shrink: 0;
 }
 
 .dashboard__action-label {
-  font: var(--body-sm);
+  font: var(--body-md);
   color: var(--text-primary);
 }
 
@@ -5150,12 +5176,12 @@
 .invoices-page {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
   padding: var(--space-6);
 }
 
 .invoices-page__empty-text {
-  font: var(--body-md);
+  font: var(--body-lg);
   color: var(--text-tertiary);
   margin: 0;
 }

@@ -2,11 +2,6 @@ import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import type { ActionItem } from "@/lib/dashboard/actions";
 
-const TYPE_ICONS: Record<string, string> = {
-  pending_invite: "!",
-  stale_draft: "!",
-};
-
 interface ActionItemsProps {
   items: ActionItem[];
 }
@@ -30,9 +25,7 @@ function ActionItems({ items }: ActionItemsProps) {
                 <span
                   className="dashboard__action-indicator"
                   aria-hidden="true"
-                >
-                  {TYPE_ICONS[item.type] ?? "!"}
-                </span>
+                />
                 <span className="dashboard__action-label">{item.label}</span>
               </Link>
             </li>
