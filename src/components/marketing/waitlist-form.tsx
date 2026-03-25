@@ -53,18 +53,18 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
   return (
     <FormTransition stateKey={status === "success" ? "success" : "form"}>
       {status === "success" ? (
-        <div className="py-4">
-          <p className="font-[var(--font-display)] text-xl font-medium text-accent-neon mb-2">
+        <div className="waitlist-form__success">
+          <p className="waitlist-form__success-text">
             You&apos;re on the list.
           </p>
-          <p className="font-body text-sm text-text-secondary">
+          <p className="waitlist-form__success-sub">
             We&apos;ll reach out as we roll out access in New York.
           </p>
         </div>
       ) : (
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form className="waitlist-form" onSubmit={handleSubmit}>
           <div
-            className="flex gap-2 flex-wrap"
+            className="waitlist-form__roles"
             role="group"
             aria-label="I am a"
           >
@@ -72,11 +72,7 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
               <button
                 key={r.value}
                 type="button"
-                className={`px-4 py-1.5 rounded-full border font-body text-sm cursor-pointer transition-colors duration-200 ${
-                  role === r.value
-                    ? "border-accent-neon text-accent-neon bg-accent-neon-muted"
-                    : "border-border-primary bg-transparent text-text-secondary hover:border-text-secondary hover:text-text-primary"
-                }`}
+                className={`waitlist-form__role-btn${role === r.value ? " waitlist-form__role-btn--active" : ""}`}
                 onClick={() => setRole(r.value)}
                 aria-pressed={role === r.value}
               >
@@ -86,7 +82,7 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
           </div>
           <input
             type="text"
-            className="h-11 px-4 rounded-md border border-border-primary bg-bg-secondary text-text-primary font-body text-base outline-none transition-colors duration-200 min-w-0 placeholder:text-text-tertiary focus:border-accent-neon"
+            className="waitlist-form__name"
             placeholder="Your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -94,10 +90,10 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
             disabled={status === "loading"}
             aria-label="Your name"
           />
-          <div className="flex gap-2 mb-2">
+          <div className="waitlist-form__input-row">
             <input
               type="email"
-              className="flex-1 h-11 px-4 rounded-md border border-border-primary bg-bg-secondary text-text-primary font-body text-base outline-none transition-colors duration-200 min-w-0 placeholder:text-text-tertiary focus:border-accent-neon"
+              className="waitlist-form__email"
               placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -108,14 +104,14 @@ export function WaitlistForm({ defaultRole = "dj" }: WaitlistFormProps) {
             />
             <button
               type="submit"
-              className="h-11 px-6 rounded-md bg-accent-neon text-[#0a0a0a] font-body text-sm font-medium border-none cursor-pointer whitespace-nowrap transition-opacity duration-200 hover:opacity-88 disabled:opacity-55 disabled:cursor-not-allowed"
+              className="waitlist-form__submit"
               disabled={status === "loading"}
             >
               {status === "loading" ? "Joining..." : "Join waitlist"}
             </button>
           </div>
           {status === "error" && (
-            <p className="font-body text-sm text-status-error" role="alert">
+            <p className="waitlist-form__error" role="alert">
               {errorMessage}
             </p>
           )}

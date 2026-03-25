@@ -115,16 +115,13 @@ export function Stats() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="py-20 px-6 border-t border-b border-border-primary"
-    >
-      <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-center">
+    <section ref={sectionRef} className="stats">
+      <div className="stats__container">
+        <div className="stats__grid">
           {STATS.map((stat) => (
-            <div key={stat.label} className="flex flex-col gap-2">
+            <div key={stat.label} className="stats__item">
               <span
-                className="stats__value font-[var(--font-display)] text-5xl md:text-[3.5rem] font-semibold text-text-primary tracking-tight"
+                className="stats__value"
                 data-target={stat.value}
                 data-numeric-value={stat.numericValue}
                 data-prefix={stat.prefix}
@@ -132,9 +129,7 @@ export function Stats() {
               >
                 {stat.value}
               </span>
-              <span className="font-body text-sm text-text-secondary">
-                {stat.label}
-              </span>
+              <span className="stats__label">{stat.label}</span>
             </div>
           ))}
         </div>

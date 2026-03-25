@@ -28,20 +28,18 @@ export default async function DashboardPage() {
   return (
     <>
       <TopBar title="Dashboard" />
-      <main className="flex flex-col gap-6 p-6">
-        <p className="font-[var(--font-display)] text-xl font-semibold text-text-primary">
-          {greeting}
-        </p>
+      <main className="dashboard">
+        <p className="dashboard__greeting">{greeting}</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="dashboard__grid">
           {/* Left column: upcoming bookings */}
-          <div className="lg:col-span-2">
+          <div className="dashboard__col-left">
             <UpcomingBookings bookings={data.upcomingBookings} />
           </div>
 
           {/* Right column: stats + calendar */}
-          <div className="flex flex-col gap-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+          <div className="dashboard__col-right">
+            <div className="dashboard__stats">
               <StatCard
                 label="Active bookings"
                 value={data.stats.activeBookings}
@@ -62,7 +60,7 @@ export default async function DashboardPage() {
         </div>
 
         {/* Bottom row: action items + recent invoices */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="dashboard__bottom">
           <ActionItems items={data.actionItems} />
           <RecentInvoices invoices={data.recentInvoices} />
         </div>

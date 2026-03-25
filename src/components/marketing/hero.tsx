@@ -135,22 +135,15 @@ export function Hero() {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className="hero relative flex items-center min-h-screen min-h-[100dvh] overflow-hidden"
-    >
-      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 flex flex-col gap-0">
-        <p className="hero__animate font-mono text-sm text-accent-neon tracking-[0.01em] uppercase mb-5">
-          {renderEyebrow()}
-        </p>
-        <h1 className="hero__animate font-[var(--font-display)] text-[clamp(3.5rem,9vw,6.5rem)] font-medium tracking-tight leading-none text-text-primary mb-6">
-          Clubstack
-        </h1>
-        <p className="hero__animate font-body text-base text-text-secondary max-w-[46ch] mb-10 leading-relaxed md:text-[1.0625rem]">
+    <section ref={sectionRef} className="hero">
+      <div className="hero__container">
+        <p className="hero__animate hero__eyebrow">{renderEyebrow()}</p>
+        <h1 className="hero__animate hero__headline">Clubstack</h1>
+        <p className="hero__animate hero__subtitle">
           Booking management, contracts, calendar sync, and guaranteed payment.
           Tools for working DJs, promoters, and agencies.
         </p>
-        <div className="hero__animate max-w-[540px]">
+        <div className="hero__animate hero__form-wrapper">
           <WaitlistForm />
         </div>
       </div>

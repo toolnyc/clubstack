@@ -37,33 +37,26 @@ interface RecentInvoicesProps {
 
 function RecentInvoices({ invoices }: RecentInvoicesProps) {
   return (
-    <Card className="bg-bg-secondary border border-border-primary rounded-lg p-4">
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <h2 className="font-[var(--font-display)] text-lg font-semibold text-text-primary">
-          Recent invoices
-        </h2>
-        <Link
-          href="/invoices"
-          className="font-mono text-sm text-accent-cyan hover:text-accent-cyan-hover"
-        >
+    <Card className="dashboard__invoices">
+      <CardHeader>
+        <h2 className="dashboard__section-title">Recent invoices</h2>
+        <Link href="/invoices" className="dashboard__view-all">
           View all
         </Link>
       </CardHeader>
       <CardContent>
         {invoices.length === 0 ? (
-          <p className="font-body text-sm text-text-tertiary">
-            No invoices yet.
-          </p>
+          <p className="dashboard__empty-text">No invoices yet.</p>
         ) : (
-          <ul className="flex flex-col">
+          <ul className="dashboard__invoice-list">
             {invoices.map((invoice) => (
               <li key={invoice.id}>
                 <Link
                   href={`/invoices/${invoice.id}`}
-                  className="block py-3 border-b border-border-secondary hover:bg-bg-tertiary transition-colors duration-150"
+                  className="dashboard__invoice-item"
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-sm text-text-primary">
+                  <div className="dashboard__invoice-header">
+                    <span className="dashboard__invoice-number">
                       {invoice.invoice_number}
                     </span>
                     <Badge
@@ -74,12 +67,12 @@ function RecentInvoices({ invoices }: RecentInvoicesProps) {
                       {INVOICE_STATUS_LABELS[invoice.status] ?? invoice.status}
                     </Badge>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-sm text-text-secondary">
+                  <div className="dashboard__invoice-meta">
+                    <span className="dashboard__invoice-amount">
                       {formatCurrency(invoice.total_amount, invoice.currency)}
                     </span>
                     {invoice.due_date && (
-                      <span className="font-mono text-xs text-text-tertiary">
+                      <span className="dashboard__invoice-due">
                         Due{" "}
                         {new Date(
                           invoice.due_date + "T00:00:00"

@@ -80,7 +80,7 @@ export default async function CalendarPage() {
   return (
     <>
       <TopBar title="Calendar" />
-      <div className="flex flex-col gap-6 p-6">
+      <div className="calendar-page">
         <CalendarConnect
           connected={!!connection}
           connectedSince={connection?.created_at}
