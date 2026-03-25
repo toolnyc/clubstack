@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/ui/data-table";
 import type { Column } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { InvoiceListEntry } from "@/lib/invoice/actions";
 import type { InvoiceStatus } from "@/types";
 
@@ -82,12 +84,26 @@ const columns: Column<InvoiceListEntry>[] = [
 ];
 
 function InvoiceList({ invoices }: InvoiceListProps) {
+  const router = useRouter();
+
+  if (invoices.length === 0) {
+    return (
+      <EmptyState
+        title="No invoices yet"
+        description="Invoices are generated from bookings. Create a booking and generate an invoice once the contract is signed."
+        actionLabel="Go to Bookings"
+        actionHref="/bookings"
+      />
+    );
+  }
+
   return (
     <div className="invoice-list">
       <DataTable<InvoiceListEntry>
         columns={columns}
         data={invoices}
         keyField="id"
+        onRowClick={(item) => router.push(`/invoices/${item.id}`)}
         emptyMessage="No invoices yet"
       />
     </div>

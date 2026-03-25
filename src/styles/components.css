@@ -3469,6 +3469,21 @@
   border-radius: var(--radius-md);
 }
 
+.invoice-view__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-4);
+}
+
+.invoice-view__booking-link {
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.invoice-view__booking-link:hover {
+  text-decoration: underline;
+}
+
 /* ========================================
    Manual Availability
    ======================================== */
@@ -4830,316 +4845,17 @@
    Dashboard Page
    ======================================== */
 
-.dashboard {
+.dashboard-page {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-6);
 }
 
-.dashboard__greeting {
-  font: var(--heading-lg);
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.dashboard__grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-}
-
-.dashboard__col-left {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.dashboard__col-right {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-}
-
-.dashboard__stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: var(--space-4);
-}
-
-.dashboard__bottom {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-}
-
-/* Stat card */
-.dashboard__stat-card .card__content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.dashboard__stat-value {
-  font: var(--mono-lg);
-  color: var(--text-primary);
-}
-
-.dashboard__stat-label {
-  font: var(--mono-sm);
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-mono);
-}
-
-/* Section titles */
-.dashboard__section-title {
-  font: var(--heading-md);
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.dashboard__view-all {
-  font: var(--mono-sm);
-  color: var(--accent-cyan);
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-mono);
-}
-
-.dashboard__view-all:hover {
-  text-decoration: underline;
-}
-
-.dashboard__empty-text {
+.dashboard-page__empty-text {
   font: var(--body-md);
   color: var(--text-tertiary);
   margin: 0;
-}
-
-/* Upcoming bookings */
-.dashboard__booking-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.dashboard__booking-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-secondary);
-  text-decoration: none;
-  color: inherit;
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.dashboard__booking-item:hover {
-  border-color: var(--border-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.dashboard__booking-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.dashboard__booking-date {
-  font: var(--mono-sm);
-  color: var(--text-secondary);
-}
-
-.dashboard__booking-details {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.dashboard__booking-artists {
-  font: var(--body-md);
-  color: var(--text-primary);
-}
-
-.dashboard__booking-venue {
-  font: var(--mono-sm);
-  color: var(--text-secondary);
-}
-
-.dashboard__booking-venue::before {
-  content: "@ ";
-}
-
-.dashboard__booking-event {
-  font: var(--body-sm);
-  color: var(--text-tertiary);
-}
-
-/* Recent invoices */
-.dashboard__invoice-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.dashboard__invoice-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-secondary);
-  text-decoration: none;
-  color: inherit;
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.dashboard__invoice-item:hover {
-  border-color: var(--border-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.dashboard__invoice-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
-.dashboard__invoice-number {
-  font: var(--mono-md);
-  color: var(--text-primary);
-}
-
-.dashboard__invoice-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.dashboard__invoice-amount {
-  font: var(--mono-md);
-  color: var(--text-primary);
-}
-
-.dashboard__invoice-due {
-  font: var(--mono-sm);
-  color: var(--text-tertiary);
-}
-
-/* Action items */
-.dashboard__action-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.dashboard__action-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-secondary);
-  text-decoration: none;
-  color: inherit;
-  transition:
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.dashboard__action-item:hover {
-  border-color: var(--border-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.dashboard__action-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  font: var(--mono-sm);
-  flex-shrink: 0;
-}
-
-.dashboard__action-item--pending_invite .dashboard__action-indicator {
-  background: var(--accent-cyan-muted);
-  color: var(--accent-cyan);
-}
-
-.dashboard__action-item--stale_draft .dashboard__action-indicator {
-  background: rgba(245, 158, 11, 0.08);
-  color: var(--status-warning);
-}
-
-.dashboard__action-label {
-  font: var(--body-md);
-  color: var(--text-primary);
-}
-
-/* Calendar status */
-.dashboard__calendar-connected {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.dashboard__calendar-id {
-  font: var(--mono-sm);
-  color: var(--text-tertiary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dashboard__calendar-disconnected {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.dashboard__calendar-link {
-  font: var(--mono-sm);
-  color: var(--accent-cyan);
-  text-decoration: none;
-}
-
-.dashboard__calendar-link:hover {
-  text-decoration: underline;
-}
-
-/* Mobile: single column */
-@media (max-width: 768px) {
-  .dashboard__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard__bottom {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard__stats {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 /* ========================================
@@ -5168,7 +4884,6 @@
   flex-direction: column;
   gap: var(--space-6);
   padding: var(--space-6);
-  max-width: 720px;
 }
 
 .new-booking-page__empty-text {
@@ -5178,312 +4893,94 @@
 }
 
 /* ========================================
-   Booking Form
+   Invoice Detail Page
    ======================================== */
 
-.booking-form {
-  gap: var(--space-8);
-}
-
-/* ========================================
-   Step: Event Details
-   ======================================== */
-
-.step-event {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.step-event__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.step-event__payer-options {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.step-event__payer-btn {
-  font: var(--mono-sm);
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.step-event__payer-btn:hover {
-  border-color: var(--text-secondary);
-}
-
-.step-event__payer-btn--active {
-  background: var(--accent-cyan);
-  border-color: var(--accent-cyan);
-  color: #000;
-}
-
-/* ========================================
-   Step: Dates
-   ======================================== */
-
-.step-dates {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.step-dates__row {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-md);
-}
-
-.step-dates__row-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.step-dates__row-label {
-  font: var(--mono-sm);
-  color: var(--text-secondary);
-}
-
-.step-dates__remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: transparent;
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-sm);
-  color: var(--text-tertiary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.step-dates__remove:hover {
-  border-color: var(--status-error);
-  color: var(--status-error);
-}
-
-.step-dates__fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-@media (max-width: 600px) {
-  .step-dates__fields {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ========================================
-   Step: Artists
-   ======================================== */
-
-.step-artists {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-.step-artists__empty {
-  padding: var(--space-8) var(--space-4);
-  text-align: center;
-}
-
-.step-artists__empty-text {
-  font: var(--body-md);
-  color: var(--text-tertiary);
-  margin: 0;
-}
-
-.step-artists__card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-md);
-}
-
-.step-artists__card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.step-artists__card-name {
-  font: var(--heading-sm);
-  color: var(--text-primary);
-}
-
-.step-artists__remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: transparent;
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-sm);
-  color: var(--text-tertiary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.step-artists__remove:hover {
-  border-color: var(--status-error);
-  color: var(--status-error);
-}
-
-.step-artists__card-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: var(--space-3);
-}
-
-@media (max-width: 600px) {
-  .step-artists__card-fields {
-    grid-template-columns: 1fr;
-  }
-}
-
-.step-artists__add {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.step-artists__total {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3) var(--space-4);
-  border-top: 1px solid var(--border-secondary);
-}
-
-.step-artists__total-label {
-  font: var(--mono-sm);
-  color: var(--text-secondary);
-}
-
-.step-artists__total-value {
-  font: var(--mono-lg);
-  color: var(--text-primary);
-}
-
-/* ========================================
-   Step: Costs & Review
-   ======================================== */
-
-.step-costs-review {
+.invoice-detail-page {
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  padding: var(--space-6);
+  max-width: 720px;
 }
 
-.step-costs-review__section {
+.invoice-detail-page__back {
+  font: var(--mono-sm);
+  color: var(--text-tertiary);
+  text-decoration: none;
+}
+
+.invoice-detail-page__back:hover {
+  color: var(--text-primary);
+}
+
+.invoice-detail-page__not-found {
+  font: var(--body-md);
+  color: var(--text-tertiary);
+}
+
+/* ========================================
+   Booking Detail
+   ======================================== */
+
+.booking-detail {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-6);
+  padding: var(--space-6);
 }
 
-.step-costs-review__section-title {
+.booking-detail__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.booking-detail__title {
+  font: var(--heading-lg);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.booking-detail__notes {
+  font: var(--body-md);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.booking-detail__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.booking-detail__section-title {
   font: var(--heading-sm);
   color: var(--text-primary);
   margin: 0;
 }
 
-.step-costs-review__cost-row {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-}
-
-.step-costs-review__cost-fields {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: var(--space-3);
-}
-
-@media (max-width: 600px) {
-  .step-costs-review__cost-fields {
-    grid-template-columns: 1fr;
-  }
-}
-
-.step-costs-review__cost-category {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.step-costs-review__cost-remove {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  margin-top: 24px;
-  background: transparent;
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-sm);
-  color: var(--text-tertiary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.step-costs-review__cost-remove:hover {
-  border-color: var(--status-error);
-  color: var(--status-error);
-}
-
-.step-costs-review__summary-details {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.step-costs-review__detail {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-1) 0;
-}
-
-.step-costs-review__detail-label {
+.booking-detail__invoice-link {
   font: var(--mono-sm);
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.booking-detail__invoice-link:hover {
+  text-decoration: underline;
+}
+
+.booking-detail__invoice-note {
+  font: var(--body-sm);
   color: var(--text-tertiary);
+  margin: 0;
 }
 
-.step-costs-review__detail-value {
-  font: var(--body-md);
+/* ========================================
+   Invoice List
+   ======================================== */
+
+.invoice-list__number {
+  font: var(--mono-sm);
   color: var(--text-primary);
-}
-
-.step-costs-review__deal-summary {
-  margin-top: var(--space-2);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-secondary);
-}
-
-.step-costs-review__error {
-  font: var(--body-md);
-  color: var(--status-error);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--status-error);
-  border-radius: var(--radius-md);
 }

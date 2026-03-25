@@ -3,6 +3,11 @@ import { describe, it, expect, vi } from "vitest";
 import { InvoiceList } from "./invoice-list";
 import type { InvoiceListEntry } from "@/lib/invoice/actions";
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+  usePathname: () => "/invoices",
+}));
+
 vi.mock("@/lib/hooks/use-breakpoint", () => ({
   useBreakpoint: () => "desktop",
 }));
@@ -74,6 +79,7 @@ describe("InvoiceList", () => {
   it("shows empty state when no invoices", () => {
     render(<InvoiceList invoices={[]} />);
     expect(screen.getByText("No invoices yet")).toBeInTheDocument();
+    expect(screen.getByText("Go to Bookings")).toBeInTheDocument();
   });
 
   it("renders multiple invoices", () => {

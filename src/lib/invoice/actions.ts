@@ -217,6 +217,16 @@ export async function getAllInvoices(): Promise<{
   return { data: result, error: null };
 }
 
+export async function getInvoiceByBookingId(bookingId: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("invoices")
+    .select("id, status")
+    .eq("booking_id", bookingId)
+    .single();
+  return data;
+}
+
 export async function updateInvoiceStatus(
   invoiceId: string,
   status: InvoiceStatus
