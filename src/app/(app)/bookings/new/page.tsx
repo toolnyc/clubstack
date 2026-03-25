@@ -1,8 +1,14 @@
+import { TopBar } from "@/components/layout/top-bar";
+
 export default function NewBookingPage() {
   return (
-    <div className="new-booking-page">
-      <h1 className="new-booking-page__title">New Booking</h1>
-      <p className="new-booking-page__empty-text">Booking form coming soon.</p>
-    </div>
+    <>
+      <TopBar title="New Booking" />
+      <div className="new-booking-page">
+        <p className="new-booking-page__empty-text">
+          Booking form coming soon.
+        </p>
+      </div>
+    </>
   );
 }

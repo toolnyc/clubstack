@@ -93,6 +93,15 @@
   opacity: 0.9;
 }
 
+.btn--accent {
+  background: var(--accent-neon);
+  color: #0a0a0a;
+}
+
+.btn--accent:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
 /* Loading */
 .btn__spinner {
   width: 16px;
@@ -660,6 +669,57 @@
 
 .bottom-tabs__item--active {
   color: var(--accent-cyan);
+}
+
+/* ========================================
+   Auth Layout
+   ======================================== */
+
+.auth-layout {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: var(--space-6);
+}
+
+.auth-layout::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    circle,
+    rgba(211, 247, 7, 0.08) 1px,
+    transparent 1px
+  );
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    black 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+  animation: dot-drift 28s ease-in-out infinite;
+}
+
+.auth-layout__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.auth-layout__wordmark {
+  font: var(--display-lg);
+  color: var(--accent-neon);
+  letter-spacing: var(--tracking-tight);
 }
 
 /* ========================================
@@ -1961,6 +2021,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
+  padding: var(--space-6);
 }
 
 .bookings-page__header {
@@ -4762,5 +4823,56 @@
 .itinerary-page__error-text {
   font: var(--body-md);
   color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ========================================
+   Dashboard Page
+   ======================================== */
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.dashboard-page__empty-text {
+  font: var(--body-md);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* ========================================
+   Invoices Page
+   ======================================== */
+
+.invoices-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.invoices-page__empty-text {
+  font: var(--body-md);
+  color: var(--text-tertiary);
+  margin: 0;
+}
+
+/* ========================================
+   New Booking Page
+   ======================================== */
+
+.new-booking-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+}
+
+.new-booking-page__empty-text {
+  font: var(--body-md);
+  color: var(--text-tertiary);
   margin: 0;
 }

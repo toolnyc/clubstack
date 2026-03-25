@@ -1,8 +1,12 @@
+import { TopBar } from "@/components/layout/top-bar";
+
 export default function DashboardPage() {
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="mt-2 text-gray-600">Coming soon.</p>
-    </main>
+    <>
+      <TopBar title="Dashboard" />
+      <main className="dashboard-page">
+        <p className="dashboard-page__empty-text">Coming soon.</p>
+      </main>
+    </>
   );
 }

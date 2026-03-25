@@ -68,7 +68,7 @@ export default function LoginPage() {
           required
           error={error}
         />
-        <Button type="submit" variant="primary" loading={loading}>
+        <Button type="submit" variant="accent" loading={loading}>
           Send sign-in link
         </Button>
       </form>

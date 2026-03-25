@@ -139,7 +139,7 @@ export default function OnboardingPage() {
           >
             Back
           </Button>
-          <Button type="submit" variant="primary" loading={loading}>
+          <Button type="submit" variant="accent" loading={loading}>
             Continue
           </Button>
         </div>

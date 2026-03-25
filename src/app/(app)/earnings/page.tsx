@@ -3,6 +3,7 @@ import {
   getEarningsSummary,
   getEarningsHistory,
 } from "@/lib/payments/earnings-actions";
+import { TopBar } from "@/components/layout/top-bar";
 
 export default async function EarningsPage() {
   const [summaryResult, historyResult] = await Promise.all([
@@ -20,9 +21,11 @@ export default async function EarningsPage() {
   const history = historyResult.data ?? [];
 
   return (
-    <main className="earnings-dash__page">
-      <h1 className="earnings-dash__page-title">Earnings</h1>
-      <EarningsDashboard initialSummary={summary} initialHistory={history} />
-    </main>
+    <>
+      <TopBar title="Earnings" />
+      <main className="earnings-dash__page">
+        <EarningsDashboard initialSummary={summary} initialHistory={history} />
+      </main>
+    </>
   );
 }

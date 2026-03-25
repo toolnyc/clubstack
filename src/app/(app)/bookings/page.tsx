@@ -4,6 +4,7 @@ import { getProfile } from "@/lib/auth/actions";
 import { getBookings } from "@/lib/booking/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TopBar } from "@/components/layout/top-bar";
 
 const STATUS_LABELS: Record<string, string> = {
   draft: "Draft",
@@ -32,49 +33,52 @@ export default async function BookingsPage() {
   const bookings = await getBookings();
 
   return (
-    <div className="bookings-page">
-      <div className="bookings-page__header">
-        <h1 className="bookings-page__title">Bookings</h1>
-        <Link href="/bookings/new">
-          <Button variant="primary" size="sm">
-            New booking
-          </Button>
-        </Link>
+    <>
+      <TopBar
+        title="Bookings"
+        actions={
+          <Link href="/bookings/new">
+            <Button variant="primary" size="sm">
+              New booking
+            </Button>
+          </Link>
+        }
+      />
+      <div className="bookings-page">
+        {bookings.length === 0 ? (
+          <div className="bookings-page__empty">
+            <p className="bookings-page__empty-text">
+              No bookings yet. Create your first booking to get started.
+            </p>
+          </div>
+        ) : (
+          <div className="bookings-page__list">
+            {bookings.map((booking) => (
+              <Link
+                key={booking.id}
+                href={`/bookings/${booking.id}`}
+                className="bookings-page__item"
+              >
+                <div className="bookings-page__item-info">
+                  <Badge variant={STATUS_VARIANTS[booking.status] ?? "default"}>
+                    {STATUS_LABELS[booking.status] ?? booking.status}
+                  </Badge>
+                  <span className="bookings-page__item-date">
+                    {new Date(booking.created_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                {booking.notes && (
+                  <p className="bookings-page__item-notes">{booking.notes}</p>
+                )}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
-
-      {bookings.length === 0 ? (
-        <div className="bookings-page__empty">
-          <p className="bookings-page__empty-text">
-            No bookings yet. Create your first booking to get started.
-          </p>
-        </div>
-      ) : (
-        <div className="bookings-page__list">
-          {bookings.map((booking) => (
-            <Link
-              key={booking.id}
-              href={`/bookings/${booking.id}`}
-              className="bookings-page__item"
-            >
-              <div className="bookings-page__item-info">
-                <Badge variant={STATUS_VARIANTS[booking.status] ?? "default"}>
-                  {STATUS_LABELS[booking.status] ?? booking.status}
-                </Badge>
-                <span className="bookings-page__item-date">
-                  {new Date(booking.created_at).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                  })}
-                </span>
-              </div>
-              {booking.notes && (
-                <p className="bookings-page__item-notes">{booking.notes}</p>
-              )}
-            </Link>
-          ))}
-        </div>
-      )}
-    </div>
+    </>
   );
 }

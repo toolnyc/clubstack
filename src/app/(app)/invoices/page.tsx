@@ -1,14 +1,17 @@
 import { InvoiceList } from "@/components/invoice/invoice-list";
 import { getAllInvoices } from "@/lib/invoice/actions";
+import { TopBar } from "@/components/layout/top-bar";
 
 export default async function InvoicesPage() {
   const result = await getAllInvoices();
   const invoices = result.data ?? [];
 
   return (
-    <main className="invoices-page">
-      <h1 className="invoices-page__title">Invoices</h1>
-      <InvoiceList invoices={invoices} />
-    </main>
+    <>
+      <TopBar title="Invoices" />
+      <main className="invoices-page">
+        <InvoiceList invoices={invoices} />
+      </main>
+    </>
   );
 }
