@@ -1,50 +1,63 @@
 ---
 name: design-check
-description: Verify a component or page matches the Clubstack design system. Use after building UI.
+description: Verify a component or page matches the Clubstack design system. Sets design-checked sentinel on pass.
 ---
 
 # Design System Check
 
-Review the specified component or page against the Design System Spec:
+Review the specified file or directory against the Clubstack design system.
 
-1. Read the Design System Spec at `/Users/pete/Dropbox/Notes/Obsidian/Clubstack/Clubstack/Clubstack Research/Design System Spec.md`
-2. Read the component/page code specified by $ARGUMENTS
-3. Check against these rules:
+**$ARGUMENTS** — file path or component name to check (e.g., `src/components/booking/booking-card.tsx`)
+
+## Steps
+
+1. Read the file(s) specified by $ARGUMENTS
+2. Run through each category below — mark pass/fail with specific line references
+3. Fix all failures before declaring done
+4. On clean pass, set sentinel:
+   ```bash
+   node -e "import('./.claude/hooks/sentinels.mjs').then(s => s.set('designChecked', { file: '$ARGUMENTS' }))"
+   ```
 
 ## Tokens
 
-- [ ] All spacing uses token values (4px base unit scale)
-- [ ] Border radius uses `radius-sm/md/lg/full` tokens
-- [ ] Shadows use `shadow-sm/md/lg` tokens (minimal usage)
-- [ ] Transitions use `transition-fast/base/slow/reveal` tokens
+- [ ] All spacing uses Tailwind scale (not arbitrary `[47px]`)
+- [ ] Border radius: `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-full` — not raw values
+- [ ] Shadows: minimal. `shadow-sm` at most. No `shadow-xl`, no `drop-shadow`
+- [ ] Transitions via utility classes, not inline style
 
 ## Color
 
-- [ ] No hardcoded colors — all CSS custom properties
-- [ ] Accent ratio: ~95% monochrome, ~4% cyan, ~1% neon
-- [ ] Status colors use semantic tokens (available/busy/booked/hold/error)
-- [ ] Works in both light and dark mode
+- [ ] No hardcoded hex values — all `text-*`, `bg-*`, `border-*` Tailwind tokens or CSS custom properties
+- [ ] Accent ratio: ~95% monochrome (zinc/slate/neutral), ~4% cyan, ~1% neon/highlight
+- [ ] Status colors use semantic tokens only: available/busy/booked/hold/error
+- [ ] `dark:` variants present for every `bg-*` and `text-*` that differs in dark mode
 
 ## Typography
 
-- [ ] Mono for data (numbers, dates, status labels, nav items, button text)
-- [ ] Sans for narrative (body text, headings, descriptions)
-- [ ] Type scale tokens used (not raw px/rem)
-- [ ] Max reading width 65ch for body text
+- [ ] Mono (`font-mono`) for: numbers, dates, times, dollar amounts, IDs, status labels, button text, nav items, code
+- [ ] Sans (`font-sans`) for: body paragraphs, headings, descriptions, marketing copy
+- [ ] Type scale tokens used — not raw `text-[14px]`
+- [ ] Body text max width: `max-w-prose` or `max-w-[65ch]`
 
 ## Components
 
-- [ ] Max one primary button per screen
-- [ ] Labels always visible (no placeholder-only inputs)
-- [ ] Optional fields labeled "(optional)", not required fields with asterisks
-- [ ] Cards: bg-secondary, border-primary, radius-lg, no shadow by default
-- [ ] Status indicators: 8px dot + mono label, never color alone
+- [ ] Maximum one primary button (filled/high-emphasis) per screen or card
+- [ ] All inputs have visible `<label>` elements — no placeholder-only inputs
+- [ ] Optional fields labeled "(optional)" — required fields need no asterisk
+- [ ] Cards: `bg-secondary border border-primary rounded-lg` — no shadow by default
+- [ ] Status indicators: 8px dot + mono label. Never color alone to convey state.
+- [ ] Empty states: present and designed (not blank white space)
+- [ ] Loading states: present for any async data
 
 ## Accessibility
 
-- [ ] Color contrast WCAG AA (4.5:1 body, 3:1 large)
-- [ ] Visible focus rings on all interactive elements
-- [ ] `aria-live` on dynamic status changes
-- [ ] `prefers-reduced-motion` respected
+- [ ] Color contrast WCAG AA: 4.5:1 for body text, 3:1 for large text/icons
+- [ ] Visible focus rings on all interactive elements (not `outline-none` without replacement)
+- [ ] `aria-live` or `aria-atomic` on dynamic status regions
+- [ ] `prefers-reduced-motion`: any GSAP animation wrapped in motion check
 
-$ARGUMENTS should be a file path or component name to check.
+## Fix Protocol
+
+For each failure: fix it now, then re-check that item. Don't list and move on.
+If a failure requires design system discussion (new pattern needed): flag it and leave a `// TODO: design-system` comment rather than making an ad-hoc decision.

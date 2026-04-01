@@ -1,28 +1,52 @@
 ---
 name: db-migrate
-description: Create and run a Supabase database migration. Use when adding/modifying tables, RLS policies, or functions.
+description: Create and run a Supabase database migration. Manages types-current sentinel.
 ---
 
 # Database Migration
 
-Create a new Supabase migration:
+**$ARGUMENTS** — descriptive migration name (e.g., `create-bookings-table`, `add-commission-to-deals`)
+
+## Steps
 
 1. Run `pnpm supabase migration new $ARGUMENTS` to create the migration file
-2. Write the SQL in the generated file following these conventions:
-   - All tables have `id uuid primary key default gen_random_uuid()`
-   - All tables have `created_at timestamptz default now()` and `updated_at timestamptz default now()`
-   - Use `references` for foreign keys with `on delete cascade` where appropriate
-   - Add RLS policies immediately — no table exists without a policy
-   - Add comments on tables and non-obvious columns
+2. Write the SQL following these conventions:
+   - `id uuid primary key default gen_random_uuid()`
+   - `created_at timestamptz default now()` and `updated_at timestamptz default now()` on all primary entity tables
+   - Foreign keys with `on delete cascade` where appropriate
+   - Comments on tables and non-obvious columns
+   - RLS policies immediately — no table without a policy (see patterns below)
 3. Run `pnpm db:migrate` to apply
-4. Run `pnpm db:types` to regenerate TypeScript types
-5. Verify the migration worked by checking the generated types
+4. Clear the types sentinel (types are now stale):
+   ```bash
+   node -e "import('./.claude/hooks/sentinels.mjs').then(s => s.clear('typesCurrent'))"
+   ```
+5. Run `pnpm db:types` to regenerate TypeScript types
+6. Set the types sentinel (types are now current):
+   ```bash
+   node -e "import('./.claude/hooks/sentinels.mjs').then(s => s.set('typesCurrent'))"
+   ```
+7. Verify the migration worked by checking the generated `src/types/index.ts`
 
 ## RLS Policy Patterns
 
-- DJs: `auth.uid() = user_id`
-- Agencies: `auth.uid() in (select user_id from agency_members where agency_id = table.agency_id)`
-- Venues: booking-level access via venue_id join
-- Public profiles: `true` for select, owner-only for insert/update/delete
+```sql
+-- DJs (own rows)
+CREATE POLICY "djs_own_rows" ON table_name
+  FOR ALL USING (auth.uid() = user_id);
 
-$ARGUMENTS should be a descriptive migration name like `create-bookings-table` or `add-commission-to-deals`.
+-- Agency members
+CREATE POLICY "agency_members_access" ON table_name
+  FOR ALL USING (
+    auth.uid() IN (
+      SELECT user_id FROM agency_members WHERE agency_id = table_name.agency_id
+    )
+  );
+
+-- Public read, owner write
+CREATE POLICY "public_read" ON table_name FOR SELECT USING (true);
+CREATE POLICY "owner_write" ON table_name
+  FOR ALL USING (auth.uid() = user_id);
+```
+
+Never use `USING (true)` on INSERT, UPDATE, or DELETE operations.

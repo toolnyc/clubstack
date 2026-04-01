@@ -1,24 +1,23 @@
 ---
 name: build-issue
-description: Build a GitHub issue from the MVP Epic Spec. Use when creating or implementing a specific feature ticket.
+description: DEPRECATED — use /epic then /feature instead. This skill redirects to the new workflow.
 ---
 
-# Build Issue
+# Build Issue — Deprecated
 
-When given an issue number, title, or feature description from the MVP Epic Spec:
+This skill has been replaced by a two-step workflow that produces better results:
 
-1. Read the MVP Epic Spec at `/Users/pete/Dropbox/Notes/Obsidian/Clubstack/Clubstack/Clubstack Research/MVP Epic Spec.md`
-2. Read the Design System Spec at `/Users/pete/Dropbox/Notes/Obsidian/Clubstack/Clubstack/Clubstack Research/Design System Spec.md`
-3. Read the current CLAUDE.md for architecture and conventions
-4. Identify all related data model entities and their relationships
-5. Implement the feature following these steps:
-   - Schema/migration if new tables needed
-   - Types in `src/types/`
-   - Server-side logic (API routes, server actions)
-   - UI components (design system primitives first, then feature components)
-   - Tests: unit tests for business logic, component tests for UI, E2E test for the flow
-6. Create a commit with conventional commit message (`feat:`, `fix:`, etc.)
+1. **`/epic "<description>"`** — Research the codebase, define scope, produce a structured plan
+2. **`/feature <epic-slug>`** — Build from the plan with quality gates enforced
 
-$ARGUMENTS should be the issue title or feature name to build.
+## Why the Change
 
-Always check existing code before creating new files. Prefer editing over creating.
+The old workflow assumed an Epic Spec existed in Obsidian and went straight to implementation. The new workflow:
+
+- Derives current state from the actual codebase (not stale specs)
+- Requires explicit scope confirmation before any code is written
+- Enforces quality gates automatically (design, verify, session close)
+
+## If You Need a Quick Fix
+
+For changes < 5 lines to existing files (typos, config values, small corrections), you don't need an epic. Edit directly. The pre-tool gate only blocks **new file creation**.
