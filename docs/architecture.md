@@ -1,88 +1,79 @@
 # Architecture & Conventions
 
-## Directory Tree
+## Architecture Overview
+
+Clubstack is two layers sharing a Supabase backend:
+
+- **Web layer** (`src/`) — Next.js 16. Scope: marketing site, public DJ profiles, API routes.
+  No new authenticated UI here. The `(app)/` routes are a legacy scaffold, preserved as a
+  screen reference but not actively developed.
+- **Native app** (`apps/mobile/`) — React Native + Expo. The product. Not yet initialized;
+  scaffolded as Phase 1A. Hits the same Supabase project and Next.js API routes.
+
+## Web Layer Directory Tree
 
 ```
 src/
 ├── app/                              # Next.js App Router
-│   ├── (app)/                        # Authenticated routes (Supabase auth gate)
-│   │   ├── bookings/                 # Booking list, detail, itinerary, new booking
-│   │   ├── calendar/                 # Calendar view (synced with Google Calendar)
-│   │   ├── dashboard/                # Main dashboard
-│   │   ├── earnings/                 # Earnings overview
-│   │   ├── invoices/                 # Invoice list
-│   │   ├── profile/                  # DJ/user profile + edit
-│   │   ├── roster/                   # Agency roster + availability grid
-│   │   ├── settings/                 # Account settings
-│   │   └── layout.tsx                # App shell (sidebar + top bar)
+│   ├── (app)/                        # Legacy web app scaffold — reference only, not developed
 │   ├── (auth)/                       # Auth routes (login, onboarding)
-│   │   ├── login/                    # Magic link login
-│   │   └── onboarding/              # New user onboarding flow
-│   ├── (marketing)/                  # Public marketing pages (landing)
+│   ├── (marketing)/                  # Public marketing pages (landing, pricing, waitlist)
 │   ├── api/                          # API route handlers
 │   │   ├── calendar/                 # Google Calendar OAuth (connect/callback/disconnect)
 │   │   ├── cron/                     # Cron jobs (calendar-sync, fund-release)
 │   │   ├── stripe/webhook/           # Stripe webhook handler
 │   │   └── waitlist/                 # Waitlist signup endpoint
-│   ├── auth/                         # Supabase auth callbacks (confirm, callback)
-│   ├── dj/[slug]/                    # Public DJ profile page
-│   ├── sign/[token]/                 # Contract signing page (public, token-gated)
-│   ├── fonts.ts                      # Font definitions (PP Neue Montreal, Inter, KH Interference)
-│   ├── layout.tsx                    # Root layout
-│   └── page.tsx                      # Landing page
+│   ├── auth/                         # Supabase auth callbacks
+│   ├── dj/[slug]/                    # Public DJ profile page (SEO)
+│   └── sign/[token]/                 # Contract signing page (public, token-gated)
 ├── components/
-│   ├── agency/                       # Roster list, artist detail, availability grid, CSV import, invites
-│   ├── booking/                      # Booking dashboard, deal summary, itinerary, travel form
-│   ├── calendar/                     # Calendar view, month grid, agenda list, manual availability, connect
-│   ├── contract/                     # Contract builder, preview, clause list, signature pad
-│   ├── dj/                           # Profile form, rider form, SoundCloud embed
-│   ├── invoice/                      # Invoice list and invoice view
-│   ├── layout/                       # App shell, sidebar, top bar, bottom tabs
-│   ├── marketing/                    # Hero, features, pricing, stats, CTA, user types, waitlist form
-│   ├── messaging/                    # Message thread
-│   ├── notifications/                # Notification settings
-│   ├── payments/                     # Earnings dashboard
-│   ├── settings/                     # Account section
-│   └── ui/                           # Primitives: badge, button, card, data-table, drawer, empty-state,
-│                                     #   form-transition, input, modal, status-dot, stepped-flow, auto-icon
-├── fonts/                            # Font files (PP Neue Montreal, KH Interference)
-├── lib/
+│   ├── marketing/                    # Hero, features, pricing, CTA, waitlist form
+│   └── ui/                           # Primitives: badge, button, card, input, modal, etc.
+├── lib/                              # Shared backend — used by web AND native via API
 │   ├── agency/                       # Agency server actions + availability logic
-│   ├── auth/                         # Auth server actions (login, signup, logout)
-│   ├── booking/                      # Booking actions, deal math, status machine, itinerary, travel
-│   ├── calendar/                     # Calendar actions, ICS parser, manual actions, date utils
-│   ├── contract/                     # Contract actions, clause defaults, signature actions
+│   ├── auth/                         # Auth server actions
+│   ├── booking/                      # Booking actions, status machine, deal math
+│   ├── calendar/                     # Calendar actions, ICS parser, Google API client
+│   ├── contract/                     # Contract actions, clause defaults, signatures
 │   ├── dj/                           # DJ profile + rider server actions
-│   ├── google/                       # Google Calendar API client + OAuth helpers
+│   ├── google/                       # Google Calendar OAuth helpers
 │   ├── hooks/                        # Client hooks (use-breakpoint, use-theme)
-│   ├── invoice/                      # Invoice actions + invoice number generation
-│   ├── messaging/                    # Messaging server actions
-│   ├── notifications/                # Knock notification send + preferences + templates
-│   ├── payments/                     # Earnings actions, payment actions, payment math, Stripe Connect
+│   ├── invoice/                      # Invoice actions + number generation
+│   ├── notifications/                # Knock notification send + preferences
+│   ├── payments/                     # Earnings, payment actions, Stripe Connect
 │   ├── promoter/                     # Promoter server actions
 │   ├── resend/                       # Resend client (marketing emails only)
 │   ├── stripe/                       # Stripe client wrapper
 │   ├── supabase/                     # Supabase client wrappers (client, server, middleware)
-│   ├── venue/                        # Venue server actions
-│   ├── auto-icon.ts                  # Icon auto-selection utility
-│   ├── math.ts                       # Numeric helpers (round2)
-│   ├── routes.ts                     # All app route definitions (used by nav + tests)
-│   └── slug.ts                       # URL slug generation
-├── mocks/                            # MSW request handlers + server setup (test infrastructure)
+│   └── venue/                        # Venue server actions
 ├── styles/
 │   ├── themes/                       # Light and dark theme CSS
-│   ├── animations.css                # Animation keyframes
-│   ├── components.css                # Component-level CSS tokens
+│   ├── animations.css
+│   ├── components.css
 │   └── tokens.css                    # Design system CSS custom properties
 ├── test/
-│   ├── architecture.test.ts          # Convention enforcement tests (see Import Rules below)
-│   ├── factories.ts                  # Test data factories
-│   └── setup.ts                      # Vitest global setup
-├── types/
-│   ├── database.ts                   # Supabase-generated database types (via pnpm db:types)
-│   └── index.ts                      # App-level shared types (Profile, BookingStatus, etc.)
-├── instrumentation.ts                # Sentry instrumentation (Node + Edge)
-└── middleware.ts                      # Next.js middleware (Supabase session refresh)
+│   ├── architecture.test.ts          # Convention enforcement
+│   ├── factories.ts
+│   └── setup.ts
+└── types/
+    ├── database.ts                   # Supabase-generated types (pnpm db:types)
+    └── index.ts                      # App-level shared types
+```
+
+## Native App (Phase 1A — not yet initialized)
+
+```
+apps/mobile/                          # Expo app (to be scaffolded)
+├── app/                              # Expo Router file-based routing
+│   ├── (auth)/                       # Login, onboarding
+│   ├── (tabs)/                       # Main tab navigator
+│   │   ├── bookings/                 # Booking list + detail
+│   │   ├── calendar/                 # Calendar view
+│   │   ├── roster/                   # Agency roster
+│   │   └── settings/                 # Account + profile
+│   └── booking/[id]/                 # Booking detail screens
+├── components/                       # Native UI components (no web components here)
+└── lib/                              # Re-exports from ../../src/lib where possible
 ```
 
 ## Component Conventions

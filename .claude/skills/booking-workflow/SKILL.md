@@ -5,55 +5,102 @@ description: Reference context for the core booking state machine. Auto-loaded w
 
 # Booking Workflow Reference
 
-This skill provides context when working on any feature that touches the booking system.
-Read before modifying `src/lib/booking/`, `src/app/(app)/bookings/`, or booking-related migrations.
+Read before modifying `src/lib/booking/`, booking migrations, or booking-related native screens.
 
 ## State Machine
 
 ```
-draft
-  └─▶ pending       (DJ submits offer / agency sends offer to DJ)
-        └─▶ confirmed    (both parties accept terms)
-              ├─▶ advancing   (within advancing window, venue/promoter provides details)
-              └─▶ completed   (all booking_dates.end_time have passed)
-                    └─▶ released    (escrow released to DJ after hold window)
+Draft
+  └─▶ Offer Sent      (agency sends offer to promoter/venue)
+        └─▶ Offer Signed   (contract signed by both parties → triggers auto-dispatch)
+              └─▶ Advancing   (cron: T−7 days — advancing window opens)
+                    └─▶ Show Complete   (cron: last booking_dates.end_time passes)
+                          └─▶ Settled   (cron: T+14 working days — balance released)
 
-Any state ──▶ cancelled   (by either party, before completed)
-Any state ──▶ disputed    (payment dispute raised)
+Any state ──▶ Cancelled       (before Show Complete; refund logic varies by state)
+Any state ──▶ force_majeure_invoked   (requires structured resolution flow)
 ```
 
 ## State Transitions
 
-| From                | To        | Trigger                            | Who                             | Notes                         |
-| ------------------- | --------- | ---------------------------------- | ------------------------------- | ----------------------------- |
-| draft               | pending   | offer sent                         | agency/DJ                       | booking_dates must be set     |
-| pending             | confirmed | both parties sign contract         | system                          | triggers contract creation    |
-| confirmed           | advancing | N days before first date           | cron                            | advancing window configurable |
-| confirmed/advancing | completed | last booking_dates.end_time passes | cron                            | triggers escrow hold timer    |
-| completed           | released  | N hours after completed            | cron (`/api/cron/fund-release`) | default window in env var     |
-| any                 | cancelled | explicit cancel action             | either party                    | refund logic varies by state  |
+| From          | To            | Trigger                                    | Who    |
+| ------------- | ------------- | ------------------------------------------ | ------ |
+| Draft         | Offer Sent    | Agency sends offer                         | Agency |
+| Offer Sent    | Offer Signed  | Both parties sign contract                 | System |
+| Offer Signed  | Advancing     | Cron: T−7 days before show                 | Cron   |
+| Advancing     | Show Complete | Cron: last `booking_dates.end_time` passes | Cron   |
+| Show Complete | Settled       | Cron: T+14 working days after show         | Cron   |
+
+## Auto-Dispatch on Signing
+
+When a booking moves to `Offer Signed`, immediately send all of:
+
+1. Deposit invoice (50% artist fee + agency booking fee) — scheduled task for T−30 days
+2. Agency booking fee invoice
+3. Artist EPK
+4. Advancing details form (pre-filled where ClubStack has data; blanks for promoter)
+5. Artist technical rider
+
+This is atomic — all five fire on the same state transition, not sequentially.
+
+## Payment Schedule
+
+Two scheduled tasks created at signing. Deposit is NOT charged at signing.
+
+| Task    | When                         | Amount                                 |
+| ------- | ---------------------------- | -------------------------------------- |
+| Deposit | T−30 days before show        | 50% of artist fee + agency booking fee |
+| Balance | T+14 working days after show | Remaining 50% minus logged expenses    |
+
+**Expense window:** Opens at Show Complete, closes when balance task fires.
+DJ/agency logs travel, receipts during this window. Balance is reduced by logged expenses.
+
+**Offline payment recording:** Must be easy to record that a payment happened outside the platform
+(cash, bank transfer). The `offline_payment_recorded` flag and amount on bookings handles this.
+
+## Advancing Form Schema
+
+```
+advancing_requests
+├── rider_confirmed (bool + notes)
+├── contacts
+│   ├── promoter_contact (name, phone, email)
+│   ├── dos_liaison (name, phone, email)
+│   └── transport_contact (name, phone)
+├── accommodation
+│   ├── hotel_name, hotel_address
+│   ├── reservation_number, reservation_name
+│   └── checkin_time, checkout_time
+└── schedule
+    ├── dinner_time (nullable)
+    ├── soundcheck_time
+    ├── doors_open_time
+    ├── curfew_time
+    └── running_order (jsonb array: [{artist, set_start, set_end}])
+```
+
+## Automated Reminders (Cron)
+
+| Item                             | Trigger           |
+| -------------------------------- | ----------------- |
+| Promotional assets (EPK, photos) | T−30 days         |
+| Tech rider (flag for review)     | T−7 days          |
+| Guest list deadline              | T−12 hours        |
+| Deposit charge                   | T−30 days         |
+| Balance release                  | T+14 working days |
 
 ## Notifications (Knock)
 
-All notifications go through `src/lib/notifications/send.ts`. Never call Knock directly from components.
+All notifications via `src/lib/notifications/send.ts`. Never call Knock from components.
 
-| Event             | Workflow Key         | Recipients   |
-| ----------------- | -------------------- | ------------ |
-| Offer sent        | `booking.offer-sent` | DJ           |
-| Offer accepted    | `booking.confirmed`  | Agency + DJ  |
-| Advancing started | `booking.advancing`  | Agency       |
-| Funds released    | `booking.released`   | DJ           |
-| Cancelled         | `booking.cancelled`  | Both parties |
-
-## Stripe Operations
-
-| Stage                      | Operation                     | Notes                                       |
-| -------------------------- | ----------------------------- | ------------------------------------------- |
-| confirmed                  | PaymentIntent created         | Held in escrow, not captured yet            |
-| completed                  | PaymentIntent captured        | Money moves from card to Stripe balance     |
-| released                   | Transfer to connected account | After hold window; commission split applied |
-| cancelled (before capture) | PaymentIntent cancelled       | No charge                                   |
-| cancelled (after capture)  | Refund issued                 | Partial if expenses logged                  |
+| Event             | Workflow Key              | Recipients        |
+| ----------------- | ------------------------- | ----------------- |
+| Offer sent        | `booking.offer-sent`      | Promoter/venue    |
+| Offer signed      | `booking.signed`          | Agency + DJ       |
+| Deposit charged   | `booking.deposit-charged` | Promoter          |
+| Advancing started | `booking.advancing`       | Agency + promoter |
+| Balance released  | `booking.settled`         | DJ + agency       |
+| Cancelled         | `booking.cancelled`       | All parties       |
 
 ## Key Files
 
@@ -63,9 +110,10 @@ All notifications go through `src/lib/notifications/send.ts`. Never call Knock d
 - `src/app/api/cron/fund-release/route.ts` — automated release cron
 - `src/lib/notifications/templates.ts` — Knock workflow keys
 
-## Rules When Modifying
+## Rules
 
-- State transitions must go through `status-machine.ts` — never update `status` column directly in actions
-- Every transition must fire the corresponding Knock notification
+- Transitions must go through `status-machine.ts` — never update `status` directly in actions
+- Every transition fires the corresponding Knock notification
 - Payment operations are server-only — no client mutations to payment tables
-- The RLS policy on `transfers` is `false` — enforced at DB level
+- RLS on `transfers` is `false` — enforced at DB level
+- `force_majeure_invoked` requires a resolution record before any state change can proceed

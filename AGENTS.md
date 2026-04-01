@@ -1,6 +1,8 @@
 # Clubstack
 
-DJ booking platform for underground clubs. DJs get free profiles + calendar sync. Venues pay subscription for booking tools. Escrow payments guarantee DJs get paid.
+DJ booking platform for underground clubs. Agency-first MVP: booking agencies manage rosters,
+run the full offer-to-settlement workflow, and guarantee DJs get paid. DJs keep 100% of fees.
+Venue subscriptions are v2.
 
 ---
 
@@ -24,31 +26,31 @@ If your AI tool prefers a specific entry point, create it by copying or symlinki
 
 ## Tech Stack
 
-| Layer          | Choice                                               |
-| -------------- | ---------------------------------------------------- |
-| Framework      | Next.js 16 (App Router)                              |
-| Database       | Supabase (Postgres + RLS + Auth)                     |
-| Payments       | Stripe Connect — Custom accounts                     |
-| Notifications  | Knock (email + SMS unified)                          |
-| Email provider | Resend — as Knock email channel + marketing waitlist |
-| Calendar       | Google Calendar API (OAuth2, always-connected)       |
-| Deployment     | Vercel                                               |
-| Animation      | GSAP                                                 |
-| Fonts          | System mono + system sans-serif                      |
-| Error tracking | Sentry (`@sentry/nextjs`)                            |
-| Analytics      | Vercel Analytics + Speed Insights                    |
+| Layer          | Choice                                                             |
+| -------------- | ------------------------------------------------------------------ |
+| Main app       | React Native + Expo (iOS/Android — the product)                    |
+| Web layer      | Next.js 16 (App Router) — marketing site + public DJ profiles only |
+| Database       | Supabase (Postgres + RLS + Auth)                                   |
+| Payments       | Stripe Connect — Express accounts (v1); Custom accounts (v2)       |
+| Notifications  | Knock (email + SMS unified)                                        |
+| Email provider | Resend — as Knock email channel + marketing waitlist               |
+| Calendar       | Google Calendar API (OAuth2, always-connected)                     |
+| PDF generation | react-pdf (server-side, no headless browser)                       |
+| Deployment     | Vercel (web layer) + EAS Build (native)                            |
+| Animation      | GSAP (web only)                                                    |
+| Fonts          | PP Neue Montreal (display) + Inter (body) + KH Interference (mono) |
+| Error tracking | Sentry (`@sentry/nextjs`)                                          |
+| Analytics      | Vercel Analytics + Speed Insights                                  |
 
 ## Quick Reference
 
-| Topic                         | Details                                                           |
-| ----------------------------- | ----------------------------------------------------------------- |
-| Architecture & conventions    | [docs/architecture.md](docs/architecture.md)                      |
-| Database & Supabase patterns  | [docs/database.md](docs/database.md)                              |
-| Testing patterns              | [docs/testing.md](docs/testing.md)                                |
-| Locked architecture decisions | `Clubstack/Architecture/MVP Architecture Decisions.md` (Obsidian) |
-| Design system spec            | `Clubstack/Clubstack Research/Design System Spec.md` (Obsidian)   |
-| MVP epic spec                 | `Clubstack/Clubstack Research/MVP Epic Spec.md` (Obsidian)        |
-| Market research               | `Clubstack/Clubstack Research.md` (Obsidian)                      |
+| Topic                         | Details                                                             |
+| ----------------------------- | ------------------------------------------------------------------- |
+| Architecture & conventions    | [docs/architecture.md](docs/architecture.md)                        |
+| Database & Supabase patterns  | [docs/database.md](docs/database.md)                                |
+| Testing patterns              | [docs/testing.md](docs/testing.md)                                  |
+| Product direction (canonical) | Session Report 2026-03-31 in Obsidian: `Clubstack/Session Reports/` |
+| Build phases                  | See Session Report 2026-03-31 — Phase 1A/1B/1C/2/3                  |
 
 ## Environments
 
@@ -139,11 +141,13 @@ The `2>/dev/null` suppresses the harmless "installer out of date" warning. Sessi
 ## Important
 
 - Solo-founder MVP. Keep it simple. No premature abstractions.
-- Architecture decisions are locked in Obsidian: `Clubstack/Architecture/MVP Architecture Decisions.md` — read before building.
+- Product direction is documented in Session Report 2026-03-31 (Obsidian). Read before building new features.
 - The `research/` directory is reference only — don't modify it.
 - Architecture is mechanically enforced — see `src/test/architecture.test.ts`.
 - Payments and transfers are **server-only** — no client mutations. RLS policies enforce `false` on these tables.
 - TIN/SSN is **never stored in the DB** — passed directly to Stripe API and vaulted there.
+- The main app is **React Native / Expo** — do not build new authenticated UI in the Next.js `(app)` routes.
+  The existing web app routes are preserved as a screen map reference but are not being developed further.
 
 ---
 
@@ -166,162 +170,192 @@ The `2>/dev/null` suppresses the harmless "installer out of date" warning. Sessi
 
 ## Skills / Procedures
 
-These procedures are available for Claude Code in `.claude/skills/` and documented here for all other models.
+For Claude Code, all skills are available in `.claude/skills/` and invoked with `/skill-name`.
+For other models, domain reference material is documented below.
 
-### Database Migration
+### Skills Directory
 
-Create a new Supabase migration:
+| Skill               | Purpose                                           | Requires         | Sets                       |
+| ------------------- | ------------------------------------------------- | ---------------- | -------------------------- |
+| `/epic`             | Plan a feature from plain English                 | Nothing          | `epic-created`             |
+| `/feature`          | Build a planned feature                           | `epic-created`   | `feature-active`           |
+| `/db-migrate`       | Create and run a Supabase migration               | `feature-active` | — (clears `types-current`) |
+| `/design-check`     | Verify component matches design system            | `feature-active` | `design-checked`           |
+| `/verify`           | Full lint + test + build loop                     | `feature-active` | `verify-passed`            |
+| `/session-close`    | End-of-session capture, clear sentinels           | Nothing          | Clears all                 |
+| `/docs-sync`        | Update CLAUDE.md, skills, and docs/ to match code | Nothing          | —                          |
+| `/kb-prune`         | Remove stale content from docs                    | Nothing          | —                          |
+| `/booking-workflow` | Booking state machine reference context           | Nothing          | Reference only             |
+| `/stripe-connect`   | Stripe Connect payment patterns reference         | Nothing          | Reference only             |
+| `/stripe-testing`   | Stripe test cards and fixture data                | Nothing          | Reference only             |
 
-1. Run `pnpm supabase migration new <name>` to create the migration file
-2. Write the SQL in the generated file following these conventions:
-   - All tables have `id uuid primary key default gen_random_uuid()`
-   - All tables have `created_at timestamptz default now()` and `updated_at timestamptz default now()`
-   - Use `references` for foreign keys with `on delete cascade` where appropriate
-   - Add RLS policies immediately — no table exists without a policy
-   - Add comments on tables and non-obvious columns
-3. Run `pnpm db:migrate` to apply
-4. Run `pnpm db:types` to regenerate TypeScript types
-5. Verify the migration worked by checking the generated types
+**Deprecated:** `/build-issue` — use `/epic` + `/feature` instead.
 
-**RLS Policy Patterns:**
+---
 
-- DJs: `auth.uid() = user_id`
-- Agencies: `auth.uid() in (select user_id from agency_members where agency_id = table.agency_id)`
-- Venues: booking-level access via venue_id join
-- Public profiles: `true` for select, owner-only for insert/update/delete
+### Domain Reference: Booking Workflow
 
-### Stripe Connect Testing
+Read before touching `src/lib/booking/`, booking migrations, or booking-related native screens.
 
-When testing Stripe Connect features:
+#### State Machine
 
-**Charge Flow (Destination Charges):**
+```
+Draft
+  └─▶ Offer Sent      (agency sends offer to promoter/venue)
+        └─▶ Offer Signed   (contract signed by both parties)
+              │
+              ├─▶ [auto-dispatch cascade — see below]
+              │
+              └─▶ Advancing   (advancing window, T−7 days)
+                    └─▶ Show Complete   (last set end time passed)
+                          └─▶ Settled   (balance released after T+14 working days)
 
-- Use test mode keys (`sk_test_*`)
-- Test card: `4242424242424242` (success), `4000000000000341` (attach fails)
-- Connected account: create test Express accounts via API
-- Webhook testing: use Stripe CLI `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
-
-**Key Webhook Events to Test:**
-
-- `payment_intent.succeeded` — deposit/balance captured
-- `charge.succeeded` — payment confirmed
-- `transfer.created` — commission split executed
-- `payout.paid` — funds released to DJ
-- `account.updated` — Connect account status change
-
-**Fixture Data Structure** — Store in `__fixtures__/stripe/`:
-
-- `payment-intent-succeeded.json`
-- `charge-succeeded.json`
-- `transfer-created.json`
-- `account-updated.json`
-
-**MSW Handler Pattern:**
-
-```typescript
-http.post("https://api.stripe.com/v1/payment_intents", () => {
-  return HttpResponse.json(fixtures.paymentIntent);
-});
+Any state ──▶ Cancelled   (before Show Complete)
+Any state ──▶ force_majeure_invoked   (structured resolution required)
 ```
 
-**Verify webhook signatures in tests:** Use `stripe.webhooks.generateTestHeaderString()` to create valid signatures for test events.
+#### State Transitions
 
-### Design System Check
+| From          | To            | Trigger                                    | Who    |
+| ------------- | ------------- | ------------------------------------------ | ------ |
+| Draft         | Offer Sent    | Agency sends offer                         | Agency |
+| Offer Sent    | Offer Signed  | Both parties sign contract                 | System |
+| Offer Signed  | Advancing     | Cron: T−7 days before show                 | Cron   |
+| Advancing     | Show Complete | Cron: last `booking_dates.end_time` passes | Cron   |
+| Show Complete | Settled       | Cron: T+14 working days after show         | Cron   |
 
-Review a component or page against the Design System Spec:
+#### Auto-Dispatch on Signing
 
-1. Read the Design System Spec at Obsidian: `Clubstack/Clubstack Research/Design System Spec.md`
-2. Read the component/page code
-3. Check against these rules:
+When a booking moves to `Offer Signed`, the platform immediately sends all of the following:
 
-**Tokens:**
+1. Deposit invoice (50% of artist fee + agency booking fee) — scheduled for T−30 days
+2. Booking fee invoice (agency commission)
+3. Artist EPK
+4. Advancing details form (pre-filled where ClubStack has data)
+5. Artist technical rider
 
-- [ ] All spacing uses token values (4px base unit scale)
-- [ ] Border radius uses `radius-sm/md/lg/full` tokens
-- [ ] Shadows use `shadow-sm/md/lg` tokens (minimal usage)
-- [ ] Transitions use `transition-fast/base/slow/reveal` tokens
+#### Payment Schedule
 
-**Color:**
+Payments are **not captured at signing**. Two scheduled tasks are created at signing:
 
-- [ ] No hardcoded colors — all CSS custom properties
-- [ ] Accent ratio: ~95% monochrome, ~4% cyan, ~1% neon
-- [ ] Status colors use semantic tokens (available/busy/booked/hold/error)
-- [ ] Works in both light and dark mode
+| Task    | When                         | Amount                                 |
+| ------- | ---------------------------- | -------------------------------------- |
+| Deposit | T−30 days before show        | 50% of artist fee + agency booking fee |
+| Balance | T+14 working days after show | Remaining 50%, minus logged expenses   |
 
-**Typography:**
+The expense window is open from Show Complete until the balance task fires.
 
-- [ ] Mono for data (numbers, dates, status labels, nav items, button text)
-- [ ] Sans for narrative (body text, headings, descriptions)
-- [ ] Type scale tokens used (not raw px/rem)
-- [ ] Max reading width 65ch for body text
+#### Advancing Form Schema
 
-**Components:**
+```
+advancing_requests
+├── rider_confirmed (bool + notes)
+├── contacts
+│   ├── promoter_contact (name, phone, email)
+│   ├── dos_liaison (name, phone, email)
+│   └── transport_contact (name, phone)
+├── accommodation
+│   ├── hotel_name, hotel_address
+│   ├── reservation_number, reservation_name
+│   └── checkin_time, checkout_time
+└── schedule
+    ├── dinner_time (nullable)
+    ├── soundcheck_time
+    ├── doors_open_time
+    ├── curfew_time
+    └── running_order (jsonb array: [{artist, set_start, set_end}])
+```
 
-- [ ] Max one primary button per screen
-- [ ] Labels always visible (no placeholder-only inputs)
-- [ ] Optional fields labeled "(optional)", not required fields with asterisks
-- [ ] Cards: bg-secondary, border-primary, radius-lg, no shadow by default
-- [ ] Status indicators: 8px dot + mono label, never color alone
+#### Automated Reminders (Cron)
 
-**Accessibility:**
+| Item                              | When sent  |
+| --------------------------------- | ---------- |
+| Promotional assets (EPK, photos)  | T−30 days  |
+| Tech rider (flag if needs update) | T−7 days   |
+| Guest list deadline reminder      | T−12 hours |
 
-- [ ] Color contrast WCAG AA (4.5:1 body, 3:1 large)
-- [ ] Visible focus rings on all interactive elements
-- [ ] `aria-live` on dynamic status changes
-- [ ] `prefers-reduced-motion` respected
+#### Rules
 
-### Build Issue from MVP Epic Spec
+- State transitions must go through `status-machine.ts` — never update `status` directly
+- Every transition fires the corresponding Knock notification
+- Payment operations are server-only — no client mutations to payment tables
+- RLS on `transfers` is `false` — enforced at DB level
 
-When given an issue number, title, or feature description from the MVP Epic Spec:
+---
 
-1. Read the MVP Epic Spec at Obsidian: `Clubstack/Clubstack Research/MVP Epic Spec.md`
-2. Read the Design System Spec at Obsidian: `Clubstack/Clubstack Research/Design System Spec.md`
-3. Read this file (AGENTS.md) for architecture and conventions
-4. Identify all related data model entities and their relationships
-5. Implement the feature following these steps:
-   - Schema/migration if new tables needed
-   - Types in `src/types/`
-   - Server-side logic (API routes, server actions)
-   - UI components (design system primitives first, then feature components)
-   - Tests: unit tests for business logic, component tests for UI, E2E test for the flow
-6. Create a commit with conventional commit message (`feat:`, `fix:`, etc.)
+### Domain Reference: Stripe Connect
 
-**Always check existing code before creating new files. Prefer editing over creating.**
+Read before touching `src/lib/payments/`, `src/lib/stripe/`, or `src/app/api/stripe/`.
 
-### Verify (Full Verification Loop)
+#### Account Type
 
-Run the full verification loop. Fix any failures — do not ask, fix-forward.
+**Express accounts (v1)** — Stripe hosts the onboarding UX and handles KYC compliance.
+Clubstack controls payout timing. ~5 min DJ onboarding.
 
-**Steps:**
+Custom accounts are the v2 migration path (when Clubstack owns the full tax doc UI).
 
-1. Run `pnpm lint` — fix any ESLint or TypeScript errors
-2. Run `pnpm test` — fix any failing tests (including architecture tests)
-3. Run `pnpm build` — fix any build errors
-4. If any step failed and you made fixes, re-run all three from the top
-5. Stop when all three pass clean
+#### Express Onboarding Flow
 
-**Rules:**
+```
+1. DJ completes profile and initiates payout setup
+2. stripe.accounts.create({ type: 'express', country, capabilities: { transfers: { requested: true } } })
+3. stripe.accountLinks.create({ account: id, type: 'account_onboarding', refresh_url, return_url })
+4. Redirect DJ to accountLink.url (Stripe-hosted)
+5. Stripe calls return_url when complete
+6. Check account.details_submitted + account.payouts_enabled before allowing bookings
+```
 
-- Never skip a failing test — either fix the code or fix the test
-- Never disable ESLint rules to pass — fix the underlying issue
-- Architecture test failures mean a convention was violated — fix the source, not the test
-- Report what you fixed, not what passed
+#### Payment Intent Lifecycle
+
+```
+1. Booking signed → two PaymentIntents created (capture_method: 'manual')
+   - Deposit PI: amount = (50% artist fee + booking fee), scheduled charge T−30 days
+   - Balance PI: amount = (50% artist fee), scheduled capture T+14 working days post-show
+
+2. T−30 days → Deposit PI confirmed/captured
+   application_fee_amount = platform fee
+   transfer_data.destination = dj_stripe_account_id
+
+3. T+14 working days → Balance PI captured
+   amount adjusted down for any logged expenses
+   transfer_data handles agency commission split automatically
+```
+
+#### Fee Math
+
+- DJ receives: `artist_fee − agency_commission − platform_fee − logged_expenses`
+- Agency receives: `agency_commission` (destination charge split)
+- Platform receives: `application_fee_amount`
+- Stripe fee: ~2.9% + $0.30, deducted from platform share
+
+#### Key Rules
+
+- Stripe client only instantiated in `src/lib/stripe/client.ts`
+- Secret key never in client-side code
+- TIN/SSN never stored — passed directly to Stripe only
+- All Stripe API calls that create resources use idempotency keys: `booking_${bookingId}_deposit`
+- Webhook handler uses `STRIPE_WEBHOOK_SECRET` for signature verification
+
+#### Key Webhook Events
+
+| Event                      | Handler action                                       |
+| -------------------------- | ---------------------------------------------------- |
+| `payment_intent.succeeded` | Update booking payment status                        |
+| `account.updated`          | Check onboarding completion, enable booking if ready |
+| `transfer.created`         | Log to `transfers` table                             |
+| `payout.paid`              | Notify DJ via Knock                                  |
 
 ---
 
 ## Parallel Agent Worktrees
 
-The `.claude/worktrees/` directory contains git worktrees for parallel agent sessions. These are model-agnostic — any AI tool can use git worktrees for isolated work.
-
-To create a worktree:
+The `.claude/worktrees/` directory contains git worktrees for parallel agent sessions.
 
 ```bash
+# Create
 git worktree add .claude/worktrees/agent-<id> -b agent/<feature-name>
-```
 
-To clean up:
-
-```bash
+# Clean up
 git worktree remove .claude/worktrees/agent-<id>
 git branch -d agent/<feature-name>
 ```

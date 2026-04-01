@@ -14,7 +14,7 @@ DJ booking platform for underground clubs. DJs get free profiles + calendar sync
 - Commands
 - Environment variables
 - Architecture conventions
-- Skills/procedures (database migration, Stripe testing, design check, build issue, verify)
+- Skills/procedures (epic, feature, db-migrate, design-check, verify, session-close, and more)
 - Quick rules
 
 ---
