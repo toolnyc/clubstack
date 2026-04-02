@@ -9,6 +9,7 @@ const FILES = {
   typesCurrent:   join(STATE_DIR, 'types-current'),
   designChecked:  join(STATE_DIR, 'design-checked'),
   verifyPassed:   join(STATE_DIR, 'verify-passed'),
+  sessionActive:  join(STATE_DIR, 'session-active'),
 };
 
 export function check(name, { maxAgeHours = null } = {}) {

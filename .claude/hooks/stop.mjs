@@ -1,24 +1,43 @@
 import { execSync } from 'child_process';
+import { check } from './sentinels.mjs';
 
 let raw = '';
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => { raw += chunk; });
 process.stdin.on('end', () => {
-  let count = 0;
+  const session = check('sessionActive');
+
+  // Count modified source files
+  let fileCount = 0;
   try {
     const result = execSync('git diff HEAD --name-only -- src/ 2>/dev/null', { encoding: 'utf8' });
-    count = result.trim().split('\n').filter(l => l.length > 0).length;
-  } catch {
-    process.exit(0);
+    fileCount = result.trim().split('\n').filter(l => l.length > 0).length;
+  } catch {}
+
+  // Count total commits this session (if we have a session timestamp)
+  let commitCount = 0;
+  if (session.exists && session.data?.timestamp) {
+    try {
+      const log = execSync(`git log --oneline --since="${session.data.timestamp}" 2>/dev/null`, { encoding: 'utf8' });
+      commitCount = log.trim().split('\n').filter(l => l.length > 0).length;
+    } catch {}
   }
 
-  if (count < 3) process.exit(0);
+  // Remind if: 3+ files modified, OR any commits were made this session, OR session has been active 1h+
+  const hasWork = fileCount >= 3 || commitCount > 0 || (session.exists && session.age >= 1);
 
-  const feedback = `--- Session summary reminder ---
-You modified ${count} source files this session. Before closing:
+  if (!hasWork) process.exit(0);
+
+  const parts = [];
+  if (fileCount > 0) parts.push(`${fileCount} uncommitted source file${fileCount === 1 ? '' : 's'}`);
+  if (commitCount > 0) parts.push(`${commitCount} commit${commitCount === 1 ? '' : 's'} this session`);
+  if (parts.length === 0 && session.exists) parts.push(`session active for ${session.age}h`);
+
+  const feedback = `--- Session close reminder ---
+${parts.join(', ')}. Before closing:
 • Run /session-close to capture learnings and write the Obsidian report
 • Check if any SKILL.md files need updating based on patterns that emerged
-• Confirm /verify passed (or run it now if not)`;
+• If code was written: confirm /verify passed (or run it now)`;
 
   const output = {
     hookSpecificOutput: {

@@ -50,6 +50,27 @@ Run at the end of every working session where code was written.
    - Open questions or next steps
    - Link to epic file if applicable
 
+   **Content rules for obsidian CLI:**
+   - Do NOT use backticks, markdown code fences, or special shell characters in the content string
+   - Use plain text descriptions instead of code blocks
+   - Keep formatting simple: headings (#), bullets (-), bold (\*\*)
+
+   **Verify the write succeeded:**
+
+   ```bash
+   ls "/Users/pete/Dropbox/Notes/Obsidian/Clubstack/Clubstack/Session Reports/Session — <date> <title>.md"
+   ```
+
+   If the file does not exist, retry the obsidian create command. If it fails again, fall back to writing directly:
+
+   ```bash
+   cat > "/Users/pete/Dropbox/Notes/Obsidian/Clubstack/Clubstack/Session Reports/Session — <date> <title>.md" << 'REPORT'
+   <report content>
+   REPORT
+   ```
+
+   Always confirm the file exists before proceeding to step 6.
+
 6. Clear all sentinels:
    ```bash
    node -e "import('./.claude/hooks/sentinels.mjs').then(s => s.clearAll())"
@@ -61,3 +82,5 @@ Run at the end of every working session where code was written.
 - Never skip the "new conventions" question — this is how the system stays current
 - If a skill was wrong, fix it in this session before clearing sentinels
 - The session report is permanent record — write it as if future-you will need to understand the context six months from now
+- Always verify the Obsidian write succeeded — the CLI can fail silently
+- Always state the exact file path of the session report in your response
