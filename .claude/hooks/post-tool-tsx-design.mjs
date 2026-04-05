@@ -10,7 +10,7 @@ function processInput(raw) {
 
   // Only check TSX files in src/
   const relPath = filePath.startsWith(cwd) ? filePath.slice(cwd.length + 1) : filePath;
-  if (!relPath.match(/^src\/.*\.tsx$/)) process.exit(0);
+  if (!relPath.match(/^apps\/web\/src\/.*\.tsx$/)) process.exit(0);
 
   let content;
   try { content = readFileSync(filePath, 'utf8'); } catch { process.exit(0); }

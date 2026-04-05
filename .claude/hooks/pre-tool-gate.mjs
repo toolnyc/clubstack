@@ -4,7 +4,7 @@ import { existsSync } from 'fs';
 const GATES = [
   {
     tools: ['Write'],
-    pathPattern: /^src\//,
+    pathPattern: /^apps\/web\/src\//,
     newFilesOnly: true,
     requires: 'featureActive',
     maxAgeHours: 48,

@@ -29,7 +29,7 @@ Use `pnpm db:migrate` to push and `pnpm db:types` to regenerate TypeScript types
 
 ## Architecture Tests
 
-The `src/test/architecture.test.ts` file mechanically enforces:
+The `apps/web/src/test/architecture.test.ts` file mechanically enforces:
 
 - Every `CREATE TABLE` has RLS enabled
 - Every table has an `updated_at` column

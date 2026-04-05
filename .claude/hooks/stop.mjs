@@ -9,7 +9,7 @@ process.stdin.on('end', () => {
   // Count modified source files
   let fileCount = 0;
   try {
-    const result = execSync('git diff HEAD --name-only -- src/ 2>/dev/null', { encoding: 'utf8' });
+    const result = execSync('git diff HEAD --name-only -- apps/web/src/ 2>/dev/null', { encoding: 'utf8' });
     fileCount = result.trim().split('\n').filter(l => l.length > 0).length;
   } catch {}
 

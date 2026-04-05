@@ -18,9 +18,9 @@ pnpm e2e:ui        # Playwright UI mode
 ## Conventions
 
 - Colocate test files next to source: `dj-card.tsx` → `dj-card.test.tsx`
-- Architecture tests live in `src/test/architecture.test.ts` — these enforce project invariants mechanically
+- Architecture tests live in `apps/web/src/test/architecture.test.ts` — these enforce project invariants mechanically
 - Test behavior, not implementation — assert on what the user sees, not internal state
-- Use shared factories for test data (see `src/test/factories.ts` if it exists)
+- Use shared factories for test data (see `apps/web/src/test/factories.ts` if it exists)
 - No mocking Supabase in integration tests — use MSW for API boundaries
 
 ## Architecture Tests

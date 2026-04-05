@@ -89,7 +89,7 @@ Copy `.env.local.example` to `.env.local`. Key vars:
 
 ## Cron Jobs
 
-Defined in `vercel.json`. Both routes validate `Authorization: Bearer $CRON_SECRET`.
+Defined in `apps/web/vercel.json`. Both routes validate `Authorization: Bearer $CRON_SECRET`.
 
 | Route                     | Schedule     | Purpose                                                                 |
 | ------------------------- | ------------ | ----------------------------------------------------------------------- |
@@ -143,7 +143,7 @@ The `2>/dev/null` suppresses the harmless "installer out of date" warning. Sessi
 - Solo-founder MVP. Keep it simple. No premature abstractions.
 - Product direction is documented in Session Report 2026-03-31 (Obsidian). Read before building new features.
 - The `research/` directory is reference only — don't modify it.
-- Architecture is mechanically enforced — see `src/test/architecture.test.ts`.
+- Architecture is mechanically enforced — see `apps/web/src/test/architecture.test.ts`.
 - Payments and transfers are **server-only** — no client mutations. RLS policies enforce `false` on these tables.
 - TIN/SSN is **never stored in the DB** — passed directly to Stripe API and vaulted there.
 - The main app is **React Native / Expo** — do not build new authenticated UI in the Next.js `(app)` routes.
@@ -159,12 +159,12 @@ The `2>/dev/null` suppresses the harmless "installer out of date" warning. Sessi
 - **Styling:** Tailwind only. No inline styles, no CSS modules. Use `cn()` from `@/lib/utils`.
 - **No `any` types.** Use `unknown` and narrow.
 - **RLS is mandatory** on every Supabase table.
-- **File naming:** kebab-case for all files in `src/`.
+- **File naming:** kebab-case for all files in `apps/web/src/`.
 - **Tests:** Colocate with source. Run `pnpm test` before submitting.
 
 ## Architecture Enforcement
 
-`src/test/architecture.test.ts` mechanically enforces these conventions. If your change breaks an architecture test, fix your code — don't modify the test.
+`apps/web/src/test/architecture.test.ts` mechanically enforces these conventions. If your change breaks an architecture test, fix your code — don't modify the test.
 
 ---
 
@@ -195,7 +195,7 @@ For other models, domain reference material is documented below.
 
 ### Domain Reference: Booking Workflow
 
-Read before touching `src/lib/booking/`, booking migrations, or booking-related native screens.
+Read before touching `apps/web/src/lib/booking/`, booking migrations, or booking-related native screens.
 
 #### State Machine
 
@@ -285,7 +285,7 @@ advancing_requests
 
 ### Domain Reference: Stripe Connect
 
-Read before touching `src/lib/payments/`, `src/lib/stripe/`, or `src/app/api/stripe/`.
+Read before touching `apps/web/src/lib/payments/`, `apps/web/src/lib/stripe/`, or `apps/web/src/app/api/stripe/`.
 
 #### Account Type
 
@@ -330,7 +330,7 @@ Custom accounts are the v2 migration path (when Clubstack owns the full tax doc 
 
 #### Key Rules
 
-- Stripe client only instantiated in `src/lib/stripe/client.ts`
+- Stripe client only instantiated in `apps/web/src/lib/stripe/client.ts`
 - Secret key never in client-side code
 - TIN/SSN never stored — passed directly to Stripe only
 - All Stripe API calls that create resources use idempotency keys: `booking_${bookingId}_deposit`

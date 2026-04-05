@@ -13,14 +13,24 @@ import path from "path";
 // ---------------------------------------------------------------------------
 
 const ROOT = path.resolve(__dirname, "../..");
+const REPO_ROOT = path.resolve(ROOT, "../..");
 
 async function globFiles(pattern: string): Promise<string[]> {
   const { glob } = await import("glob");
   return glob(pattern, { cwd: ROOT });
 }
 
+async function globRepoFiles(pattern: string): Promise<string[]> {
+  const { glob } = await import("glob");
+  return glob(pattern, { cwd: REPO_ROOT });
+}
+
 async function readFile(relativePath: string): Promise<string> {
   return fs.readFile(path.resolve(ROOT, relativePath), "utf-8");
+}
+
+async function readRepoFile(relativePath: string): Promise<string> {
+  return fs.readFile(path.resolve(REPO_ROOT, relativePath), "utf-8");
 }
 
 // ---------------------------------------------------------------------------
@@ -135,11 +145,11 @@ describe("typescript strictness", () => {
 
 describe("database migrations", () => {
   test("every CREATE TABLE has RLS enabled", async () => {
-    const files = await globFiles("supabase/migrations/*.sql");
+    const files = await globRepoFiles("supabase/migrations/*.sql");
     const violations: string[] = [];
 
     for (const file of files) {
-      const content = await readFile(file);
+      const content = await readRepoFile(file);
       const lower = content.toLowerCase();
 
       const createMatches = lower.matchAll(
@@ -165,7 +175,7 @@ describe("database migrations", () => {
   });
 
   test("primary entity tables have updated_at column", async () => {
-    const files = await globFiles("supabase/migrations/*.sql");
+    const files = await globRepoFiles("supabase/migrations/*.sql");
     const violations: string[] = [];
 
     // Junction tables, cache tables, and append-only tables that
@@ -187,7 +197,7 @@ describe("database migrations", () => {
     ]);
 
     for (const file of files) {
-      const content = await readFile(file);
+      const content = await readRepoFile(file);
       const lower = content.toLowerCase();
 
       const createMatches = lower.matchAll(

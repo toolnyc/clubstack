@@ -167,12 +167,10 @@ export async function importICS(input: z.infer<typeof ImportICSSchema>) {
     end_time: null,
   }));
 
-  const { error } = await supabase
-    .from("manual_availability")
-    .upsert(rows, {
-      onConflict: "user_id,specific_date",
-      ignoreDuplicates: true,
-    });
+  const { error } = await supabase.from("manual_availability").upsert(rows, {
+    onConflict: "user_id,specific_date",
+    ignoreDuplicates: true,
+  });
 
   if (error) return { error: error.message, imported: 0 };
 

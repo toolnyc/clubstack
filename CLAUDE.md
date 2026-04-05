@@ -27,7 +27,7 @@ DJ booking platform for underground clubs. DJs get free profiles + calendar sync
 | Architecture      | [docs/architecture.md](docs/architecture.md) |
 | Database patterns | [docs/database.md](docs/database.md)         |
 | Testing patterns  | [docs/testing.md](docs/testing.md)           |
-| Architecture test | `src/test/architecture.test.ts`              |
+| Architecture test | `apps/web/src/test/architecture.test.ts`     |
 
 ## Commands
 
@@ -56,7 +56,7 @@ The agentic system enforces a planning-before-building discipline via sentinel f
 
 **Enforcement:**
 
-- Creating new files in `src/` or `supabase/migrations/` is **hard-blocked** without an active feature context
+- Creating new files in `apps/web/src/` or `supabase/migrations/` is **hard-blocked** without an active feature context
 - The pre-tool hook enforces this — do not attempt to work around it
 - Quick fixes to existing files (<5 lines, not new functionality) are exempt from the gate
 - Committing or opening PRs without `verify-passed` triggers a soft warning
@@ -98,16 +98,17 @@ rm -f .claude/epics/.active
 
 Conventions established during development. Each entry has a rationale so future decisions can be made consistently.
 
-| Convention                                       | Since          | Why                                           | Enforced By                            |
-| ------------------------------------------------ | -------------- | --------------------------------------------- | -------------------------------------- |
-| Knock for all booking notifications              | MVP            | Single channel, avoids Resend/Knock split     | CLAUDE.md rule                         |
-| Resend only for marketing emails (waitlist)      | MVP            | Knock not appropriate for non-user comms      | CLAUDE.md rule                         |
-| Payments/transfers server-only                   | MVP            | Security — RLS `false` on these tables        | RLS + architecture.test.ts             |
-| TIN/SSN never stored in DB                       | MVP            | Compliance — Stripe vaults sensitive tax data | CLAUDE.md rule                         |
-| No `@supabase/*` imports outside `lib/supabase/` | MVP            | Service layer isolation                       | architecture.test.ts                   |
-| RLS mandatory on every table                     | MVP            | Security baseline                             | architecture.test.ts + schema hook     |
-| Tailwind only — no CSS modules or inline styles  | MVP            | Consistency                                   | architecture.test.ts + tsx design hook |
-| New feature requires epic first                  | Agentic system | Quality gate — no unplanned code              | pre-tool hook (hard block)             |
-| /verify before any commit                        | Agentic system | Catch regressions before they land            | pre-tool hook (soft warn)              |
+| Convention                                         | Since          | Why                                           | Enforced By                            |
+| -------------------------------------------------- | -------------- | --------------------------------------------- | -------------------------------------- |
+| Knock for all booking notifications                | MVP            | Single channel, avoids Resend/Knock split     | CLAUDE.md rule                         |
+| Resend only for marketing emails (waitlist)        | MVP            | Knock not appropriate for non-user comms      | CLAUDE.md rule                         |
+| Payments/transfers server-only                     | MVP            | Security — RLS `false` on these tables        | RLS + architecture.test.ts             |
+| TIN/SSN never stored in DB                         | MVP            | Compliance — Stripe vaults sensitive tax data | CLAUDE.md rule                         |
+| No `@supabase/*` imports outside `lib/supabase/`   | MVP            | Service layer isolation                       | architecture.test.ts                   |
+| RLS mandatory on every table                       | MVP            | Security baseline                             | architecture.test.ts + schema hook     |
+| Tailwind only — no CSS modules or inline styles    | MVP            | Consistency                                   | architecture.test.ts + tsx design hook |
+| New feature requires epic first                    | Agentic system | Quality gate — no unplanned code              | pre-tool hook (hard block)             |
+| /verify before any commit                          | Agentic system | Catch regressions before they land            | pre-tool hook (soft warn)              |
+| Monorepo: web app in `apps/web/`, supabase at root | 2026-04-05     | Support future React Native + shared packages | pnpm-workspace.yaml + directory layout |
 
 _Add new rows here when a convention is established. Include the session report date if applicable._

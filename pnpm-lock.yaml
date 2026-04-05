@@ -7,6 +7,24 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      '@playwright/test':
+        specifier: ^1.50.1
+        version: 1.58.2
+      glob:
+        specifier: ^13.0.6
+        version: 13.0.6
+      lint-staged:
+        specifier: ^15.4.3
+        version: 15.5.2
+      prettier:
+        specifier: ^3.5.3
+        version: 3.8.1
+      simple-git-hooks:
+        specifier: ^2.11.1
+        version: 2.13.1
+
+  apps/web:
     dependencies:
       '@sentry/nextjs':
         specifier: ^10.45.0
@@ -48,9 +66,6 @@ importers:
         specifier: ^3.24.2
         version: 3.25.76
     devDependencies:
-      '@playwright/test':
-        specifier: ^1.50.1
-        version: 1.58.2
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.2.1
@@ -87,24 +102,12 @@ importers:
       eslint-config-next:
         specifier: 16.1.6
         version: 16.1.6(@typescript-eslint/parser@8.57.2(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
-      glob:
-        specifier: ^13.0.6
-        version: 13.0.6
       jsdom:
         specifier: ^26.0.0
         version: 26.1.0
-      lint-staged:
-        specifier: ^15.4.3
-        version: 15.5.2
       msw:
         specifier: ^2.7.3
         version: 2.12.10(@types/node@20.19.37)(typescript@5.9.3)
-      prettier:
-        specifier: ^3.5.3
-        version: 3.8.1
-      simple-git-hooks:
-        specifier: ^2.11.1
-        version: 2.13.1
       tailwindcss:
         specifier: ^4
         version: 4.2.1
@@ -5481,7 +5484,7 @@ snapshots:
 
   '@typescript-eslint/project-service@8.57.0(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.57.0(typescript@5.9.3)
+      '@typescript-eslint/tsconfig-utils': 8.57.2(typescript@5.9.3)
       '@typescript-eslint/types': 8.57.2
       debug: 4.4.3
       typescript: 5.9.3

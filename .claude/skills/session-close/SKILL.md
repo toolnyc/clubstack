@@ -1,6 +1,6 @@
 ---
 name: session-close
-description: End-of-session capture. Summarizes work done, updates skills if needed, writes Obsidian report, clears sentinels.
+description: End-of-session capture. Summarizes work done, updates roadmap, updates skills if needed, writes Obsidian report, clears sentinels.
 ---
 
 # Session Close
@@ -71,7 +71,14 @@ Run at the end of every working session where code was written.
 
    Always confirm the file exists before proceeding to step 6.
 
-6. Clear all sentinels:
+6. Update roadmap status:
+   - Read `docs/mvp-roadmap.md` and find the row matching today's session
+   - If the session's task was **fully completed**: set Status to `Done`
+   - If only **partial progress**: set Status to `Partial` and add a brief note (e.g., `Partial — auth done, tests remain`)
+   - If the session was **unrelated to a roadmap row** (e.g., bug fix, refactor): skip this step
+   - Confirm the update with the user before writing: "Marking [Day] [Task] as [Done/Partial]. Correct?"
+
+7. Clear all sentinels:
    ```bash
    node -e "import('./.claude/hooks/sentinels.mjs').then(s => s.clearAll())"
    rm -f .claude/epics/.active
@@ -84,3 +91,4 @@ Run at the end of every working session where code was written.
 - The session report is permanent record — write it as if future-you will need to understand the context six months from now
 - Always verify the Obsidian write succeeded — the CLI can fail silently
 - Always state the exact file path of the session report in your response
+- Always confirm roadmap status with the user before writing — never silently mark a row
