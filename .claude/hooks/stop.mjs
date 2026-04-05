@@ -1,9 +1,8 @@
 import { execSync } from 'child_process';
 import { check } from './sentinels.mjs';
 
-let raw = '';
 process.stdin.setEncoding('utf8');
-process.stdin.on('data', chunk => { raw += chunk; });
+process.stdin.resume();
 process.stdin.on('end', () => {
   const session = check('sessionActive');
 

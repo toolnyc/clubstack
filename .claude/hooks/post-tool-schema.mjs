@@ -20,7 +20,6 @@ function processInput(raw) {
   let content;
   try { content = readFileSync(filePath, 'utf8'); } catch { process.exit(0); }
 
-  const lines = content.split('\n');
   const errors = [];
   const warns = [];
 
