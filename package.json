@@ -5,9 +5,11 @@
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile start",
     "build": "pnpm --filter web build",
     "start": "pnpm --filter web start",
     "lint": "pnpm --filter web lint",
+    "lint:mobile": "pnpm --filter mobile exec tsc --noEmit",
     "test": "pnpm --filter web test",
     "test:watch": "pnpm --filter web test:watch",
     "e2e": "playwright test",

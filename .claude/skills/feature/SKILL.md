@@ -11,14 +11,15 @@ Build a planned feature from an epic file.
 
 ## Pre-flight
 
-1. Resolve the epic file:
+1. Read `.claude/epics/PREFLIGHT.md` — if it has unchecked items, show them to the user before proceeding
+2. Resolve the epic file:
    - Try `.claude/epics/$ARGUMENTS.md`
    - Try `.claude/epics/$ARGUMENTS` (if path provided directly)
    - If not found: **stop** — "No epic found for '$ARGUMENTS'. Run /epic '$ARGUMENTS' first."
-2. Check `.claude/state/feature-active`:
+3. Check `.claude/state/feature-active`:
    - If exists and < 48h old: show active epic name and ask "Resume this feature or start a new one?"
    - If stale (> 48h): warn and offer to clear
-3. Read the epic file fully before proceeding
+4. Read the epic file fully before proceeding
 
 ## Sentinel Setup
 

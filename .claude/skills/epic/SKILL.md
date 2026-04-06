@@ -11,14 +11,15 @@ Turn a plain English feature description into a structured implementation plan.
 
 ## Steps
 
-1. Accept the feature description from $ARGUMENTS
-2. Explore the codebase to understand current state:
+1. Read `.claude/epics/PREFLIGHT.md` — if it has unchecked items, show them to the user before proceeding
+2. Accept the feature description from $ARGUMENTS
+3. Explore the codebase to understand current state:
    - Grep for related existing code (`src/lib/`, `src/components/`, `src/app/`)
    - Read affected lib/ modules and component directories
    - Read `docs/architecture.md` and `docs/database.md`
-3. Check `.claude/state/epic-created` — if it exists, show the current epic slug and ask if replacing or creating new
-4. Derive the slug from $ARGUMENTS (kebab-case, max 5 words, e.g., `agency-dj-roster`)
-5. Write the epic to `.claude/epics/<slug>.md` using this structure:
+4. Check `.claude/state/epic-created` — if it exists, show the current epic slug and ask if replacing or creating new
+5. Derive the slug from $ARGUMENTS (kebab-case, max 5 words, e.g., `agency-dj-roster`)
+6. Write the epic to `.claude/epics/<slug>.md` using this structure:
 
 ```
 ---
