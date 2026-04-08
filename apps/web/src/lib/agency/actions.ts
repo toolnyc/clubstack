@@ -2,7 +2,11 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import type { Agency, RosterEntry, AgencyArtistStatus } from "@/types";
+import type {
+  Agency,
+  RosterEntry,
+  AgencyArtistStatus,
+} from "@clubstack/shared";
 
 const agencySchema = z.object({
   name: z.string().min(1, "Name is required").max(200),

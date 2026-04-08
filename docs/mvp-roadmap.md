@@ -23,8 +23,8 @@
 | --- | --------------------------------------------------------------------------------- | ------ |
 | Mon | Verify current codebase: run `/verify`, fix any lint/type/build failures          | Done   |
 | Tue | Monorepo setup: pnpm workspaces, move Next.js to `apps/web/`, update imports      | Done   |
-| Wed | Expo init: `apps/mobile/` with Expo Router, confirm it boots in Expo Go           |        |
-| Thu | Shared types: extract `packages/shared/` (DB types, domain types), wire both apps |        |
+| Wed | Expo init: `apps/mobile/` with Expo Router, confirm it boots in Expo Go           | Done   |
+| Thu | Shared types: extract `packages/shared/` (DB types, domain types), wire both apps | Done   |
 | Fri | CI: GitHub Actions workflow — lint + test + build on PR. Merge `develop` → `main` |        |
 
 ### Week 2 — API Bridge + Substack Launch

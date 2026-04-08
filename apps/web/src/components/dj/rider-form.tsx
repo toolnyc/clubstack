@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { saveRider } from "@/lib/dj/rider-actions";
-import type { TechnicalRider } from "@/types";
+import type { TechnicalRider } from "@clubstack/shared";
 
 interface RiderFormProps {
   initialData?: TechnicalRider | null;

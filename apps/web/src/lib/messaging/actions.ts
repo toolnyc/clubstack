@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { Thread, Message } from "@/types";
+import type { Thread, Message } from "@clubstack/shared";
 
 export async function getOrCreateThread(
   bookingId: string

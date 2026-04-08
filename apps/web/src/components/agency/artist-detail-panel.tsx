@@ -7,7 +7,7 @@ import { Input, Textarea } from "@/components/ui/input";
 import { AutoIcon } from "@/components/ui/auto-icon";
 import { Badge } from "@/components/ui/badge";
 import { updateArtist, removeArtist } from "@/lib/agency/actions";
-import type { RosterEntry } from "@/types";
+import type { RosterEntry } from "@clubstack/shared";
 
 interface ArtistDetailPanelProps {
   entry: RosterEntry;

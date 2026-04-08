@@ -1,7 +1,10 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { NotificationPreference, NotificationType } from "@/types";
+import type {
+  NotificationPreference,
+  NotificationType,
+} from "@clubstack/shared";
 
 const NOTIFICATION_TYPES: NotificationType[] = [
   "contract_sent",

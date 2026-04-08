@@ -8,7 +8,7 @@ import { RosterList } from "@/components/agency/roster-list";
 import { InviteArtistForm } from "@/components/agency/invite-artist-form";
 import { ArtistDetailPanel } from "@/components/agency/artist-detail-panel";
 import { CSVImport } from "@/components/agency/csv-import";
-import type { Agency, RosterEntry } from "@/types";
+import type { Agency, RosterEntry } from "@clubstack/shared";
 
 type View = "list" | "invite" | "csv" | "detail";
 

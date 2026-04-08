@@ -5,7 +5,7 @@ import type {
   InvoiceLineItem,
   ContractClause,
   Message,
-} from "@/types";
+} from "@clubstack/shared";
 import type {
   EarningsSummary,
   EarningsEntry,

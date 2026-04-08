@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import type { Venue } from "@/types";
+import type { Venue } from "@clubstack/shared";
 
 const venueSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),

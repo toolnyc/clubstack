@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { SignatureType } from "@/types";
+import type { SignatureType } from "@clubstack/shared";
 
 interface SignaturePadProps {
   onSign: (data: string, type: SignatureType) => void;

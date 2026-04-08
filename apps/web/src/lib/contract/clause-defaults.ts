@@ -1,4 +1,4 @@
-import type { ClauseType } from "@/types";
+import type { ClauseType } from "@clubstack/shared";
 
 interface ClauseDefault {
   type: ClauseType;

@@ -11,7 +11,7 @@ import {
   reorderClauses,
 } from "@/lib/contract/actions";
 import { useBreakpoint } from "@/lib/hooks/use-breakpoint";
-import type { ContractClause } from "@/types";
+import type { ContractClause } from "@clubstack/shared";
 
 interface ContractBuilderProps {
   initialClauses: ContractClause[];

@@ -1,5 +1,5 @@
 import type { Resend } from "resend";
-import type { NotificationType } from "@/types";
+import type { NotificationType } from "@clubstack/shared";
 import { getTemplate } from "./templates";
 import type { TemplateData } from "./templates";
 import { createClient } from "@/lib/supabase/server";

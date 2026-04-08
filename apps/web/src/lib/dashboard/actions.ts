@@ -1,7 +1,11 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { InvoiceStatus, AgencyArtistStatus, UserType } from "@/types";
+import type {
+  InvoiceStatus,
+  AgencyArtistStatus,
+  UserType,
+} from "@clubstack/shared";
 
 export interface UpcomingBooking {
   id: string;

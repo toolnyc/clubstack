@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Invoice, InvoiceLineItem } from "@/types";
+import type { Invoice, InvoiceLineItem } from "@clubstack/shared";
 import { InvoiceActions } from "./invoice-actions";
 
 interface InvoiceDetailProps {

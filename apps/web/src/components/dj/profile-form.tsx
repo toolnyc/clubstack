@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { AutoIcon } from "@/components/ui/auto-icon";
 import { saveDJProfile } from "@/lib/dj/actions";
-import type { DJProfile } from "@/types";
+import type { DJProfile } from "@clubstack/shared";
 
 interface ProfileFormProps {
   initialData?: DJProfile | null;

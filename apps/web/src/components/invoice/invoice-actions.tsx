@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateInvoiceStatus } from "@/lib/invoice/actions";
 import { Button } from "@/components/ui/button";
-import type { InvoiceStatus } from "@/types";
+import type { InvoiceStatus } from "@clubstack/shared";
 
 interface InvoiceActionsProps {
   invoiceId: string;

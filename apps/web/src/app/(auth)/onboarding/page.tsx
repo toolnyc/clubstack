@@ -6,7 +6,7 @@ import { Disc3, Building2, Users, Megaphone } from "lucide-react";
 import { createProfile } from "@/lib/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { UserType } from "@/types";
+import type { UserType } from "@clubstack/shared";
 
 const USER_TYPES: {
   type: UserType;

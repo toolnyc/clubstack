@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { GripVertical, ChevronDown, ChevronRight } from "lucide-react";
 import { Toggle } from "@/components/ui/input";
-import type { ContractClause } from "@/types";
+import type { ContractClause } from "@clubstack/shared";
 
 interface ClauseListProps {
   clauses: ContractClause[];

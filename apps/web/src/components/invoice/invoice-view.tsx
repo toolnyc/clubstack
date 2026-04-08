@@ -1,4 +1,4 @@
-import type { Invoice, InvoiceLineItem } from "@/types";
+import type { Invoice, InvoiceLineItem } from "@clubstack/shared";
 
 interface InvoiceViewProps {
   invoice: Invoice;

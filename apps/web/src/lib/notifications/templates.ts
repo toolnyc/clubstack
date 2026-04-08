@@ -1,4 +1,4 @@
-import type { NotificationType } from "@/types";
+import type { NotificationType } from "@clubstack/shared";
 
 interface TemplateData {
   recipientName?: string;

@@ -9,7 +9,7 @@ import {
   unblockDate,
   importICS,
 } from "@/lib/calendar/manual-actions";
-import type { ManualAvailability } from "@/types";
+import type { ManualAvailability } from "@clubstack/shared";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 

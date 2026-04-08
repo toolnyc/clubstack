@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getAvailability } from "@/lib/calendar/actions";
-import type { RosterEntry, CalendarDay } from "@/types";
+import type { RosterEntry, CalendarDay } from "@clubstack/shared";
 
 export interface ArtistAvailability {
   entry: RosterEntry;

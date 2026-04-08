@@ -1,7 +1,7 @@
 "use client";
 
 import { Input, Textarea } from "@/components/ui/input";
-import type { Venue, Promoter } from "@/types";
+import type { Venue, Promoter } from "@clubstack/shared";
 import type { EventDetails } from "./booking-form";
 
 interface StepEventProps {

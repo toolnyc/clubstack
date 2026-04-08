@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { TravelType, BookingTravel } from "@/types";
+import type { TravelType, BookingTravel } from "@clubstack/shared";
 import {
   addTravel,
   updateTravel,

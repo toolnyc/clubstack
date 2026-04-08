@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { RosterList } from "./roster-list";
-import type { RosterEntry } from "@/types";
+import type { RosterEntry } from "@clubstack/shared";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),

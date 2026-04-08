@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import type { Promoter } from "@/types";
+import type { Promoter } from "@clubstack/shared";
 
 const promoterSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),

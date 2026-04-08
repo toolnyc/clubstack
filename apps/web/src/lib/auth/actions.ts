@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { UserType } from "@/types";
+import type { UserType } from "@clubstack/shared";
 
 export async function signOut() {
   const supabase = await createClient();

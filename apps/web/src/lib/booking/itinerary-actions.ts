@@ -1,7 +1,12 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { Booking, BookingDate, BookingArtist, Venue } from "@/types";
+import type {
+  Booking,
+  BookingDate,
+  BookingArtist,
+  Venue,
+} from "@clubstack/shared";
 
 export type TravelType = "flight" | "hotel" | "ground_transport";
 

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { sendMessage } from "@/lib/messaging/actions";
-import type { Message } from "@/types";
+import type { Message } from "@clubstack/shared";
 
 interface MessageThreadProps {
   threadId: string;

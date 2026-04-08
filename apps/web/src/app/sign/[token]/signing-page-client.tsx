@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { SignaturePad } from "@/components/contract/signature-pad";
 import { signContract } from "@/lib/contract/signature-actions";
-import type { SignatureType, SignerRole } from "@/types";
+import type { SignatureType, SignerRole } from "@clubstack/shared";
 
 interface SigningPageClientProps {
   contractId: string;

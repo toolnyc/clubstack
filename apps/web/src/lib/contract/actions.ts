@@ -2,7 +2,11 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getDefaultClauses } from "./clause-defaults";
-import type { Contract, ContractClause, SignatureConfig } from "@/types";
+import type {
+  Contract,
+  ContractClause,
+  SignatureConfig,
+} from "@clubstack/shared";
 
 export async function createContract(bookingId: string) {
   const supabase = await createClient();

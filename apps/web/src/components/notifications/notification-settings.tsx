@@ -2,7 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { updatePreference } from "@/lib/notifications/preferences-actions";
-import type { NotificationPreference, NotificationType } from "@/types";
+import type {
+  NotificationPreference,
+  NotificationType,
+} from "@clubstack/shared";
 
 const NOTIFICATION_LABELS: Record<
   NotificationType,

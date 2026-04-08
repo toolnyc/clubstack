@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { generateId } from "./booking-form";
 import type { ArtistEntry } from "./booking-form";
-import type { RosterEntry } from "@/types";
+import type { RosterEntry } from "@clubstack/shared";
 
 interface StepArtistsProps {
   roster: RosterEntry[];

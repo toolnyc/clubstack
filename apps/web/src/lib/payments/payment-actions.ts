@@ -2,7 +2,7 @@
 
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
-import type { Payment } from "@/types";
+import type { Payment } from "@clubstack/shared";
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getTemplate, TEMPLATE_MAP } from "./templates";
-import type { NotificationType } from "@/types";
+import type { NotificationType } from "@clubstack/shared";
 
 const ALL_TYPES: NotificationType[] = [
   "contract_sent",

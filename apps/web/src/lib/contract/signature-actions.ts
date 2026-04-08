@@ -1,7 +1,11 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import type { ContractSignature, SignerRole, SignatureType } from "@/types";
+import type {
+  ContractSignature,
+  SignerRole,
+  SignatureType,
+} from "@clubstack/shared";
 
 interface SignInput {
   contractId: string;

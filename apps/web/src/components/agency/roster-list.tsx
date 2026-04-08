@@ -4,7 +4,7 @@ import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { AutoIcon } from "@/components/ui/auto-icon";
-import type { RosterEntry } from "@/types";
+import type { RosterEntry } from "@clubstack/shared";
 
 interface RosterListProps {
   entries: RosterEntry[];

@@ -1,4 +1,4 @@
-import type { BookingStatus } from "@/types";
+import type { BookingStatus } from "@clubstack/shared";
 
 type BookingStatusOrCancelled = BookingStatus | "cancelled";
 

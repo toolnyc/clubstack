@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toDateString, isToday } from "@/lib/calendar/utils";
 import { getRosterAvailability } from "@/lib/agency/availability";
 import type { ArtistAvailability } from "@/lib/agency/availability";
-import type { RosterEntry } from "@/types";
+import type { RosterEntry } from "@clubstack/shared";
 
 interface AvailabilityGridProps {
   initialData: ArtistAvailability[];

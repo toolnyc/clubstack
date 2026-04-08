@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NotificationSettings } from "./notification-settings";
-import type { NotificationPreference } from "@/types";
+import type { NotificationPreference } from "@clubstack/shared";
 
 // Mock the server action — it lives outside the component boundary
 vi.mock("@/lib/notifications/preferences-actions", () => ({

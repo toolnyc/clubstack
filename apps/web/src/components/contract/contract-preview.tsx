@@ -1,4 +1,4 @@
-import type { ContractClause } from "@/types";
+import type { ContractClause } from "@clubstack/shared";
 
 interface ContractPreviewProps {
   clauses: ContractClause[];

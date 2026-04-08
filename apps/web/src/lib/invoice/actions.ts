@@ -2,7 +2,11 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { generateInvoiceNumber } from "./invoice-number";
-import type { Invoice, InvoiceLineItem, InvoiceStatus } from "@/types";
+import type {
+  Invoice,
+  InvoiceLineItem,
+  InvoiceStatus,
+} from "@clubstack/shared";
 
 export async function generateInvoice(bookingId: string) {
   const supabase = await createClient();

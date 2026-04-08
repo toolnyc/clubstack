@@ -6,7 +6,7 @@ import type { Column } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { InvoiceListEntry } from "@/lib/invoice/actions";
-import type { InvoiceStatus } from "@/types";
+import type { InvoiceStatus } from "@clubstack/shared";
 
 interface InvoiceListProps {
   invoices: InvoiceListEntry[];

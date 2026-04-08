@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { MessageThread } from "./message-thread";
 import { buildMessage } from "@/test/factories";
-import type { Message } from "@/types";
+import type { Message } from "@clubstack/shared";
 
 // Mock supabase client
 vi.mock("@/lib/supabase/client", () => ({
