@@ -43,13 +43,13 @@
 
 ### Week 3 — Auth + Onboarding (Mobile)
 
-| Day | Session (~1hr)                                              | Status |
-| --- | ----------------------------------------------------------- | ------ |
-| Mon | Login screen: email input → OTP, Supabase Auth from Expo    |        |
-| Tue | OTP verification screen + session persistence (SecureStore) |        |
-| Wed | Role selection screen (DJ / Agency)                         |        |
-| Thu | DJ onboarding: name, location, rate, photo upload           |        |
-| Fri | Agency onboarding: org name, link to profile                |        |
+| Day | Session (~1hr)                                              | Status                                           |
+| --- | ----------------------------------------------------------- | ------------------------------------------------ |
+| Mon | Login screen: email input → OTP, Supabase Auth from Expo    | Partial — built, needs device test               |
+| Tue | OTP verification screen + session persistence (SecureStore) | Partial — built, blocked by rate limits          |
+| Wed | Role selection screen (DJ / Agency)                         | Partial — built in onboarding, needs device test |
+| Thu | DJ onboarding: name, location, rate, photo upload           |                                                  |
+| Fri | Agency onboarding: org name, link to profile                |                                                  |
 
 ### Week 4 — DJ Profile + Rider
 

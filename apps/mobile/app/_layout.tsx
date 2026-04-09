@@ -5,12 +5,13 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -18,7 +19,6 @@ export {
 } from "expo-router";
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: "(tabs)",
 };
 
@@ -46,15 +46,51 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
+  );
+}
+
+function useProtectedRoute() {
+  const { session, profile, isLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (!session) {
+      // Not signed in — redirect to sign-in (unless already there)
+      if (!inAuthGroup) {
+        router.replace("/(auth)/sign-in");
+      }
+    } else if (!profile) {
+      // Signed in but no profile — redirect to onboarding
+      if (segments[1] !== "onboarding") {
+        router.replace("/(auth)/onboarding");
+      }
+    } else {
+      // Signed in with profile — redirect to tabs (unless already there)
+      if (inAuthGroup) {
+        router.replace("/(tabs)");
+      }
+    }
+  }, [session, profile, isLoading, segments, router]);
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+  useProtectedRoute();
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
