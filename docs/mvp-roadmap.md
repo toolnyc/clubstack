@@ -69,11 +69,11 @@
 - ~~Remove artist from roster~~ Done
 - ~~Roster ordering / notes~~ Done (up/down reorder + private notes)
 
-### Week 6 — Calendar Sync
+### Week 6 — Calendar Sync (Partial — OAuth, availability display, manual blocks done; multi-artist overlay + content remain)
 
-- Google OAuth from mobile (deep link to web OAuth, redirect back)
-- Display synced availability (week view from `calendar_cache`)
-- Manual availability blocks (create/edit `manual_availability`)
+- ~~Google OAuth from mobile (deep link to web OAuth, redirect back)~~ Done
+- ~~Display synced availability (month view from `calendar_cache`)~~ Done
+- ~~Manual availability blocks (create/edit `manual_availability`)~~ Done
 - Multi-artist availability overlay for agency view
 - Content: Substack Post 2 + start DJ interview loop
 
