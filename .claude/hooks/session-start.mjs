@@ -23,6 +23,7 @@ function formatProgress() {
   }
   if (p.buildPlan) {
     out += `\nBuild plan: ${p.buildPlan}`;
+    out += `\n→ Resume with /build`;
   }
   return out;
 }

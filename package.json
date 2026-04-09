@@ -14,6 +14,10 @@
     "test:watch": "pnpm --filter web test:watch",
     "e2e": "playwright test",
     "e2e:ui": "playwright test --ui",
+    "verify:mobile": "pnpm --filter mobile doctor && pnpm --filter mobile export:check",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
     "db:types": "supabase gen types typescript --local > packages/shared/src/database.ts",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
@@ -21,6 +25,7 @@
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
+    "@playwright/mcp": "^0.0.70",
     "@playwright/test": "^1.50.1",
     "glob": "^13.0.6",
     "lint-staged": "^15.4.3",

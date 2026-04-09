@@ -65,6 +65,7 @@ Follow this order strictly — each step depends on the previous:
    - Reference the UI Breakdown from the epic
    - Run `/design-check <file>` on each new TSX file as it's completed
    - Server Components by default; `'use client'` only when needed
+   - **Visual verification:** After building each page, use the Playwright MCP browser tool to navigate to the page URL, take an accessibility snapshot, and verify key elements from the epic's UI Breakdown are present. Fix missing elements before moving to next component.
    - **WIP checkpoint:**
      ```bash
      git add apps/web/src/app/ apps/web/src/components/
@@ -76,12 +77,18 @@ Follow this order strictly — each step depends on the previous:
    - Unit tests for business logic in lib/
    - Component tests for UI behavior
    - Architecture tests remain untouched unless adding new rules
+   - **E2E specs** (if feature has user-facing pages): Generate Playwright E2E specs in `e2e/<slug>.spec.ts` and verify with `pnpm e2e`
    - **WIP checkpoint:**
      ```bash
      git add apps/web/src/
      git commit -m "wip($ARGUMENTS): tests"
      node -e "import('./.claude/hooks/progress.mjs').then(p => { p.updateStep('verify'); p.writeProgress({ lastCommit: '$(git rev-parse --short HEAD)' }); })"
      ```
+
+5. **Independent verification** (if epic has acceptance criteria)
+   - Run `/verify-agent`
+   - If it reports failures: fix issues, re-run `/verify`, then `/verify-agent` again (max 1 retry)
+   - If no acceptance criteria in epic: skip this step
 
 ## Iteration Discipline
 

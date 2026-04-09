@@ -85,6 +85,8 @@ rm -f .claude/epics/.active
 | `/db-migrate`       | New table or schema change                                | `feature-active` | — (clears `types-current`) |
 | `/design-check`     | After building any UI                                     | `feature-active` | `design-checked`           |
 | `/verify`           | Before any commit                                         | `feature-active` | `verify-passed`            |
+| `/verify-agent`     | Independent QA after verify passes                        | `verify-passed`  | —                          |
+| `/build`            | Chain features from a build plan autonomously             | `BUILDPLAN.md`   | Per-feature sentinels      |
 | `/session-close`    | End of every session                                      | Nothing          | Clears all                 |
 | `/docs-sync`        | When docs feel stale                                      | Nothing          | —                          |
 | `/kb-prune`         | When knowledge base is cluttered                          | Nothing          | —                          |
@@ -112,5 +114,8 @@ Conventions established during development. Each entry has a rationale so future
 | Monorepo: web app in `apps/web/`, supabase at root        | 2026-04-05     | Support future React Native + shared packages        | pnpm-workspace.yaml + directory layout |
 | WIP commits during feature builds: `wip(slug): <step>`    | 2026-04-09     | Crash recovery + progress tracking via progress.json | feature SKILL.md                       |
 | Iteration caps: 2 verify / 3 fix-forward, with reflection | 2026-04-09     | Prevents stuck agent loops (Osmani: 67% reduction)   | feature SKILL.md                       |
+| Isolated verify agent after feature builds                | 2026-04-09     | Anti-sycophancy — independent QA never sees code     | verify-agent SKILL.md                  |
+| Playwright MCP for UI verification during builds          | 2026-04-09     | Agent can see rendered UI via accessibility tree     | .mcp.json + feature SKILL.md           |
+| Mobile verify conditional on `apps/mobile/` changes       | 2026-04-09     | Skip expo-doctor/export when only web files changed  | verify SKILL.md                        |
 
 _Add new rows here when a convention is established. Include the session report date if applicable._

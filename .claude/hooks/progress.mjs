@@ -8,6 +8,7 @@ const EMPTY = {
   buildPlan: null,
   currentFeature: null,
   currentStep: null,
+  currentEpicIndex: 0,
   completedFeatures: [],
   blockers: [],
   lastCommit: null,
