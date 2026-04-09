@@ -42,7 +42,7 @@ create or replace view compliance_task_status as
 select
   dp.id as dj_profile_id,
   dp.user_id,
-  dp.display_name,
+  dp.name,
   dp.stripe_account_id,
   dp.w9_status,
   dp.w9_completed_at,

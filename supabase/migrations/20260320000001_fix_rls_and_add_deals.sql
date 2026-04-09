@@ -215,14 +215,14 @@ create policy "Thread participants can send messages"
   );
 
 -- ─── travel ───────────────────────────────────────────────────────────────────
-drop policy if exists "Travel follows booking access" on travel;
+drop policy if exists "Travel follows booking access" on booking_travel;
 
 create policy "Travel follows booking access"
-  on travel for select
+  on booking_travel for select
   using (
     exists (
       select 1 from bookings b
-      where b.id = travel.booking_id
+      where b.id = booking_travel.booking_id
         and (
           b.created_by = auth.uid()
           or b.payer_user_id = auth.uid()

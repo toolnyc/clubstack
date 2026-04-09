@@ -7,11 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.4";
-  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -83,6 +78,7 @@ export type Database = {
           id: string;
           invited_email: string | null;
           private_notes: string | null;
+          sort_order: number;
           status: string;
           updated_at: string | null;
         };
@@ -94,6 +90,7 @@ export type Database = {
           id?: string;
           invited_email?: string | null;
           private_notes?: string | null;
+          sort_order?: number;
           status?: string;
           updated_at?: string | null;
         };
@@ -105,6 +102,7 @@ export type Database = {
           id?: string;
           invited_email?: string | null;
           private_notes?: string | null;
+          sort_order?: number;
           status?: string;
           updated_at?: string | null;
         };
@@ -120,7 +118,55 @@ export type Database = {
             foreignKeyName: "agency_artists_dj_profile_id_fkey";
             columns: ["dj_profile_id"];
             isOneToOne: false;
+            referencedRelation: "compliance_task_status";
+            referencedColumns: ["dj_profile_id"];
+          },
+          {
+            foreignKeyName: "agency_artists_dj_profile_id_fkey";
+            columns: ["dj_profile_id"];
+            isOneToOne: false;
             referencedRelation: "dj_profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      booking_access_tokens: {
+        Row: {
+          booking_id: string;
+          created_at: string | null;
+          email: string;
+          expires_at: string;
+          id: string;
+          role: string;
+          token: string;
+          used_at: string | null;
+        };
+        Insert: {
+          booking_id: string;
+          created_at?: string | null;
+          email: string;
+          expires_at: string;
+          id?: string;
+          role: string;
+          token: string;
+          used_at?: string | null;
+        };
+        Update: {
+          booking_id?: string;
+          created_at?: string | null;
+          email?: string;
+          expires_at?: string;
+          id?: string;
+          role?: string;
+          token?: string;
+          used_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "booking_access_tokens_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
             referencedColumns: ["id"];
           },
         ];
@@ -160,6 +206,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "bookings";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "booking_artists_dj_profile_id_fkey";
+            columns: ["dj_profile_id"];
+            isOneToOne: false;
+            referencedRelation: "compliance_task_status";
+            referencedColumns: ["dj_profile_id"];
           },
           {
             foreignKeyName: "booking_artists_dj_profile_id_fkey";
@@ -210,6 +263,7 @@ export type Database = {
           booking_id: string;
           created_at: string | null;
           date: string;
+          end_time: string | null;
           event_name: string | null;
           id: string;
           load_in_time: string | null;
@@ -219,6 +273,7 @@ export type Database = {
           booking_id: string;
           created_at?: string | null;
           date: string;
+          end_time?: string | null;
           event_name?: string | null;
           id?: string;
           load_in_time?: string | null;
@@ -228,6 +283,7 @@ export type Database = {
           booking_id?: string;
           created_at?: string | null;
           date?: string;
+          end_time?: string | null;
           event_name?: string | null;
           id?: string;
           load_in_time?: string | null;
@@ -426,8 +482,11 @@ export type Database = {
           calendar_id: string;
           created_at: string | null;
           id: string;
+          last_synced_at: string | null;
           provider: string;
           refresh_token: string;
+          sync_error: string | null;
+          sync_status: string;
           token_expires_at: string;
           updated_at: string | null;
           user_id: string;
@@ -437,8 +496,11 @@ export type Database = {
           calendar_id?: string;
           created_at?: string | null;
           id?: string;
+          last_synced_at?: string | null;
           provider?: string;
           refresh_token: string;
+          sync_error?: string | null;
+          sync_status?: string;
           token_expires_at: string;
           updated_at?: string | null;
           user_id: string;
@@ -448,8 +510,11 @@ export type Database = {
           calendar_id?: string;
           created_at?: string | null;
           id?: string;
+          last_synced_at?: string | null;
           provider?: string;
           refresh_token?: string;
+          sync_error?: string | null;
+          sync_status?: string;
           token_expires_at?: string;
           updated_at?: string | null;
           user_id?: string;
@@ -460,6 +525,58 @@ export type Database = {
             columns: ["user_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      calendar_event_mappings: {
+        Row: {
+          booking_date_id: string;
+          calendar_id: string;
+          created_at: string | null;
+          dj_profile_id: string;
+          gcal_event_id: string;
+          id: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          booking_date_id: string;
+          calendar_id?: string;
+          created_at?: string | null;
+          dj_profile_id: string;
+          gcal_event_id: string;
+          id?: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          booking_date_id?: string;
+          calendar_id?: string;
+          created_at?: string | null;
+          dj_profile_id?: string;
+          gcal_event_id?: string;
+          id?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "calendar_event_mappings_booking_date_id_fkey";
+            columns: ["booking_date_id"];
+            isOneToOne: false;
+            referencedRelation: "booking_dates";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "calendar_event_mappings_dj_profile_id_fkey";
+            columns: ["dj_profile_id"];
+            isOneToOne: false;
+            referencedRelation: "compliance_task_status";
+            referencedColumns: ["dj_profile_id"];
+          },
+          {
+            foreignKeyName: "calendar_event_mappings_dj_profile_id_fkey";
+            columns: ["dj_profile_id"];
+            isOneToOne: false;
+            referencedRelation: "dj_profiles";
             referencedColumns: ["id"];
           },
         ];
@@ -510,6 +627,7 @@ export type Database = {
       };
       contract_signatures: {
         Row: {
+          clause_snapshot: Json;
           contract_id: string;
           created_at: string | null;
           id: string;
@@ -521,9 +639,11 @@ export type Database = {
           signer_name: string;
           signer_role: string;
           signer_user_id: string | null;
+          token_hash: string | null;
           user_agent: string | null;
         };
         Insert: {
+          clause_snapshot?: Json;
           contract_id: string;
           created_at?: string | null;
           id?: string;
@@ -535,9 +655,11 @@ export type Database = {
           signer_name: string;
           signer_role: string;
           signer_user_id?: string | null;
+          token_hash?: string | null;
           user_agent?: string | null;
         };
         Update: {
+          clause_snapshot?: Json;
           contract_id?: string;
           created_at?: string | null;
           id?: string;
@@ -549,6 +671,7 @@ export type Database = {
           signer_name?: string;
           signer_role?: string;
           signer_user_id?: string | null;
+          token_hash?: string | null;
           user_agent?: string | null;
         };
         Relationships: [
@@ -606,54 +729,138 @@ export type Database = {
           },
         ];
       };
+      deals: {
+        Row: {
+          booking_id: string;
+          created_at: string | null;
+          currency: string;
+          gross_fee: number;
+          id: string;
+          release_disputed: boolean;
+          release_disputed_at: string | null;
+          release_disputed_by: string | null;
+          release_hours_after_gig: number;
+          released_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          booking_id: string;
+          created_at?: string | null;
+          currency?: string;
+          gross_fee: number;
+          id?: string;
+          release_disputed?: boolean;
+          release_disputed_at?: string | null;
+          release_disputed_by?: string | null;
+          release_hours_after_gig?: number;
+          released_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          booking_id?: string;
+          created_at?: string | null;
+          currency?: string;
+          gross_fee?: number;
+          id?: string;
+          release_disputed?: boolean;
+          release_disputed_at?: string | null;
+          release_disputed_by?: string | null;
+          release_hours_after_gig?: number;
+          released_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "deals_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: true;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "deals_release_disputed_by_fkey";
+            columns: ["release_disputed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       dj_profiles: {
         Row: {
+          avatar_url: string | null;
           bio: string | null;
           created_at: string | null;
+          field_visibility: Json;
+          genres: string[] | null;
           id: string;
           instagram_url: string | null;
           location: string | null;
           name: string;
+          press_kit: Json;
           rate_max: number | null;
           rate_min: number | null;
           slug: string;
           soundcloud_url: string | null;
           stripe_account_id: string | null;
           stripe_account_status: string | null;
+          stripe_kyc_status: string;
+          stripe_requirements: Json | null;
+          stripe_tin_provided: boolean;
           updated_at: string | null;
           user_id: string;
+          w9_completed_at: string | null;
+          w9_status: string;
         };
         Insert: {
+          avatar_url?: string | null;
           bio?: string | null;
           created_at?: string | null;
+          field_visibility?: Json;
+          genres?: string[] | null;
           id?: string;
           instagram_url?: string | null;
           location?: string | null;
           name: string;
+          press_kit?: Json;
           rate_max?: number | null;
           rate_min?: number | null;
           slug: string;
           soundcloud_url?: string | null;
           stripe_account_id?: string | null;
           stripe_account_status?: string | null;
+          stripe_kyc_status?: string;
+          stripe_requirements?: Json | null;
+          stripe_tin_provided?: boolean;
           updated_at?: string | null;
           user_id: string;
+          w9_completed_at?: string | null;
+          w9_status?: string;
         };
         Update: {
+          avatar_url?: string | null;
           bio?: string | null;
           created_at?: string | null;
+          field_visibility?: Json;
+          genres?: string[] | null;
           id?: string;
           instagram_url?: string | null;
           location?: string | null;
           name?: string;
+          press_kit?: Json;
           rate_max?: number | null;
           rate_min?: number | null;
           slug?: string;
           soundcloud_url?: string | null;
           stripe_account_id?: string | null;
           stripe_account_status?: string | null;
+          stripe_kyc_status?: string;
+          stripe_requirements?: Json | null;
+          stripe_tin_provided?: boolean;
           updated_at?: string | null;
           user_id?: string;
+          w9_completed_at?: string | null;
+          w9_status?: string;
         };
         Relationships: [
           {
@@ -1022,6 +1229,13 @@ export type Database = {
             foreignKeyName: "technical_riders_dj_profile_id_fkey";
             columns: ["dj_profile_id"];
             isOneToOne: false;
+            referencedRelation: "compliance_task_status";
+            referencedColumns: ["dj_profile_id"];
+          },
+          {
+            foreignKeyName: "technical_riders_dj_profile_id_fkey";
+            columns: ["dj_profile_id"];
+            isOneToOne: false;
             referencedRelation: "dj_profiles";
             referencedColumns: ["id"];
           },
@@ -1170,6 +1384,7 @@ export type Database = {
           id: string;
           name: string | null;
           role: string;
+          updated_at: string | null;
         };
         Insert: {
           created_at?: string | null;
@@ -1177,6 +1392,7 @@ export type Database = {
           id?: string;
           name?: string | null;
           role: string;
+          updated_at?: string | null;
         };
         Update: {
           created_at?: string | null;
@@ -1184,12 +1400,62 @@ export type Database = {
           id?: string;
           name?: string | null;
           role?: string;
+          updated_at?: string | null;
         };
         Relationships: [];
       };
     };
     Views: {
-      [_ in never]: never;
+      compliance_task_status: {
+        Row: {
+          dj_profile_id: string | null;
+          name: string | null;
+          outstanding_tasks: string[] | null;
+          payout_blocked: boolean | null;
+          stripe_account_id: string | null;
+          stripe_kyc_status: string | null;
+          stripe_requirements: Json | null;
+          stripe_tin_provided: boolean | null;
+          user_id: string | null;
+          w9_completed_at: string | null;
+          w9_status: string | null;
+        };
+        Insert: {
+          dj_profile_id?: string | null;
+          name?: string | null;
+          outstanding_tasks?: never;
+          payout_blocked?: never;
+          stripe_account_id?: string | null;
+          stripe_kyc_status?: string | null;
+          stripe_requirements?: Json | null;
+          stripe_tin_provided?: boolean | null;
+          user_id?: string | null;
+          w9_completed_at?: string | null;
+          w9_status?: string | null;
+        };
+        Update: {
+          dj_profile_id?: string | null;
+          name?: string | null;
+          outstanding_tasks?: never;
+          payout_blocked?: never;
+          stripe_account_id?: string | null;
+          stripe_kyc_status?: string | null;
+          stripe_requirements?: Json | null;
+          stripe_tin_provided?: boolean | null;
+          user_id?: string | null;
+          w9_completed_at?: string | null;
+          w9_status?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "dj_profiles_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       [_ in never]: never;
