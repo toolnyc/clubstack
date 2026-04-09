@@ -1,7 +1,7 @@
 ---
 slug: technical-rider-mobile
 created: 2026-04-09
-status: draft
+status: completed
 ---
 
 # Epic: Technical Rider Mobile
