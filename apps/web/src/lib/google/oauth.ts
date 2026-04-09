@@ -36,7 +36,10 @@ interface TokenResponse {
   token_type: string;
 }
 
-async function exchangeCodeForTokens(code: string): Promise<TokenResponse> {
+async function exchangeCodeForTokens(
+  code: string,
+  redirectUri?: string
+): Promise<TokenResponse> {
   const res = await fetch(GOOGLE_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -44,7 +47,7 @@ async function exchangeCodeForTokens(code: string): Promise<TokenResponse> {
       code,
       client_id: process.env.GOOGLE_CLIENT_ID!,
       client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirect_uri: getRedirectUri(),
+      redirect_uri: redirectUri ?? getRedirectUri(),
       grant_type: "authorization_code",
     }),
   });
