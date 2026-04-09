@@ -1,7 +1,7 @@
 ---
 slug: calendar-availability
 created: 2026-04-09
-status: draft
+status: completed
 ---
 
 # Epic: Calendar Availability (Mobile)
