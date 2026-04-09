@@ -1,18 +1,20 @@
 import { StyleSheet } from "react-native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
+import { Text, View, useThemeColor } from "@/components/Themed";
+import { useAuth } from "@/lib/auth-context";
 
-export default function TabOneScreen() {
+export default function HomeScreen() {
+  const { profile } = useAuth();
+  const tint = useThemeColor({}, "tint");
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+      <FontAwesome name="headphones" size={48} color={tint} />
+      <Text style={styles.title}>
+        Welcome{profile?.display_name ? `, ${profile.display_name}` : ""}
+      </Text>
+      <Text style={styles.subtitle}>Your dashboard is coming soon</Text>
     </View>
   );
 }
@@ -22,14 +24,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    gap: 12,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  subtitle: {
+    fontSize: 14,
+    color: "#999",
   },
 });

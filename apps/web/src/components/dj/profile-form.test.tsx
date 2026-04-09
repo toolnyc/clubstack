@@ -50,6 +50,10 @@ describe("ProfileForm", () => {
           instagram_url: null,
           location: "Brooklyn, NY",
           bio: "Deep house vibes",
+          avatar_url: null,
+          genres: null,
+          field_visibility: {},
+          press_kit: {},
           created_at: "",
           updated_at: "",
         }}
