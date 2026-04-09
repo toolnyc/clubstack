@@ -1,7 +1,7 @@
 ---
 slug: agency-roster-mobile
 created: 2026-04-09
-status: draft
+status: completed
 ---
 
 # Epic: Agency Roster Mobile
