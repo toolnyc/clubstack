@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
+import { useAuth } from "@/lib/auth-context";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -14,6 +15,8 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { profile } = useAuth();
+  const isAgency = profile?.user_type === "agency";
 
   return (
     <Tabs
@@ -27,6 +30,14 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="roster"
+        options={{
+          title: "Roster",
+          tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
+          href: isAgency ? undefined : null,
         }}
       />
       <Tabs.Screen
