@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { canTransition, type BookingStatusOrCancelled } from "./status-machine";
-import type { Booking } from "@clubstack/shared";
+import type { Booking, CreateBookingInput } from "@clubstack/shared";
 
 const bookingSchema = z.object({
   venue_id: z.string().uuid().optional(),
@@ -34,33 +34,6 @@ const costSchema = z.object({
     .enum(["travel", "accommodation", "equipment", "other"])
     .optional(),
 });
-
-export interface CreateBookingInput {
-  booking: {
-    venue_id?: string;
-    promoter_id?: string;
-    payer_type?: "venue" | "promoter";
-    payer_user_id?: string;
-    notes?: string;
-  };
-  dates: {
-    date: string;
-    set_time?: string;
-    load_in_time?: string;
-    event_name?: string;
-  }[];
-  artists: {
-    dj_profile_id: string;
-    fee: number;
-    commission_pct?: number;
-    payment_split_pct?: number;
-  }[];
-  costs: {
-    description: string;
-    amount: number;
-    category?: "travel" | "accommodation" | "equipment" | "other";
-  }[];
-}
 
 export async function createBooking(input: CreateBookingInput) {
   const supabase = await createClient();

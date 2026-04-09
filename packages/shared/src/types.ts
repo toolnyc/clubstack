@@ -381,6 +381,33 @@ export interface BookingTravel {
   updated_at: string;
 }
 
+export interface CreateBookingInput {
+  booking: {
+    venue_id?: string;
+    promoter_id?: string;
+    payer_type?: "venue" | "promoter";
+    payer_user_id?: string;
+    notes?: string;
+  };
+  dates: {
+    date: string;
+    set_time?: string;
+    load_in_time?: string;
+    event_name?: string;
+  }[];
+  artists: {
+    dj_profile_id: string;
+    fee: number;
+    commission_pct?: number;
+    payment_split_pct?: number;
+  }[];
+  costs: {
+    description: string;
+    amount: number;
+    category?: "travel" | "accommodation" | "equipment" | "other";
+  }[];
+}
+
 export type NotificationType =
   | "contract_sent"
   | "contract_signed"
