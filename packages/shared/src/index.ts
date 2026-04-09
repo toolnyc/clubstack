@@ -1,4 +1,5 @@
 export * from "./types";
+export { generateSlug } from "./slug";
 export type { Database, Json } from "./database";
 export type {
   Tables,

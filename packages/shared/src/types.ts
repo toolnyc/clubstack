@@ -33,6 +33,37 @@ export interface CalendarDay {
   status: "available" | "busy";
 }
 
+export type FieldVisibilityLevel = "public" | "private" | "agent-only";
+
+export interface FieldVisibility {
+  rate?: FieldVisibilityLevel;
+  location?: FieldVisibilityLevel;
+  bio?: FieldVisibilityLevel;
+  social_links?: FieldVisibilityLevel;
+  press_kit?: FieldVisibilityLevel;
+  rider?: FieldVisibilityLevel;
+  calendar?: FieldVisibilityLevel;
+}
+
+export interface PressKitFile {
+  url: string;
+  name: string;
+  type: string;
+  uploaded_at: string;
+}
+
+export interface PressKitLink {
+  url: string;
+  label: string;
+}
+
+export interface PressKit {
+  mixes?: PressKitFile[];
+  photos?: PressKitFile[];
+  one_sheets?: PressKitFile[];
+  links?: PressKitLink[];
+}
+
 export interface DJProfile {
   id: string;
   user_id: string;
@@ -44,6 +75,10 @@ export interface DJProfile {
   instagram_url: string | null;
   location: string | null;
   bio: string | null;
+  avatar_url: string | null;
+  genres: string[] | null;
+  field_visibility: FieldVisibility;
+  press_kit: PressKit;
   created_at: string;
   updated_at: string;
 }

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { generateSlug } from "@/lib/slug";
+import { generateSlug } from "@clubstack/shared";
 import { z } from "zod";
 
 const djProfileSchema = z.object({
