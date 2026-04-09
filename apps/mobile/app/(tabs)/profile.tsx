@@ -14,6 +14,10 @@ import { Text, View, useThemeColor } from "@/components/Themed";
 import { useAuth } from "@/lib/auth-context";
 import { useDJProfile } from "@/lib/use-dj-profile";
 import { getRiderSummary, pickAndUploadAvatar } from "@/lib/dj-profile";
+import {
+  getConnectionStatus,
+  type CalendarConnectionStatus,
+} from "@/lib/calendar";
 
 export default function ProfileScreen() {
   const { profile, user } = useAuth();
@@ -25,6 +29,8 @@ export default function ProfileScreen() {
     has_rider: boolean;
   } | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [calendarStatus, setCalendarStatus] =
+    useState<CalendarConnectionStatus | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -32,6 +38,7 @@ export default function ProfileScreen() {
       if (djProfile?.id) {
         getRiderSummary(djProfile.id).then(setRiderSummary);
       }
+      getConnectionStatus().then(setCalendarStatus);
     }, [refresh, djProfile?.id])
   );
 
@@ -247,13 +254,43 @@ export default function ProfileScreen() {
         )}
       </Pressable>
 
-      {/* Calendar Teaser */}
-      <Pressable style={styles.card}>
+      {/* Calendar / Availability */}
+      <Pressable
+        style={styles.card}
+        onPress={() => router.push("/profile/calendar")}
+      >
         <View style={styles.cardHeader}>
           <FontAwesome name="calendar" size={18} color={tint} />
           <Text style={styles.cardTitle}>Availability</Text>
+          <FontAwesome
+            name="chevron-right"
+            size={14}
+            color="#999"
+            style={{ marginLeft: "auto" }}
+          />
         </View>
-        <Text style={styles.placeholder}>Connect your calendar</Text>
+        {calendarStatus?.connected ? (
+          <View style={styles.calendarStatus}>
+            <View
+              style={[
+                styles.calendarDot,
+                {
+                  backgroundColor:
+                    calendarStatus.syncStatus === "error"
+                      ? "#e74c3c"
+                      : "#2ecc71",
+                },
+              ]}
+            />
+            <Text style={styles.body}>
+              {calendarStatus.syncStatus === "error"
+                ? "Sync error"
+                : "Calendar connected"}
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.placeholder}>Connect your calendar</Text>
+        )}
       </Pressable>
 
       {/* Edit Button */}
@@ -360,6 +397,17 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 16, fontWeight: "600" },
   placeholder: { fontSize: 14, color: "#999", fontStyle: "italic" },
+  calendarStatus: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: "transparent",
+  },
+  calendarDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
   editButton: {
     flexDirection: "row",
     alignItems: "center",
