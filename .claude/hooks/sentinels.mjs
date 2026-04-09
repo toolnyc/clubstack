@@ -1,7 +1,7 @@
 import { existsSync, statSync, writeFileSync, unlinkSync, mkdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-const STATE_DIR = '.claude/state';
+export const STATE_DIR = '.claude/state';
 
 const FILES = {
   epicCreated:    join(STATE_DIR, 'epic-created'),

@@ -1,5 +1,31 @@
 import { check, set } from './sentinels.mjs';
+import { readProgress } from './progress.mjs';
 import { execSync } from 'child_process';
+
+function formatProgress() {
+  const p = readProgress();
+  if (!p.currentFeature && p.completedFeatures.length === 0 && p.blockers.length === 0) return '';
+
+  let out = '\n\n--- Build Progress ---';
+  if (p.currentFeature) {
+    out += `\nFeature: ${p.currentFeature}`;
+    out += `\nStep: ${p.currentStep || 'unknown'}`;
+  }
+  if (p.completedFeatures.length > 0) {
+    out += `\nCompleted: ${p.completedFeatures.join(', ')}`;
+  }
+  if (p.blockers.length > 0) {
+    const latest = p.blockers[p.blockers.length - 1];
+    out += `\nLatest blocker: ${latest.feature}/${latest.step} — ${latest.error}`;
+  }
+  if (p.lastCommit) {
+    out += `\nLast WIP commit: ${p.lastCommit}`;
+  }
+  if (p.buildPlan) {
+    out += `\nBuild plan: ${p.buildPlan}`;
+  }
+  return out;
+}
 
 let raw = '';
 process.stdin.setEncoding('utf8');
@@ -16,13 +42,15 @@ process.stdin.on('end', () => {
     currentBranch = execSync('git branch --show-current 2>/dev/null', { encoding: 'utf8' }).trim();
   } catch {}
 
+  const progressContext = formatProgress();
+
   // --- RESUME: session reconnected with full context ---
   if (event === 'resume' && prev.exists) {
     const age = prev.age || '?';
     const msg = `Session resumed (started ${prev.data?.timestamp || 'unknown'}, ${age}h ago, branch "${prev.data?.branch || 'unknown'}").
 You have full conversation context. Before continuing:
 • If the previous work is done, run /session-close to capture the report.
-• Otherwise, continue where you left off.`;
+• Otherwise, continue where you left off.${progressContext}`;
 
     const output = {
       hookSpecificOutput: {
@@ -40,7 +68,7 @@ You have full conversation context. Before continuing:
     const msg = `Context was just compressed — conversation details have been summarized.
 Save important decisions to memory NOW before more detail is lost:
 • Key decisions or conventions from this session → save to memory files
-• If the session is wrapping up, run /session-close while you still have context.`;
+• If the session is wrapping up, run /session-close while you still have context.${progressContext}`;
 
     const output = {
       hookSpecificOutput: {
@@ -75,7 +103,7 @@ Save important decisions to memory NOW before more detail is lost:
 
     const warning = `⚠ Previous session did not close cleanly.
 Started ${since || 'unknown time'} on branch "${prevBranch}" (${age}h ago).
-${gitSummary}
+${gitSummary}${progressContext}
 
 → Run /session-close now to write the missed report, or say "skip" to continue without one.`;
 

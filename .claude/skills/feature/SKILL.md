@@ -32,6 +32,8 @@ node -e "import('./.claude/hooks/sentinels.mjs').then(s => {
   s.clear('verifyPassed');
   s.clear('designChecked');
 })"
+# Initialize progress tracking
+node -e "import('./.claude/hooks/progress.mjs').then(p => p.writeProgress({ currentFeature: '$ARGUMENTS', currentStep: 'schema' }))"
 ```
 
 ## Build Order
@@ -41,21 +43,79 @@ Follow this order strictly — each step depends on the previous:
 1. **Schema** (if Data Model in epic is not "None")
    - Run `/db-migrate <migration-name>`
    - Wait for `pnpm db:types` to complete and types-current sentinel to be set
+   - **WIP checkpoint:**
+     ```bash
+     git add supabase/migrations/ apps/web/src/lib/supabase/database.types.ts
+     git commit -m "wip($ARGUMENTS): schema"
+     node -e "import('./.claude/hooks/progress.mjs').then(p => { p.updateStep('server'); p.writeProgress({ lastCommit: '$(git rev-parse --short HEAD)' }); })"
+     ```
 
 2. **Server layer** — server actions and/or route handlers
    - Reference the API Surface from the epic
    - All logic in `src/lib/<domain>/actions.ts` or similar
    - No Supabase imports outside `src/lib/supabase/`
+   - **WIP checkpoint:**
+     ```bash
+     git add apps/web/src/lib/
+     git commit -m "wip($ARGUMENTS): server layer"
+     node -e "import('./.claude/hooks/progress.mjs').then(p => { p.updateStep('ui'); p.writeProgress({ lastCommit: '$(git rev-parse --short HEAD)' }); })"
+     ```
 
 3. **UI layer** — components and pages
    - Reference the UI Breakdown from the epic
    - Run `/design-check <file>` on each new TSX file as it's completed
    - Server Components by default; `'use client'` only when needed
+   - **WIP checkpoint:**
+     ```bash
+     git add apps/web/src/app/ apps/web/src/components/
+     git commit -m "wip($ARGUMENTS): ui components"
+     node -e "import('./.claude/hooks/progress.mjs').then(p => { p.updateStep('tests'); p.writeProgress({ lastCommit: '$(git rev-parse --short HEAD)' }); })"
+     ```
 
 4. **Tests** — colocated with source files
    - Unit tests for business logic in lib/
    - Component tests for UI behavior
    - Architecture tests remain untouched unless adding new rules
+   - **WIP checkpoint:**
+     ```bash
+     git add apps/web/src/
+     git commit -m "wip($ARGUMENTS): tests"
+     node -e "import('./.claude/hooks/progress.mjs').then(p => { p.updateStep('verify'); p.writeProgress({ lastCommit: '$(git rev-parse --short HEAD)' }); })"
+     ```
+
+## Iteration Discipline
+
+Caps prevent infinite loops. Reflection prevents repeated mistakes.
+
+### Limits
+
+- **Max verify attempts:** 2 — if `pnpm lint && pnpm test && pnpm build` fails twice, stop.
+- **Max fix-forward loops per step:** 3 — if a step's code fails lint/typecheck 3 times, stop.
+
+### Before Each Retry
+
+STOP and reflect before retrying. Answer these three questions explicitly:
+
+1. What exactly failed? (paste the error, not a summary)
+2. Why did my previous fix not work?
+3. What is different about this attempt?
+
+Do not retry without writing these answers. This forced reflection cuts stuck-agent loops by 67% (Osmani research).
+
+### On Cap Hit
+
+When a limit is reached:
+
+1. Commit whatever currently works:
+   ```bash
+   git add -A && git commit -m "wip($ARGUMENTS): partial — <step> blocked"
+   ```
+2. Log the blocker:
+   ```bash
+   node -e "import('./.claude/hooks/progress.mjs').then(p => p.addBlocker('$ARGUMENTS', '<step>', '<error summary>'))"
+   ```
+3. Report to user: "Blocked on `<step>` after N attempts. Error: `<summary>`. Committed partial progress."
+4. Move to the next step if possible, or stop the feature build.
 
 ## Verification
 
@@ -70,9 +130,13 @@ On clean pass:
 
 ```bash
 node -e "import('./.claude/hooks/sentinels.mjs').then(s => s.set('verifyPassed', { epic: '$ARGUMENTS' }))"
+# Final feature commit on top of WIP history
+git add -A
+git commit -m "feat($ARGUMENTS): <description from epic>"
+node -e "import('./.claude/hooks/progress.mjs').then(p => p.completeFeature('$ARGUMENTS'))"
 ```
 
-On failure: fix-forward. Never skip a test or disable a lint rule.
+On failure: fix-forward, but respect iteration caps (see Iteration Discipline above). Before each retry, perform the mandatory 3-question reflection. Never skip a test or disable a lint rule.
 
 ## Closeout
 
