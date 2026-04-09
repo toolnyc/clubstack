@@ -222,10 +222,19 @@ export default function ProfileScreen() {
       </View>
 
       {/* Rider Summary Card */}
-      <Pressable style={styles.card}>
+      <Pressable
+        style={styles.card}
+        onPress={() => router.push("/profile/rider")}
+      >
         <View style={styles.cardHeader}>
           <FontAwesome name="sliders" size={18} color={tint} />
           <Text style={styles.cardTitle}>Technical Rider</Text>
+          <FontAwesome
+            name="chevron-right"
+            size={14}
+            color="#999"
+            style={{ marginLeft: "auto" }}
+          />
         </View>
         {riderSummary ? (
           <Text style={styles.body}>
