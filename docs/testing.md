@@ -22,6 +22,19 @@ pnpm e2e:ui        # Playwright UI mode
 - Test behavior, not implementation — assert on what the user sees, not internal state
 - Use shared factories for test data (see `apps/web/src/test/factories.ts` if it exists)
 - No mocking Supabase in integration tests — use MSW for API boundaries
+- Local Supabase seed data in `supabase/seed.sql` — deterministic fixtures for agencies, DJs, bookings, payments
+
+## Mobile Verification
+
+The `/verify` skill conditionally runs mobile checks when `apps/mobile/` files have changed:
+
+```bash
+pnpm verify:mobile    # expo-doctor + expo export --platform web
+```
+
+- `expo-doctor` validates package compatibility
+- `expo export --platform web` catches ~70% of build issues without native toolchain
+- Full native testing (Maestro, device tests) deferred to Phase 1C
 
 ## Architecture Tests
 

@@ -17,7 +17,7 @@ Turn today's high-level roadmap item into 3–5 specific, buildable subtasks for
    - Note the phase and week for context
 
 2. Explore the codebase to understand what exists:
-   - Grep for related code in `src/lib/`, `src/components/`, `src/app/`, `apps/`
+   - Grep for related code in `apps/web/src/lib/`, `apps/web/src/components/`, `apps/web/src/app/`, `apps/mobile/`
    - Read any files that will be touched
    - Check `supabase/migrations/` if DB tables are involved
    - Check if an epic already exists for this work
@@ -50,7 +50,7 @@ Phase: <phase> | Week: <week> | Day: <day>
 <yes/no — if yes, suggest the epic description to run>
 ```
 
-5. If the task requires new files in `src/` or `supabase/migrations/`:
+5. If the task requires new files in `apps/web/src/`, `apps/mobile/`, or `supabase/migrations/`:
    - Check `.claude/state/feature-active` — if not set, note that `/epic` + `/feature` must run first
    - Suggest the epic description to use
 

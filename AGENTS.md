@@ -182,6 +182,9 @@ For other models, domain reference material is documented below.
 | `/db-migrate`       | Create and run a Supabase migration               | `feature-active` | — (clears `types-current`) |
 | `/design-check`     | Verify component matches design system            | `feature-active` | `design-checked`           |
 | `/verify`           | Full lint + test + build loop                     | `feature-active` | `verify-passed`            |
+| `/verify-agent`     | Independent QA — isolated agent tests via browser | `verify-passed`  | —                          |
+| `/build`            | Chain features autonomously from BUILDPLAN.md     | `BUILDPLAN.md`   | Per-feature sentinels      |
+| `/decompose`        | Break roadmap block into buildable subtasks       | Nothing          | —                          |
 | `/session-close`    | End-of-session capture, clear sentinels           | Nothing          | Clears all                 |
 | `/docs-sync`        | Update CLAUDE.md, skills, and docs/ to match code | Nothing          | —                          |
 | `/kb-prune`         | Remove stale content from docs                    | Nothing          | —                          |
