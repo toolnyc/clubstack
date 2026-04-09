@@ -33,6 +33,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="bookings"
+        options={{
+          title: "Bookings",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="calendar" color={color} />
+          ),
+          href: isAgency ? undefined : null,
+        }}
+      />
+      <Tabs.Screen
         name="roster"
         options={{
           title: "Roster",
