@@ -98,17 +98,19 @@ rm -f .claude/epics/.active
 
 Conventions established during development. Each entry has a rationale so future decisions can be made consistently.
 
-| Convention                                         | Since          | Why                                           | Enforced By                            |
-| -------------------------------------------------- | -------------- | --------------------------------------------- | -------------------------------------- |
-| Knock for all booking notifications                | MVP            | Single channel, avoids Resend/Knock split     | CLAUDE.md rule                         |
-| Resend only for marketing emails (waitlist)        | MVP            | Knock not appropriate for non-user comms      | CLAUDE.md rule                         |
-| Payments/transfers server-only                     | MVP            | Security — RLS `false` on these tables        | RLS + architecture.test.ts             |
-| TIN/SSN never stored in DB                         | MVP            | Compliance — Stripe vaults sensitive tax data | CLAUDE.md rule                         |
-| No `@supabase/*` imports outside `lib/supabase/`   | MVP            | Service layer isolation                       | architecture.test.ts                   |
-| RLS mandatory on every table                       | MVP            | Security baseline                             | architecture.test.ts + schema hook     |
-| Tailwind only — no CSS modules or inline styles    | MVP            | Consistency                                   | architecture.test.ts + tsx design hook |
-| New feature requires epic first                    | Agentic system | Quality gate — no unplanned code              | pre-tool hook (hard block)             |
-| /verify before any commit                          | Agentic system | Catch regressions before they land            | pre-tool hook (soft warn)              |
-| Monorepo: web app in `apps/web/`, supabase at root | 2026-04-05     | Support future React Native + shared packages | pnpm-workspace.yaml + directory layout |
+| Convention                                                | Since          | Why                                                  | Enforced By                            |
+| --------------------------------------------------------- | -------------- | ---------------------------------------------------- | -------------------------------------- |
+| Knock for all booking notifications                       | MVP            | Single channel, avoids Resend/Knock split            | CLAUDE.md rule                         |
+| Resend only for marketing emails (waitlist)               | MVP            | Knock not appropriate for non-user comms             | CLAUDE.md rule                         |
+| Payments/transfers server-only                            | MVP            | Security — RLS `false` on these tables               | RLS + architecture.test.ts             |
+| TIN/SSN never stored in DB                                | MVP            | Compliance — Stripe vaults sensitive tax data        | CLAUDE.md rule                         |
+| No `@supabase/*` imports outside `lib/supabase/`          | MVP            | Service layer isolation                              | architecture.test.ts                   |
+| RLS mandatory on every table                              | MVP            | Security baseline                                    | architecture.test.ts + schema hook     |
+| Tailwind only — no CSS modules or inline styles           | MVP            | Consistency                                          | architecture.test.ts + tsx design hook |
+| New feature requires epic first                           | Agentic system | Quality gate — no unplanned code                     | pre-tool hook (hard block)             |
+| /verify before any commit                                 | Agentic system | Catch regressions before they land                   | pre-tool hook (soft warn)              |
+| Monorepo: web app in `apps/web/`, supabase at root        | 2026-04-05     | Support future React Native + shared packages        | pnpm-workspace.yaml + directory layout |
+| WIP commits during feature builds: `wip(slug): <step>`    | 2026-04-09     | Crash recovery + progress tracking via progress.json | feature SKILL.md                       |
+| Iteration caps: 2 verify / 3 fix-forward, with reflection | 2026-04-09     | Prevents stuck agent loops (Osmani: 67% reduction)   | feature SKILL.md                       |
 
 _Add new rows here when a convention is established. Include the session report date if applicable._
