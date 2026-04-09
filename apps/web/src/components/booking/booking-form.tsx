@@ -8,8 +8,12 @@ import { StepDates } from "./step-dates";
 import { StepArtists } from "./step-artists";
 import { StepCostsReview } from "./step-costs-review";
 import { createBooking } from "@/lib/booking/actions";
-import type { CreateBookingInput } from "@/lib/booking/actions";
-import type { Venue, Promoter, RosterEntry } from "@clubstack/shared";
+import type {
+  CreateBookingInput,
+  Venue,
+  Promoter,
+  RosterEntry,
+} from "@clubstack/shared";
 
 interface BookingFormProps {
   venues: Venue[];

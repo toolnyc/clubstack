@@ -3,7 +3,7 @@ import {
   createClientFromRequest,
   unauthorizedResponse,
 } from "@/lib/supabase/api";
-import type { Booking, CreateBookingInput } from "@clubstack/shared";
+import type { Booking } from "@clubstack/shared";
 import { z } from "zod";
 import { createBookingFromClient } from "@/lib/booking/booking-api";
 
