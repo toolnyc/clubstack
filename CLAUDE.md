@@ -118,5 +118,6 @@ Conventions established during development. Each entry has a rationale so future
 | Isolated verify agent after feature builds                     | 2026-04-09     | Anti-sycophancy — independent QA never sees code     | verify-agent SKILL.md                  |
 | Playwright MCP for UI verification during builds               | 2026-04-09     | Agent can see rendered UI via accessibility tree     | .mcp.json + feature SKILL.md           |
 | Mobile verify conditional on `apps/mobile/` changes            | 2026-04-09     | Skip expo-doctor/export when only web files changed  | verify SKILL.md                        |
+| Mobile admin ops via Next.js API routes                        | 2026-04-09     | RPC/service-role calls can't run from mobile client  | CLAUDE.md rule                         |
 
 _Add new rows here when a convention is established. Include the session report date if applicable._

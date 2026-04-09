@@ -55,19 +55,19 @@
 
 | Day | Session (~1hr)                                                         | Status |
 | --- | ---------------------------------------------------------------------- | ------ |
-| Mon | DJ profile view (read from `dj_profiles`, display in native)           |        |
-| Tue | DJ profile edit screen (bio, rate, SoundCloud, location)               |        |
-| Wed | Technical rider: view + basic edit (reads/writes `technical_riders`)   |        |
-| Thu | Profile photo: ImagePicker → Supabase Storage → profile avatar         |        |
+| Mon | DJ profile view (read from `dj_profiles`, display in native)           | Done   |
+| Tue | DJ profile edit screen (bio, rate, SoundCloud, location)               | Done   |
+| Wed | Technical rider: view + basic edit (reads/writes `technical_riders`)   | Done   |
+| Thu | Profile photo: ImagePicker → Supabase Storage → profile avatar         | Done   |
 | Fri | Content: write + publish Substack Post 1 ("How DJs Actually Get Paid") |        |
 
-### Week 5 — Agency Roster
+### Week 5 — Agency Roster ✓
 
-- Roster list view (agency's artists from `agency_artists` + `dj_profiles`)
-- Add artist to roster (invite flow or direct add)
-- Artist detail view (profile, rate, availability)
-- Remove artist from roster
-- Roster ordering / notes
+- ~~Roster list view (agency's artists from `agency_artists` + `dj_profiles`)~~ Done
+- ~~Add artist to roster (invite flow or direct add)~~ Done (via API route)
+- ~~Artist detail view (profile, rate, availability)~~ Done (commission + notes edit)
+- ~~Remove artist from roster~~ Done
+- ~~Roster ordering / notes~~ Done (up/down reorder + private notes)
 
 ### Week 6 — Calendar Sync
 
