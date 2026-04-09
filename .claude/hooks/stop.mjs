@@ -39,10 +39,7 @@ ${parts.join(', ')}. Before closing:
 • If code was written: confirm /verify passed (or run it now)`;
 
   const output = {
-    hookSpecificOutput: {
-      hookEventName: 'Stop',
-      additionalContext: feedback
-    }
+    systemMessage: feedback
   };
   process.stdout.write(JSON.stringify(output));
   process.exit(0);
