@@ -7,7 +7,9 @@ import type {
   BookingTravel,
   CostCategory,
   CreateBookingInput,
+  Message,
   RosterEntry,
+  Thread,
 } from "@clubstack/shared";
 import type { DealSummary } from "./booking-types";
 
@@ -160,5 +162,27 @@ export async function removeTravel(bookingId: string, travelId: string) {
   return apiFetch<{ success: boolean }>(
     `/api/bookings/${bookingId}/travel/${travelId}`,
     { method: "DELETE" }
+  );
+}
+
+// --- Thread / Messages ---
+
+export type MessageWithSender = Message & {
+  sender: { full_name: string } | null;
+};
+
+export interface ThreadDetail {
+  thread: Thread;
+  messages: MessageWithSender[];
+}
+
+export async function getThread(bookingId: string) {
+  return apiFetch<ThreadDetail>(`/api/bookings/${bookingId}/thread`);
+}
+
+export async function sendMessage(bookingId: string, content: string) {
+  return apiFetch<MessageWithSender>(
+    `/api/bookings/${bookingId}/thread/messages`,
+    { method: "POST", body: JSON.stringify({ content }) }
   );
 }
