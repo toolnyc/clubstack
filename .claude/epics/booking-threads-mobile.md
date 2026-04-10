@@ -1,7 +1,7 @@
 ---
 slug: booking-threads-mobile
 created: 2026-04-09
-status: draft
+status: completed
 ---
 
 # Epic: Booking Threads — Mobile
