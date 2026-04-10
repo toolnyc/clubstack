@@ -77,7 +77,7 @@
 - Multi-artist availability overlay for agency view
 - Content: Substack Post 2 + start DJ interview loop
 
-### Week 7–8 — Booking Workflow (Partial — costs/travel done; threads + contracts remain)
+### Week 7–8 — Booking Workflow ✓
 
 - ~~Create booking: select artist(s), date(s), venue/promoter, fee~~ Done
 - ~~Booking detail view with status badge (draft → signed → paid → completed)~~ Done
@@ -85,15 +85,15 @@
 - ~~Deal math: fee + commission + expenses breakdown~~ Done
 - ~~Booking costs: add travel/accommodation line items~~ Done
 - ~~Status transitions: send offer, mark signed, etc.~~ Done
-- Booking threads: in-booking messaging
+- ~~Booking threads: in-booking messaging~~ Done
 
-### Week 9–10 — Contracts + PDF
+### Week 9–10 — Contracts + PDF (Partial — contracts done, PDF offer + content remain)
 
-- Contract builder: select template, customize clauses
-- Contract preview (react-pdf rendered)
+- ~~Contract builder: select template, customize clauses~~ Done
+- ~~Contract preview (react-pdf rendered)~~ Done (read-only clause view on mobile)
 - Branded PDF offer generation
-- E-signature flow (token-gated signing page — exists on web, link from mobile)
-- Contract audit log
+- ~~E-signature flow (token-gated signing page — exists on web, link from mobile)~~ Done
+- ~~Contract audit log~~ Done (existed from web build)
 - Content: Substack Posts 3–4
 
 ---
