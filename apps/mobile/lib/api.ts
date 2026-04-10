@@ -5,10 +5,13 @@ import type {
   BookingArtist,
   BookingCost,
   BookingTravel,
+  Contract,
+  ContractClause,
   CostCategory,
   CreateBookingInput,
   Message,
   RosterEntry,
+  SignatureConfig,
   Thread,
 } from "@clubstack/shared";
 import type { DealSummary } from "./booking-types";
@@ -184,5 +187,50 @@ export async function sendMessage(bookingId: string, content: string) {
   return apiFetch<MessageWithSender>(
     `/api/bookings/${bookingId}/thread/messages`,
     { method: "POST", body: JSON.stringify({ content }) }
+  );
+}
+
+// --- Contract ---
+
+export interface ContractDetail {
+  contract: Contract;
+  clauses: ContractClause[];
+}
+
+export async function getContract(bookingId: string) {
+  return apiFetch<ContractDetail | null>(`/api/bookings/${bookingId}/contract`);
+}
+
+export async function createContract(bookingId: string) {
+  return apiFetch<ContractDetail>(`/api/bookings/${bookingId}/contract`, {
+    method: "POST",
+  });
+}
+
+export async function updateSignatureConfig(
+  bookingId: string,
+  signatureConfig: SignatureConfig
+) {
+  return apiFetch<Contract>(`/api/bookings/${bookingId}/contract`, {
+    method: "PATCH",
+    body: JSON.stringify({ signature_config: signatureConfig }),
+  });
+}
+
+export async function updateClause(
+  bookingId: string,
+  clauseId: string,
+  updates: { is_enabled?: boolean; content?: string }
+) {
+  return apiFetch<ContractClause>(
+    `/api/bookings/${bookingId}/contract/clauses/${clauseId}`,
+    { method: "PATCH", body: JSON.stringify(updates) }
+  );
+}
+
+export async function sendContractForSignature(bookingId: string) {
+  return apiFetch<{ signingUrl: string }>(
+    `/api/bookings/${bookingId}/contract/send`,
+    { method: "POST" }
   );
 }
