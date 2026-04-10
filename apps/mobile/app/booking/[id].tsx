@@ -34,6 +34,9 @@ import { DealMathCard } from "@/components/booking/deal-math-card";
 import { BookingStatusActions } from "@/components/booking/booking-status-actions";
 import { CostFormModal } from "@/components/booking/cost-form-modal";
 import { TravelFormModal } from "@/components/booking/travel-form-modal";
+import { shareOfferPdf } from "@/lib/offer-pdf";
+
+const OFFER_SHAREABLE_STATUSES: BookingStatus[] = ["draft", "contract_sent"];
 
 const TRAVEL_TYPE_LABELS: Record<TravelType, string> = {
   flight: "Flight",
@@ -63,6 +66,7 @@ export default function BookingDetailScreen() {
   const [dealMath, setDealMath] = useState<DealSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
+  const [sharingOffer, setSharingOffer] = useState(false);
 
   // Cost modal state
   const [costModalVisible, setCostModalVisible] = useState(false);
@@ -156,6 +160,21 @@ export default function BookingDetailScreen() {
   const handleEditTravel = (travel: BookingTravel) => {
     setEditingTravel(travel);
     setTravelModalVisible(true);
+  };
+
+  const handleShareOffer = async () => {
+    if (!id || sharingOffer) return;
+    setSharingOffer(true);
+    try {
+      await shareOfferPdf(id);
+    } catch (err) {
+      Alert.alert(
+        "Could not share offer",
+        err instanceof Error ? err.message : "Unknown error"
+      );
+    } finally {
+      setSharingOffer(false);
+    }
   };
 
   const handleDeleteTravel = (travel: BookingTravel) => {
@@ -344,6 +363,27 @@ export default function BookingDetailScreen() {
           <Text style={styles.messagesArrow}>→</Text>
         </Pressable>
 
+        {/* Share offer PDF */}
+        {OFFER_SHAREABLE_STATUSES.includes(booking.status as BookingStatus) ? (
+          <Pressable
+            style={[
+              styles.messagesRow,
+              sharingOffer ? styles.rowDisabled : null,
+            ]}
+            onPress={handleShareOffer}
+            disabled={sharingOffer}
+          >
+            <Text style={styles.sectionTitle}>
+              {sharingOffer ? "Preparing PDF…" : "Share Offer PDF"}
+            </Text>
+            {sharingOffer ? (
+              <ActivityIndicator color="#888" />
+            ) : (
+              <Text style={styles.messagesArrow}>↗</Text>
+            )}
+          </Pressable>
+        ) : null}
+
         {/* Deal Math */}
         {dealMath ? (
           <DealMathCard
@@ -500,6 +540,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 14,
     marginTop: 20,
+  },
+  rowDisabled: {
+    opacity: 0.6,
   },
   messagesArrow: {
     fontSize: 16,
