@@ -330,6 +330,20 @@ export default function BookingDetailScreen() {
           <Text style={styles.messagesArrow}>→</Text>
         </Pressable>
 
+        {/* Contract */}
+        <Pressable
+          style={styles.messagesRow}
+          onPress={() =>
+            router.push({
+              pathname: "/booking/contract",
+              params: { bookingId: id },
+            })
+          }
+        >
+          <Text style={styles.sectionTitle}>Contract</Text>
+          <Text style={styles.messagesArrow}>→</Text>
+        </Pressable>
+
         {/* Deal Math */}
         {dealMath ? (
           <DealMathCard
