@@ -77,13 +77,13 @@
 - Multi-artist availability overlay for agency view
 - Content: Substack Post 2 + start DJ interview loop
 
-### Week 7–8 — Booking Workflow (Partial — core CRUD + deal math done; costs, threads, content remain)
+### Week 7–8 — Booking Workflow (Partial — costs/travel done; threads + contracts remain)
 
 - ~~Create booking: select artist(s), date(s), venue/promoter, fee~~ Done
 - ~~Booking detail view with status badge (draft → signed → paid → completed)~~ Done
 - ~~Booking list (filtered by status)~~ Done
 - ~~Deal math: fee + commission + expenses breakdown~~ Done
-- Booking costs: add travel/accommodation line items
+- ~~Booking costs: add travel/accommodation line items~~ Done
 - ~~Status transitions: send offer, mark signed, etc.~~ Done
 - Booking threads: in-booking messaging
 
