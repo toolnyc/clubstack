@@ -1,7 +1,7 @@
 ---
 slug: offer-pdf-generation
 created: 2026-04-10
-status: draft
+status: completed
 ---
 
 # Epic: Branded PDF Offer Generation
