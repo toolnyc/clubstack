@@ -121,5 +121,7 @@ Conventions established during development. Each entry has a rationale so future
 | Mobile admin ops via Next.js API routes                           | 2026-04-09     | RPC/service-role calls can't run from mobile client   | CLAUDE.md rule                         |
 | Mobile API routes use Bearer token auth via `lib/supabase/api.ts` | 2026-04-09     | Mobile sends JWT in Authorization header, not cookies | CLAUDE.md rule + api.ts helper         |
 | Shared domain types in `@clubstack/shared` for cross-app use      | 2026-04-09     | Mobile + web both need CreateBookingInput, etc.       | packages/shared/src/types.ts           |
+| PDF rendering is server-only (`@react-pdf/renderer`)              | 2026-04-10     | Heavy library — keep out of client + mobile bundles   | `import "server-only"` in `lib/pdf/**` |
+| Mobile file downloads use `expo-file-system` v55 `File`/`Paths`   | 2026-04-10     | Legacy `FileSystem.downloadAsync` deprecated in v55   | `apps/mobile/lib/offer-pdf.ts` pattern |
 
 _Add new rows here when a convention is established. Include the session report date if applicable._

@@ -91,7 +91,7 @@
 
 - ~~Contract builder: select template, customize clauses~~ Done
 - ~~Contract preview (react-pdf rendered)~~ Done (read-only clause view on mobile)
-- Branded PDF offer generation
+- ~~Branded PDF offer generation~~ Done
 - ~~E-signature flow (token-gated signing page — exists on web, link from mobile)~~ Done
 - ~~Contract audit log~~ Done (existed from web build)
 - Content: Substack Posts 3–4
