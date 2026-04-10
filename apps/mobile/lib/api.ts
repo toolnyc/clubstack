@@ -4,6 +4,8 @@ import type {
   BookingDate,
   BookingArtist,
   BookingCost,
+  BookingTravel,
+  CostCategory,
   CreateBookingInput,
   RosterEntry,
 } from "@clubstack/shared";
@@ -56,6 +58,7 @@ export interface BookingDetail {
     dj_profile: { id: string; name: string; slug: string };
   })[];
   costs: BookingCost[];
+  travel: BookingTravel[];
 }
 
 export async function getBookings() {
@@ -86,4 +89,76 @@ export async function getDealMath(id: string) {
 
 export async function getRoster() {
   return apiFetch<RosterEntry[]>("/api/roster");
+}
+
+// --- Costs CRUD ---
+
+export async function getCosts(bookingId: string) {
+  return apiFetch<BookingCost[]>(`/api/bookings/${bookingId}/costs`);
+}
+
+export async function addCost(
+  bookingId: string,
+  input: { description: string; amount: number; category?: CostCategory | null }
+) {
+  return apiFetch<BookingCost>(`/api/bookings/${bookingId}/costs`, {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateCost(
+  bookingId: string,
+  costId: string,
+  input: {
+    description?: string;
+    amount?: number;
+    category?: CostCategory | null;
+  }
+) {
+  return apiFetch<BookingCost>(`/api/bookings/${bookingId}/costs/${costId}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function removeCost(bookingId: string, costId: string) {
+  return apiFetch<{ success: boolean }>(
+    `/api/bookings/${bookingId}/costs/${costId}`,
+    { method: "DELETE" }
+  );
+}
+
+// --- Travel CRUD ---
+
+export async function getTravel(bookingId: string) {
+  return apiFetch<BookingTravel[]>(`/api/bookings/${bookingId}/travel`);
+}
+
+export async function addTravel(
+  bookingId: string,
+  input: Record<string, unknown>
+) {
+  return apiFetch<BookingTravel>(`/api/bookings/${bookingId}/travel`, {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateTravel(
+  bookingId: string,
+  travelId: string,
+  input: Record<string, unknown>
+) {
+  return apiFetch<BookingTravel>(
+    `/api/bookings/${bookingId}/travel/${travelId}`,
+    { method: "PATCH", body: JSON.stringify(input) }
+  );
+}
+
+export async function removeTravel(bookingId: string, travelId: string) {
+  return apiFetch<{ success: boolean }>(
+    `/api/bookings/${bookingId}/travel/${travelId}`,
+    { method: "DELETE" }
+  );
 }
