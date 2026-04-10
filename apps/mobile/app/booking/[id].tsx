@@ -8,7 +8,7 @@ import {
   Alert,
   Pressable,
 } from "react-native";
-import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useFocusEffect, useRouter } from "expo-router";
 import type {
   BookingStatus,
   BookingCost,
@@ -58,6 +58,7 @@ function formatTravelSummary(t: BookingTravel): string {
 
 export default function BookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const [detail, setDetail] = useState<BookingDetail | null>(null);
   const [dealMath, setDealMath] = useState<DealSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -315,6 +316,20 @@ export default function BookingDetailScreen() {
           ))
         )}
 
+        {/* Messages */}
+        <Pressable
+          style={styles.messagesRow}
+          onPress={() =>
+            router.push({
+              pathname: "/booking/thread",
+              params: { bookingId: id },
+            })
+          }
+        >
+          <Text style={styles.sectionTitle}>Messages</Text>
+          <Text style={styles.messagesArrow}>→</Text>
+        </Pressable>
+
         {/* Deal Math */}
         {dealMath ? (
           <DealMathCard
@@ -462,5 +477,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#ccc",
     lineHeight: 20,
+  },
+  messagesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#111",
+    borderRadius: 8,
+    padding: 14,
+    marginTop: 20,
+  },
+  messagesArrow: {
+    fontSize: 16,
+    color: "#555",
   },
 });
