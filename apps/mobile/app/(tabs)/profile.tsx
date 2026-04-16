@@ -334,6 +334,24 @@ export default function ProfileScreen() {
         )}
       </Pressable>
 
+      {/* Earnings */}
+      <Pressable
+        style={styles.card}
+        onPress={() => router.push("/profile/earnings")}
+      >
+        <View style={styles.cardHeader}>
+          <FontAwesome name="line-chart" size={18} color={tint} />
+          <Text style={styles.cardTitle}>Earnings</Text>
+          <FontAwesome
+            name="chevron-right"
+            size={14}
+            color="#999"
+            style={{ marginLeft: "auto" }}
+          />
+        </View>
+        <Text style={styles.placeholder}>View earnings and gig history</Text>
+      </Pressable>
+
       {/* Edit Button */}
       <Pressable
         style={[styles.editButton, { borderColor: tint }]}

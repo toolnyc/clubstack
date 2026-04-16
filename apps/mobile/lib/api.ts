@@ -303,3 +303,32 @@ export async function getBookingPayments(bookingId: string) {
     `/api/mobile/bookings/${bookingId}/payments`
   );
 }
+
+// --- Earnings ---
+
+export interface EarningsSummary {
+  totalEarned: number;
+  totalPending: number;
+  totalUpcoming: number;
+  gigCount: number;
+}
+
+export interface EarningsEntry {
+  id: string;
+  date: string;
+  eventName: string | null;
+  venueName: string | null;
+  fee: number;
+  commissionPct: number;
+  commission: number;
+  net: number;
+  status: "completed" | "pending" | "upcoming" | "cancelled";
+}
+
+export async function getEarningsSummary() {
+  return apiFetch<EarningsSummary>("/api/mobile/earnings/summary");
+}
+
+export async function getEarningsHistory() {
+  return apiFetch<EarningsEntry[]>("/api/mobile/earnings/history");
+}
