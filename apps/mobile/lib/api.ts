@@ -269,3 +269,37 @@ export async function createPaymentSetup() {
 export async function getPayerPaymentStatus() {
   return apiFetch<PayerPaymentStatus>("/api/mobile/stripe/customer");
 }
+
+// --- Payment Capture ---
+
+export interface PaymentRecord {
+  id: string;
+  booking_id: string;
+  stripe_payment_intent_id: string | null;
+  type: "deposit" | "balance";
+  amount: number;
+  status: "pending" | "processing" | "succeeded" | "failed" | "refunded";
+  scheduled_date: string | null;
+  processed_at: string | null;
+  created_at: string;
+}
+
+export async function chargeDeposit(bookingId: string) {
+  return apiFetch<{ success: boolean }>(
+    `/api/mobile/bookings/${bookingId}/charge-deposit`,
+    { method: "POST" }
+  );
+}
+
+export async function chargeBalance(bookingId: string) {
+  return apiFetch<{ success: boolean }>(
+    `/api/mobile/bookings/${bookingId}/charge-balance`,
+    { method: "POST" }
+  );
+}
+
+export async function getBookingPayments(bookingId: string) {
+  return apiFetch<PaymentRecord[]>(
+    `/api/mobile/bookings/${bookingId}/payments`
+  );
+}

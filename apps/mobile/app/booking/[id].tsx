@@ -26,6 +26,8 @@ import {
   addTravel,
   updateTravel,
   removeTravel,
+  getBookingPayments,
+  type PaymentRecord,
 } from "@/lib/api";
 import type { BookingDetail } from "@/lib/api";
 import type { DealSummary } from "@/lib/booking-types";
@@ -34,7 +36,9 @@ import { DealMathCard } from "@/components/booking/deal-math-card";
 import { BookingStatusActions } from "@/components/booking/booking-status-actions";
 import { CostFormModal } from "@/components/booking/cost-form-modal";
 import { TravelFormModal } from "@/components/booking/travel-form-modal";
+import { PaymentStatusCard } from "@/components/payment-status-card";
 import { shareOfferPdf } from "@/lib/offer-pdf";
+import { useAuth } from "@/lib/auth-context";
 
 const OFFER_SHAREABLE_STATUSES: BookingStatus[] = ["draft", "contract_sent"];
 
@@ -62,8 +66,10 @@ function formatTravelSummary(t: BookingTravel): string {
 export default function BookingDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { user } = useAuth();
   const [detail, setDetail] = useState<BookingDetail | null>(null);
   const [dealMath, setDealMath] = useState<DealSummary | null>(null);
+  const [payments, setPayments] = useState<PaymentRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [transitioning, setTransitioning] = useState(false);
   const [sharingOffer, setSharingOffer] = useState(false);
@@ -80,12 +86,14 @@ export default function BookingDetailScreen() {
 
   const loadData = useCallback(async () => {
     if (!id) return;
-    const [bookingRes, dealRes] = await Promise.all([
+    const [bookingRes, dealRes, paymentsRes] = await Promise.all([
       getBooking(id),
       getDealMath(id),
+      getBookingPayments(id),
     ]);
     if (bookingRes.data) setDetail(bookingRes.data);
     if (dealRes.data) setDealMath(dealRes.data);
+    if (paymentsRes.data) setPayments(paymentsRes.data);
   }, [id]);
 
   useFocusEffect(
@@ -389,6 +397,20 @@ export default function BookingDetailScreen() {
           <DealMathCard
             summary={dealMath}
             artistNames={artists.map((a) => a.dj_profile.name)}
+          />
+        ) : null}
+
+        {/* Payments */}
+        {["signed", "deposit_paid", "balance_paid", "completed"].includes(
+          booking.status
+        ) ? (
+          <PaymentStatusCard
+            bookingId={booking.id}
+            bookingStatus={booking.status as BookingStatus}
+            depositPct={booking.deposit_pct ?? 50}
+            payments={payments}
+            isPayer={user?.id === booking.payer_user_id}
+            onPaymentComplete={loadData}
           />
         ) : null}
 
