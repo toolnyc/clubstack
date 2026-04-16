@@ -251,3 +251,21 @@ export async function createStripeConnect() {
 export async function getStripeConnectStatus() {
   return apiFetch<StripeConnectStatus>("/api/mobile/stripe/status");
 }
+
+// --- Payer Payment Setup ---
+
+export interface PayerPaymentStatus {
+  hasPaymentMethod: boolean;
+  customerId: string | null;
+  card: { brand: string; last4: string } | null;
+}
+
+export async function createPaymentSetup() {
+  return apiFetch<{ url: string }>("/api/mobile/stripe/customer", {
+    method: "POST",
+  });
+}
+
+export async function getPayerPaymentStatus() {
+  return apiFetch<PayerPaymentStatus>("/api/mobile/stripe/customer");
+}
