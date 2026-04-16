@@ -18,6 +18,7 @@ import {
   getConnectionStatus,
   type CalendarConnectionStatus,
 } from "@/lib/calendar";
+import { getStripeConnectStatus, type StripeConnectStatus } from "@/lib/api";
 
 export default function ProfileScreen() {
   const { profile, user } = useAuth();
@@ -31,6 +32,9 @@ export default function ProfileScreen() {
   const [uploading, setUploading] = useState(false);
   const [calendarStatus, setCalendarStatus] =
     useState<CalendarConnectionStatus | null>(null);
+  const [stripeStatus, setStripeStatus] = useState<StripeConnectStatus | null>(
+    null
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -39,6 +43,9 @@ export default function ProfileScreen() {
         getRiderSummary(djProfile.id).then(setRiderSummary);
       }
       getConnectionStatus().then(setCalendarStatus);
+      getStripeConnectStatus().then(({ data }) => {
+        if (data) setStripeStatus(data);
+      });
     }, [refresh, djProfile?.id])
   );
 
@@ -290,6 +297,40 @@ export default function ProfileScreen() {
           </View>
         ) : (
           <Text style={styles.placeholder}>Connect your calendar</Text>
+        )}
+      </Pressable>
+
+      {/* Payments / Stripe Connect */}
+      <Pressable
+        style={styles.card}
+        onPress={() => router.push("/profile/stripe-setup")}
+      >
+        <View style={styles.cardHeader}>
+          <FontAwesome name="credit-card" size={18} color={tint} />
+          <Text style={styles.cardTitle}>Payments</Text>
+          <FontAwesome
+            name="chevron-right"
+            size={14}
+            color="#999"
+            style={{ marginLeft: "auto" }}
+          />
+        </View>
+        {stripeStatus?.status === "active" ? (
+          <View style={styles.calendarStatus}>
+            <View
+              style={[styles.calendarDot, { backgroundColor: "#2ecc71" }]}
+            />
+            <Text style={styles.body}>Stripe account active</Text>
+          </View>
+        ) : stripeStatus?.status === "pending" ? (
+          <View style={styles.calendarStatus}>
+            <View
+              style={[styles.calendarDot, { backgroundColor: "#f39c12" }]}
+            />
+            <Text style={styles.body}>Verification pending</Text>
+          </View>
+        ) : (
+          <Text style={styles.placeholder}>Set up payments to get paid</Text>
         )}
       </Pressable>
 

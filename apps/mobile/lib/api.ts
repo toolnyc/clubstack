@@ -234,3 +234,20 @@ export async function sendContractForSignature(bookingId: string) {
     { method: "POST" }
   );
 }
+
+// --- Stripe Connect ---
+
+export interface StripeConnectStatus {
+  accountId: string | null;
+  status: "not_started" | "pending" | "active" | "restricted";
+}
+
+export async function createStripeConnect() {
+  return apiFetch<{ url: string }>("/api/mobile/stripe/connect", {
+    method: "POST",
+  });
+}
+
+export async function getStripeConnectStatus() {
+  return apiFetch<StripeConnectStatus>("/api/mobile/stripe/status");
+}
