@@ -38,6 +38,7 @@ import { CostFormModal } from "@/components/booking/cost-form-modal";
 import { TravelFormModal } from "@/components/booking/travel-form-modal";
 import { PaymentStatusCard } from "@/components/payment-status-card";
 import { shareOfferPdf } from "@/lib/offer-pdf";
+import { generateInvoice } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 
 const OFFER_SHAREABLE_STATUSES: BookingStatus[] = ["draft", "contract_sent"];
@@ -182,6 +183,20 @@ export default function BookingDetailScreen() {
       );
     } finally {
       setSharingOffer(false);
+    }
+  };
+
+  const [generatingInvoice, setGeneratingInvoice] = useState(false);
+
+  const handleGenerateInvoice = async () => {
+    if (!id || generatingInvoice) return;
+    setGeneratingInvoice(true);
+    const { data, error } = await generateInvoice(id);
+    setGeneratingInvoice(false);
+    if (error) {
+      Alert.alert("Error", error);
+    } else if (data?.invoiceId) {
+      router.push(`/invoices/${data.invoiceId}`);
     }
   };
 
@@ -388,6 +403,29 @@ export default function BookingDetailScreen() {
               <ActivityIndicator color="#888" />
             ) : (
               <Text style={styles.messagesArrow}>↗</Text>
+            )}
+          </Pressable>
+        ) : null}
+
+        {/* Generate Invoice */}
+        {["signed", "deposit_paid", "balance_paid", "completed"].includes(
+          booking.status
+        ) ? (
+          <Pressable
+            style={[
+              styles.messagesRow,
+              generatingInvoice ? styles.rowDisabled : null,
+            ]}
+            onPress={handleGenerateInvoice}
+            disabled={generatingInvoice}
+          >
+            <Text style={styles.sectionTitle}>
+              {generatingInvoice ? "Generating…" : "Generate Invoice"}
+            </Text>
+            {generatingInvoice ? (
+              <ActivityIndicator color="#888" />
+            ) : (
+              <Text style={styles.messagesArrow}>+</Text>
             )}
           </Pressable>
         ) : null}

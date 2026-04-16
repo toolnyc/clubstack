@@ -332,3 +332,57 @@ export async function getEarningsSummary() {
 export async function getEarningsHistory() {
   return apiFetch<EarningsEntry[]>("/api/mobile/earnings/history");
 }
+
+// --- Invoices ---
+
+export interface InvoiceListEntry {
+  id: string;
+  invoiceNumber: string;
+  totalAmount: number;
+  currency: string;
+  status: "draft" | "sent" | "paid" | "void";
+  dueDate: string | null;
+  sentAt: string | null;
+  paidAt: string | null;
+  createdAt: string;
+  bookingId: string;
+  venueName: string | null;
+  eventName: string | null;
+  bookingDate: string | null;
+}
+
+export interface InvoiceDetail {
+  invoice: {
+    id: string;
+    booking_id: string;
+    invoice_number: string;
+    total_amount: number;
+    currency: string;
+    status: string;
+    due_date: string | null;
+    sent_at: string | null;
+    paid_at: string | null;
+    created_at: string;
+  };
+  lineItems: {
+    id: string;
+    description: string;
+    amount: number;
+    category: string;
+  }[];
+}
+
+export async function generateInvoice(bookingId: string) {
+  return apiFetch<{ invoiceId: string }>(
+    `/api/mobile/bookings/${bookingId}/invoice`,
+    { method: "POST" }
+  );
+}
+
+export async function getAllInvoices() {
+  return apiFetch<InvoiceListEntry[]>("/api/mobile/invoices");
+}
+
+export async function getInvoice(invoiceId: string) {
+  return apiFetch<InvoiceDetail>(`/api/mobile/invoices/${invoiceId}`);
+}
