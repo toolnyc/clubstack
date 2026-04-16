@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { stripe } from "@/lib/stripe/client";
+import { getStripe } from "@/lib/stripe/client";
 import type { Payment } from "@clubstack/shared";
 
 type ChargeType = "deposit" | "balance";
@@ -61,7 +61,7 @@ export async function chargeBookingFromClient(
     chargeType === "deposit" ? "deposit_paid" : "balance_paid";
 
   try {
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await getStripe().paymentIntents.create({
       amount: amountCents,
       currency: "usd",
       customer: payerProfile.stripe_customer_id,

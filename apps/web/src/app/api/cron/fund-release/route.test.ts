@@ -1,6 +1,25 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { GET } from "./route";
 import { NextRequest } from "next/server";
+
+// Mock Stripe client before importing the route
+vi.mock("@/lib/stripe/client", () => ({
+  getStripe: vi.fn(() => ({
+    transfers: { create: vi.fn() },
+  })),
+}));
+
+// Mock Supabase service client
+vi.mock("@/lib/supabase/service", () => ({
+  createServiceClient: vi.fn(() => ({
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({ data: [], error: null })),
+      })),
+    })),
+  })),
+}));
+
+const { GET } = await import("./route");
 
 function makeRequest(authHeader?: string): NextRequest {
   const headers: Record<string, string> = {};

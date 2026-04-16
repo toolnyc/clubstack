@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-import { stripe } from "@/lib/stripe/client";
+import { createServiceClient } from "@/lib/supabase/service";
+import { getStripe } from "@/lib/stripe/client";
 import { calculateTransferSplit } from "@/lib/payments/payment-math";
 
 /** Hours after gig date before funds are released. */
@@ -18,10 +18,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SECRET_KEY!
-  );
+  const supabase = createServiceClient();
 
   // Find bookings ready for fund release:
   // status = balance_paid, earliest booking_date + RELEASE_HOURS <= now
@@ -107,7 +104,7 @@ export async function GET(request: NextRequest) {
         // Transfer to DJ
         if (artistAmount > 0) {
           const amountCents = Math.round(artistAmount * 100);
-          const transfer = await stripe.transfers.create({
+          const transfer = await getStripe().transfers.create({
             amount: amountCents,
             currency: "usd",
             destination: djProfile.stripe_account_id,
@@ -140,7 +137,7 @@ export async function GET(request: NextRequest) {
           // If not, skip commission transfer (logged for manual resolution)
           if (agencyProfile?.stripe_account_id) {
             const commissionCents = Math.round(agencyAmount * 100);
-            const transfer = await stripe.transfers.create({
+            const transfer = await getStripe().transfers.create({
               amount: commissionCents,
               currency: "usd",
               destination: agencyProfile.stripe_account_id,

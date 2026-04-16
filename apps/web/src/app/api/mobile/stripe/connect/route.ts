@@ -3,7 +3,7 @@ import {
   createClientFromRequest,
   unauthorizedResponse,
 } from "@/lib/supabase/api";
-import { stripe } from "@/lib/stripe/client";
+import { getStripe } from "@/lib/stripe/client";
 
 /**
  * POST /api/mobile/stripe/connect
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   let accountId = djProfile.stripe_account_id;
 
   if (!accountId) {
-    const account = await stripe.accounts.create({
+    const account = await getStripe().accounts.create({
       type: "express",
       metadata: {
         dj_profile_id: djProfile.id,
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const accountLink = await stripe.accountLinks.create({
+  const accountLink = await getStripe().accountLinks.create({
     account: accountId,
     refresh_url: `${baseUrl}/api/mobile/stripe/connect/callback?status=refresh`,
     return_url: `${baseUrl}/api/mobile/stripe/connect/callback?status=complete`,

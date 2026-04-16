@@ -3,7 +3,7 @@ import {
   createClientFromRequest,
   unauthorizedResponse,
 } from "@/lib/supabase/api";
-import { stripe } from "@/lib/stripe/client";
+import { getStripe } from "@/lib/stripe/client";
 
 /**
  * POST /api/mobile/stripe/customer
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   let customerId = profile.stripe_customer_id;
 
   if (!customerId) {
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       metadata: { user_id: user.id },
     });
     customerId = customer.id;
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     mode: "setup",
     customer: customerId,
     payment_method_types: ["card"],
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const paymentMethods = await stripe.paymentMethods.list({
+  const paymentMethods = await getStripe().paymentMethods.list({
     customer: profile.stripe_customer_id,
     type: "card",
     limit: 1,
