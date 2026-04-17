@@ -1,7 +1,7 @@
 ---
 slug: payments-phase-1b
 created: 2026-04-16
-status: draft
+status: completed
 ---
 
 # Epic: Phase 1B — Payments
