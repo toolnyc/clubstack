@@ -1,6 +1,6 @@
 ---
 name: docs-sync
-description: Update CLAUDE.md, skills, and docs/ to match the current codebase. Run when docs feel stale or after a major feature.
+description: Update AGENTS.md, skills, and docs/ to match the current codebase. Run when docs feel stale or after a major feature.
 ---
 
 # Docs Sync
@@ -17,7 +17,7 @@ Bring documentation back into alignment with the current codebase.
 
 2. Read all skill files in `.claude/skills/`
 
-3. Read `CLAUDE.md`, `docs/architecture.md`, `docs/database.md`, `docs/testing.md`
+3. Read `AGENTS.md`, `docs/architecture.md`, `docs/database.md`, `docs/testing.md`
 
 4. Compare each doc against reality:
 
@@ -28,7 +28,7 @@ Bring documentation back into alignment with the current codebase.
 
    **`docs/testing.md`** — Do the described patterns match what's actually in `src/test/`?
 
-   **CLAUDE.md** — Are all commands in `package.json`? Are all env vars in `.env.local.example`?
+   **AGENTS.md** — Are all commands in `package.json`? Are all env vars in `.env.local.example`?
 
    **Each SKILL.md** — Do all referenced file paths exist? Do referenced commands still work?
 
