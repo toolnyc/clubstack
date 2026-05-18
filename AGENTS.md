@@ -1,3 +1,5 @@
+@import /Users/pete/Code/.agent/conventions.md
+
 # Clubstack
 
 DJ booking platform for underground clubs. Agency-first MVP: booking agencies manage rosters,
@@ -10,7 +12,9 @@ Venue subscriptions are v2.
 
 This file is the **primary instruction source** for all AI coding agents.
 
-If your AI tool prefers a specific entry point, create it by copying or symlinking this file:
+**Primary interface:** Factory Droid CLI (`droid` command). Invoke task-specific droids with `/task --droid <name>`.
+
+For other AI tools, create entry points by copying or symlinking this file:
 
 | Tool           | Entry Point                                |
 | -------------- | ------------------------------------------ |
@@ -168,31 +172,25 @@ The `2>/dev/null` suppresses the harmless "installer out of date" warning. Sessi
 
 ---
 
-## Skills / Procedures
+## Droids
 
-For Claude Code, all skills are available in `.claude/skills/` and invoked with `/skill-name`.
-For other models, domain reference material is documented below.
+Factory Droid is your primary interface for AI-assisted work. Invoke task-specific droids with `/task --droid <name>` or `/droid <name>`.
 
-### Skills Directory
+Droids are **independent agents** — each has a focused purpose and its own system prompt. You orchestrate work by choosing which droids to invoke based on the task at hand.
 
-| Skill               | Purpose                                           | Requires         | Sets                       |
-| ------------------- | ------------------------------------------------- | ---------------- | -------------------------- |
-| `/epic`             | Plan a feature from plain English                 | Nothing          | `epic-created`             |
-| `/feature`          | Build a planned feature                           | `epic-created`   | `feature-active`           |
-| `/db-migrate`       | Create and run a Supabase migration               | `feature-active` | — (clears `types-current`) |
-| `/design-check`     | Verify component matches design system            | `feature-active` | `design-checked`           |
-| `/verify`           | Full lint + test + build loop                     | `feature-active` | `verify-passed`            |
-| `/verify-agent`     | Independent QA — isolated agent tests via browser | `verify-passed`  | —                          |
-| `/build`            | Chain features autonomously from BUILDPLAN.md     | `BUILDPLAN.md`   | Per-feature sentinels      |
-| `/decompose`        | Break roadmap block into buildable subtasks       | Nothing          | —                          |
-| `/session-close`    | End-of-session capture, clear sentinels           | Nothing          | Clears all                 |
-| `/docs-sync`        | Update CLAUDE.md, skills, and docs/ to match code | Nothing          | —                          |
-| `/kb-prune`         | Remove stale content from docs                    | Nothing          | —                          |
-| `/booking-workflow` | Booking state machine reference context           | Nothing          | Reference only             |
-| `/stripe-connect`   | Stripe Connect payment patterns reference         | Nothing          | Reference only             |
-| `/stripe-testing`   | Stripe test cards and fixture data                | Nothing          | Reference only             |
+### Available Droids
 
-**Deprecated:** `/build-issue` — use `/epic` + `/feature` instead.
+| Droid                  | Purpose                                           | Invocation                    |
+| ---------------------- | ------------------------------------------------- | ----------------------------- |
+| `impl-agent`           | Fast implementation from specification            | `/task --droid impl-agent`    |
+| `research-agent`       | Deep research, exploration, synthesis             | `/task --droid research-agent` |
+| `review-agent`         | Independent code review                          | `/task --droid review-agent`   |
+| `worker`               | General-purpose work delegation                  | `/task --droid worker`        |
+| `spec-writer`          | Thorough technical specifications                 | `/task --droid spec-writer`   |
+| `filesystem-scout`     | File/directory discovery (Spotlight + filesystem)| `/task --droid filesystem-scout` |
+| `feedback-integrator`  | Socratic dialogue for design decisions           | `/task --droid feedback-integrator` |
+
+**Droids run independently** — they don't auto-chain or share state. You decide the next step based on task progress.
 
 ---
 
@@ -348,17 +346,4 @@ Custom accounts are the v2 migration path (when Clubstack owns the full tax doc 
 | `transfer.created`         | Log to `transfers` table                             |
 | `payout.paid`              | Notify DJ via Knock                                  |
 
----
 
-## Parallel Agent Worktrees
-
-The `.claude/worktrees/` directory contains git worktrees for parallel agent sessions.
-
-```bash
-# Create
-git worktree add .claude/worktrees/agent-<id> -b agent/<feature-name>
-
-# Clean up
-git worktree remove .claude/worktrees/agent-<id>
-git branch -d agent/<feature-name>
-```
