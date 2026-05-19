@@ -122,6 +122,29 @@ All booking event notifications go through Knock. Single call: `knock.notify(wor
 - PRs target `develop`. `develop` → `main` for production releases.
 - Always `pnpm build` before opening a PR (enforced in CI)
 
+### Pre-commit Verification Gate
+
+A pre-commit hook runs automated verification on staged files in `apps/web/src/` before allowing commits:
+
+- **Prettier**: Format staged files (via `lint-staged`)
+- **ESLint + TypeScript**: Lint and type-check staged files
+- **Unit tests**: Run affected tests
+- **Build check**: Verify full app builds
+
+**Skip verification if no files in `apps/web/src/` staged.** Target performance: <30s for 10 files.
+
+**Bypass hook in emergencies** (not recommended):
+```bash
+git commit --no-verify
+```
+
+**Reinstall hooks** if they're out of date:
+```bash
+pnpm hooks:install
+```
+
+The hook config lives in `.simple-git-hooks.json`. The verification script is `scripts/pre-commit.sh`.
+
 ## Obsidian Notes
 
 Use the `obsidian` CLI (not Read/Write file tools) for all vault note I/O. Run from vault root:
@@ -191,6 +214,89 @@ Droids are **independent agents** — each has a focused purpose and its own sys
 | `feedback-integrator`  | Socratic dialogue for design decisions           | `/task --droid feedback-integrator` |
 
 **Droids run independently** — they don't auto-chain or share state. You decide the next step based on task progress.
+
+---
+
+## Agent State Management
+
+Agent workflow state is tracked in `.agent/state.json`, a machine-local, ephemeral JSON file. It tracks feature activation, verification status, and timestamps for each phase.
+
+**Important**: The state file is never committed (added to `.gitignore`). Each environment starts with default state.
+
+### State File Schema
+
+Location: `.agent/state.json`
+
+Structure:
+- `version` (integer): Schema version. Currently 1.
+- `last_updated` (ISO 8601): Timestamp of last state change.
+- `current_feature` (string | null): Name of active feature (e.g., "pre-commit-gate").
+- `feature_started_at` (ISO 8601 | null): When the current feature started.
+- `state` (object): Boolean sentinels — `epic_created`, `feature_active`, `types_current`, `design_checked`, `verify_passed`, `session_active`.
+- `metadata` (object): Timestamps for each sentinel (e.g., `verify_passed_at`).
+
+### API: `.agent/lib/state.ts`
+
+TypeScript module with 6 functions for state management:
+
+```typescript
+// Read current state (returns defaults if file missing)
+readState(): AgentState
+
+// Set sentinel to true with timestamp
+setSentinel(name: SentinelName, feature?: string): void
+
+// Clear sentinel (set to false, null timestamp)
+clearSentinel(name: SentinelName): void
+
+// Clear all sentinels
+clearAllSentinels(): void
+
+// Check if sentinel is set
+isSentinelSet(name: SentinelName): boolean
+
+// Get sentinel timestamp
+getSentinelTimestamp(name: SentinelName): string | null
+```
+
+### Usage Example
+
+```typescript
+import { setSentinel, isSentinelSet, readState } from './.agent/lib/state';
+
+// Start a feature
+setSentinel('feature_active', 'pre-commit-gate');
+
+// Check verification status
+if (isSentinelSet('verify_passed')) {
+  console.log('✅ Verification passed');
+}
+
+// Read full state
+const state = readState();
+console.log(`Current feature: ${state.current_feature}`);
+console.log(`Last updated: ${state.last_updated}`);
+
+// Clear all sentinels at end of session
+clearAllSentinels();
+```
+
+### CI Integration
+
+State file is validated on commit (if it exists):
+```bash
+npx ajv-cli validate -s .agent/state.schema.json -d .agent/state.json
+```
+
+Pre-deploy check example:
+```bash
+if [ "$(node -p "require('./.agent/state.json').state.verify_passed")" = "true" ]; then
+  echo "✅ Verified, deploying..."
+else
+  echo "❌ Verification not passed"
+  exit 1
+fi
+```
 
 ---
 

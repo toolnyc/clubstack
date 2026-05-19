@@ -45,4 +45,5 @@ next-env.d.ts
 /supabase/.temp
 
 # AI agent 
-.agent/
+.agent/state.json
+.agent/state.json.tmp

@@ -22,6 +22,7 @@
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
     "sync-instructions": "npx ts-node scripts/sync-instructions.ts",
+    "hooks:install": "simple-git-hooks",
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
@@ -31,9 +32,6 @@
     "lint-staged": "^15.4.3",
     "prettier": "^3.5.3",
     "simple-git-hooks": "^2.11.1"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
