@@ -44,12 +44,5 @@ next-env.d.ts
 # supabase
 /supabase/.temp
 
-# AI agent worktrees (git worktrees for parallel sessions)
-/.claude/worktrees/
-
-# Claude agentic state (machine-local, ephemeral)
-.claude/state/*
-!.claude/state/.gitkeep
-
-# Active feature sentinel
-.claude/epics/.active
+# AI agent 
+.agent/
