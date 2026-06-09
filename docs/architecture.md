@@ -7,8 +7,10 @@ Clubstack is two layers sharing a Supabase backend:
 - **Web layer** (`apps/web/src/`) — Next.js 16. Scope: marketing site, public DJ profiles, API routes.
   No new authenticated UI here. The `(app)/` routes are a legacy scaffold, preserved as a
   screen reference but not actively developed.
-- **Native app** (`apps/mobile/`) — React Native + Expo. The product. Not yet initialized;
-  scaffolded as Phase 1A. Hits the same Supabase project and Next.js API routes.
+- **Native app** (`apps/mobile/`) — React Native + Expo. The product. Talks to Supabase
+  directly under RLS for reads/writes; calls Next.js API routes only for operations that
+  need secrets or server orchestration (Stripe, contract send, status transitions, cron).
+  See `docs/adr/0002-mobile-talks-to-supabase-directly.md`.
 
 ## Web Layer Directory Tree
 
@@ -29,7 +31,7 @@ apps/web/src/
 ├── components/
 │   ├── marketing/                    # Hero, features, pricing, CTA, waitlist form
 │   └── ui/                           # Primitives: badge, button, card, input, modal, etc.
-├── lib/                              # Shared backend — used by web AND native via API
+├── lib/                              # Web-layer backend; native uses it only via the thin API (ADR 0002)
 │   ├── agency/                       # Agency server actions + availability logic
 │   ├── auth/                         # Auth server actions
 │   ├── booking/                      # Booking actions, status machine, deal math

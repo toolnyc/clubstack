@@ -91,6 +91,17 @@ Copy `.env.local.example` to `.env.local`. Key vars:
 - **Cron:** `CRON_SECRET` — random secret, validated by `Authorization: Bearer` header on cron routes
 - **Google:** `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI`
 
+## Local Development
+
+Two terminals:
+
+1. `pnpm dev:local:mobile` — Supabase (Docker) on the LAN IP + Stripe webhook listener; syncs all `.env.local` files. (Web-only work: `pnpm dev:local` for localhost URLs.)
+2. `pnpm dev:mobile` — Expo dev server; open the app in Expo Go on the phone (same WiFi).
+
+Auth emails (OTP codes) land in **Mailpit**, the fake local inbox at `http://127.0.0.1:54324` — nothing is sent externally in local dev. Real SMTP (Resend) is configured per-environment in the hosted Supabase dashboard. Stop everything with `pnpm dev:stop`.
+
+The app uses **Expo Go** until a custom native module forces a development build (likely Stripe native SDK or push notifications).
+
 ## Cron Jobs
 
 Defined in `apps/web/vercel.json`. Both routes validate `Authorization: Bearer $CRON_SECRET`.
@@ -175,6 +186,12 @@ The `2>/dev/null` suppresses the harmless "installer out of date" warning. Sessi
 - TIN/SSN is **never stored in the DB** — passed directly to Stripe API and vaulted there.
 - The main app is **React Native / Expo** — do not build new authenticated UI in the Next.js `(app)` routes.
   The existing web app routes are preserved as a screen map reference but are not being developed further.
+- **Mobile data access:** the Expo app reads/writes app tables directly via Supabase under RLS.
+  Next.js API routes exist only for operations needing secrets or server orchestration
+  (Stripe, contract send/signing, booking status transitions, cron) — see `docs/adr/0002`.
+  Delete superseded API routes as each feature is ported; do not maintain both paths.
+- **Architecture decisions** are recorded in `docs/adr/`. Read them before proposing
+  changes to database choice, auth, or mobile/backend topology.
 
 ---
 
