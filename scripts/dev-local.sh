@@ -182,15 +182,28 @@ SUPABASE_URL="http://${SUPABASE_HOST}:54321"
 APP_URL="http://${APP_HOST}:3000"
 
 # ---------------------------------------------------------------------------
+# 3b. Export env vars needed by supabase/config.toml env() substitution
+# ---------------------------------------------------------------------------
+export SUPABASE_SITE_URL="$APP_URL"
+
+# ---------------------------------------------------------------------------
 # 4. Start Supabase
 # ---------------------------------------------------------------------------
 log_step "Starting Supabase"
 
 cd "$PROJECT_ROOT"
 
-# Check if already running by looking for API URL in status output
-if supabase status 2>/dev/null | grep -q "API URL:"; then
+# Check if already running — match port 54321 which appears in both old and new output formats
+SUPABASE_ALREADY_RUNNING=false
+if supabase status 2>/dev/null | grep -q "54321"; then
+  SUPABASE_ALREADY_RUNNING=true
   log_ok "Supabase already running"
+  log_warn "Supabase auth config may be stale (site_url / SMTP) until restart"
+  log_warn "Run: pnpm db:stop && bash scripts/dev-local.sh"
+  if $MOBILE; then
+    log_warn "Supabase already running — site_url won't change to LAN IP without a restart"
+    log_warn "Run: pnpm db:stop && bash scripts/dev-local.sh --mobile"
+  fi
 else
   echo "  Starting containers (may take 30-60s on first run)..."
   if ! supabase start 2>&1; then
@@ -199,10 +212,19 @@ else
   fi
 fi
 
-# Extract keys from pretty status output
 SUPABASE_STATUS=$(supabase status 2>/dev/null)
-ANON_KEY=$(echo "$SUPABASE_STATUS" | grep "anon key:" | awk '{print $NF}' | tr -d '[:space:]')
-SERVICE_ROLE_KEY=$(echo "$SUPABASE_STATUS" | grep "service_role key:" | awk '{print $NF}' | tr -d '[:space:]')
+
+# New CLI format (v2.x): keys have sb_publishable_ / sb_secret_ prefixes
+ANON_KEY=$(echo "$SUPABASE_STATUS" | grep -o 'sb_publishable_[A-Za-z0-9_-]*' | head -1)
+SERVICE_ROLE_KEY=$(echo "$SUPABASE_STATUS" | grep -o 'sb_secret_[A-Za-z0-9_-]*' | head -1)
+
+# Legacy CLI format: JWT tokens labelled "anon key:" / "service_role key:"
+if [ -z "$ANON_KEY" ]; then
+  ANON_KEY=$(echo "$SUPABASE_STATUS" | grep "anon key:" | awk '{print $NF}' | tr -d '[:space:]')
+fi
+if [ -z "$SERVICE_ROLE_KEY" ]; then
+  SERVICE_ROLE_KEY=$(echo "$SUPABASE_STATUS" | grep "service_role key:" | awk '{print $NF}' | tr -d '[:space:]')
+fi
 
 if [ -z "$ANON_KEY" ] || [ -z "$SERVICE_ROLE_KEY" ]; then
   log_err "Could not extract Supabase keys — raw status output:"
@@ -212,7 +234,7 @@ fi
 
 log_ok "API:       $SUPABASE_URL"
 log_ok "Studio:    http://127.0.0.1:54323"
-log_ok "Inbucket:  http://127.0.0.1:54324"
+log_ok "Email:     Mailpit (fake inbox) → http://127.0.0.1:54324"
 
 # ---------------------------------------------------------------------------
 # 5. Start Stripe webhook listener
@@ -270,7 +292,7 @@ echo -e "${BOLD}${GREEN}All services ready${RESET}"
 echo ""
 echo -e "  ${CYAN}Supabase API${RESET}      $SUPABASE_URL"
 echo -e "  ${CYAN}Supabase Studio${RESET}   http://127.0.0.1:54323"
-echo -e "  ${CYAN}Inbucket (email)${RESET}  http://127.0.0.1:54324"
+echo -e "  ${CYAN}Auth email${RESET}        Mailpit fake inbox → http://127.0.0.1:54324"
 if [ -n "$STRIPE_PID" ]; then
   echo -e "  ${CYAN}Stripe listener${RESET}   → localhost:3000/api/stripe/webhook  (PID $STRIPE_PID)"
 fi

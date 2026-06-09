@@ -152,14 +152,16 @@ describe("database migrations", () => {
       const content = await readRepoFile(file);
       const lower = content.toLowerCase();
 
+      // Matches both plain (`create table bookings`) and pg_dump style
+      // (`create table if not exists "public"."bookings"`) declarations.
       const createMatches = lower.matchAll(
-        /create\s+table\s+(?:if\s+not\s+exists\s+)?(\w+)/g
+        /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:"?\w+"?\.)?"?(\w+)"?/g
       );
 
       for (const match of createMatches) {
         const tableName = match[1];
         const rlsPattern = new RegExp(
-          `alter\\s+table\\s+${tableName}\\s+enable\\s+row\\s+level\\s+security`
+          `alter\\s+table\\s+(?:only\\s+)?(?:"?\\w+"?\\.)?"?${tableName}"?\\s+enable\\s+row\\s+level\\s+security`
         );
         if (!rlsPattern.test(lower)) {
           violations.push(
@@ -201,7 +203,7 @@ describe("database migrations", () => {
       const lower = content.toLowerCase();
 
       const createMatches = lower.matchAll(
-        /create\s+table\s+(?:if\s+not\s+exists\s+)?(\w+)/g
+        /create\s+table\s+(?:if\s+not\s+exists\s+)?(?:"?\w+"?\.)?"?(\w+)"?/g
       );
 
       for (const match of createMatches) {

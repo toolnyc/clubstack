@@ -11,22 +11,22 @@ INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confir
 VALUES
   -- DJ user
   ('a1111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000',
-   'dj@test.local', crypt('testpass123', gen_salt('bf')),
+   'dj@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated'),
   -- Agency user
   ('a2222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000',
-   'agency@test.local', crypt('testpass123', gen_salt('bf')),
+   'agency@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated'),
   -- Promoter user
   ('a3333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000',
-   'promoter@test.local', crypt('testpass123', gen_salt('bf')),
+   'promoter@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated'),
   -- Venue contact user
   ('a4444444-4444-4444-4444-444444444444', '00000000-0000-0000-0000-000000000000',
-   'venue@test.local', crypt('testpass123', gen_salt('bf')),
+   'venue@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
    '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated')
 ON CONFLICT (id) DO NOTHING;

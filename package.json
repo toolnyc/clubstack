@@ -7,6 +7,7 @@
     "dev": "pnpm --filter web dev",
     "dev:local": "bash scripts/dev-local.sh",
     "dev:local:mobile": "bash scripts/dev-local.sh --mobile",
+    "dev:stop": "bash scripts/dev-stop.sh",
     "dev:mobile": "pnpm --filter mobile start",
     "build": "pnpm --filter web build",
     "start": "pnpm --filter web start",
