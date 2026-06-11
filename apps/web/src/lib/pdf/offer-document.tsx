@@ -15,7 +15,7 @@ import {
   StyleSheet,
   renderToBuffer,
 } from "@react-pdf/renderer";
-import type { DealSummary } from "@/lib/booking/deal-math";
+import type { DealSummary } from "@clubstack/shared";
 
 export interface OfferDocumentData {
   agency: {

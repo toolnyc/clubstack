@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import type { DealSummary } from "@/lib/booking-types";
+import type { DealSummary } from "@clubstack/shared";
 
 interface DealMathCardProps {
   summary: DealSummary;

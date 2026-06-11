@@ -1,4 +1,4 @@
-import { round2 } from "@/lib/math";
+import { round2 } from "@clubstack/shared";
 import type { BalanceDueTiming } from "@clubstack/shared";
 
 export interface PaymentSchedule {

@@ -13,7 +13,7 @@
     "start": "pnpm --filter web start",
     "lint": "pnpm --filter web lint",
     "lint:mobile": "pnpm --filter mobile exec tsc --noEmit",
-    "test": "pnpm --filter web test",
+    "test": "pnpm --filter @clubstack/shared test && pnpm --filter web test",
     "test:watch": "pnpm --filter web test:watch",
     "test:mobile": "pnpm --filter mobile test",
     "e2e": "playwright test",

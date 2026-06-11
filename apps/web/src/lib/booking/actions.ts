@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
-import { canTransition, type BookingStatusOrCancelled } from "./status-machine";
+import { canTransition, type BookingStatusOrCancelled } from "@clubstack/shared";
 import type { Booking, CreateBookingInput } from "@clubstack/shared";
 
 const bookingSchema = z.object({

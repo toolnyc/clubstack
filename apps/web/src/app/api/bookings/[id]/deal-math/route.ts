@@ -3,7 +3,7 @@ import {
   createClientFromRequest,
   unauthorizedResponse,
 } from "@/lib/supabase/api";
-import { calculateDealSummary } from "@/lib/booking/deal-math";
+import { calculateDealSummary } from "@clubstack/shared";
 
 /**
  * GET /api/bookings/[id]/deal-math — calculate deal summary for a booking.

@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import type { Booking } from "@clubstack/shared";
-import type { BookingStatusOrCancelled } from "@/lib/booking/status-machine";
+import type { BookingStatusOrCancelled } from "@clubstack/shared";
 import type { Column } from "@/components/ui/data-table";
 import type { BadgeVariant } from "@/components/ui/badge";
 

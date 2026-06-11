@@ -6,7 +6,7 @@ import {
 import {
   canTransition,
   type BookingStatusOrCancelled,
-} from "@/lib/booking/status-machine";
+} from "@clubstack/shared";
 import { z } from "zod";
 
 const statusSchema = z.object({

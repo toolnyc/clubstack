@@ -9,11 +9,11 @@ import type {
   ContractClause,
   CostCategory,
   CreateBookingInput,
+  DealSummary,
   Message,
   SignatureConfig,
   Thread,
 } from "@clubstack/shared";
-import type { DealSummary } from "./booking-types";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
 

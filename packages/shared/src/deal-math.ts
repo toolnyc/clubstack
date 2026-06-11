@@ -1,4 +1,4 @@
-import { round2 } from "@/lib/math";
+import { round2 } from "./math";
 
 interface ArtistDeal {
   fee: number;

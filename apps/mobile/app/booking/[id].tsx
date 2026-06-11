@@ -30,7 +30,7 @@ import {
   type PaymentRecord,
 } from "@/lib/api";
 import type { BookingDetail } from "@/lib/api";
-import type { DealSummary } from "@/lib/booking-types";
+import type { DealSummary } from "@clubstack/shared";
 import { StatusBadge } from "@/components/booking/status-badge";
 import { DealMathCard } from "@/components/booking/deal-math-card";
 import { BookingStatusActions } from "@/components/booking/booking-status-actions";

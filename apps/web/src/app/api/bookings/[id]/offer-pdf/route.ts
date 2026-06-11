@@ -3,7 +3,7 @@ import {
   createClientFromRequest,
   unauthorizedResponse,
 } from "@/lib/supabase/api";
-import { calculateDealSummary } from "@/lib/booking/deal-math";
+import { calculateDealSummary } from "@clubstack/shared";
 import { renderOfferPdf } from "@/lib/pdf/offer-document";
 import type { OfferDocumentData } from "@/lib/pdf/offer-document";
 

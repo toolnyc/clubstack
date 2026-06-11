@@ -1,4 +1,4 @@
-import { calculateDealSummary } from "@/lib/booking/deal-math";
+import { calculateDealSummary } from "@clubstack/shared";
 import type { BookingArtist, BookingCost } from "@clubstack/shared";
 
 interface DealSummaryProps {
