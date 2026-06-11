@@ -3,6 +3,7 @@ import type {
   InvoiceLineItem,
   InvoiceStatus,
 } from "@clubstack/shared";
+import { generateInvoiceNumber } from "@clubstack/shared";
 
 import { supabase } from "./supabase";
 
@@ -61,6 +62,82 @@ export async function getAllInvoices(): Promise<InvoiceListEntry[]> {
       bookingDate: firstDate?.date ?? null,
     };
   });
+}
+
+export async function generateInvoice(bookingId: string): Promise<string> {
+  const { data: artists, error: artistsError } = await supabase
+    .from("booking_artists")
+    .select("dj_profile_id, fee")
+    .eq("booking_id", bookingId);
+
+  if (artistsError) throw new Error(artistsError.message);
+
+  const { data: costs, error: costsError } = await supabase
+    .from("booking_costs")
+    .select("description, amount, category")
+    .eq("booking_id", bookingId);
+
+  if (costsError) throw new Error(costsError.message);
+
+  const djProfileIds = (artists ?? []).map((a) => a.dj_profile_id);
+  const { data: djProfiles } = await supabase
+    .from("dj_profiles")
+    .select("id, name")
+    .in("id", djProfileIds.length > 0 ? djProfileIds : ["__none__"]);
+
+  const profileMap = new Map((djProfiles ?? []).map((p) => [p.id, p.name]));
+
+  const lineItems: { description: string; amount: number; category: string }[] =
+    [];
+
+  for (const artist of artists ?? []) {
+    const name = profileMap.get(artist.dj_profile_id) ?? "Artist";
+    lineItems.push({
+      description: `Performance fee — ${name}`,
+      amount: artist.fee,
+      category: "fee",
+    });
+  }
+
+  for (const cost of costs ?? []) {
+    lineItems.push({
+      description: cost.description,
+      amount: cost.amount,
+      category: cost.category ?? "other",
+    });
+  }
+
+  const totalAmount = lineItems.reduce((sum, item) => sum + item.amount, 0);
+
+  const { data: invoice, error: invoiceError } = await supabase
+    .from("invoices")
+    .insert({
+      booking_id: bookingId,
+      invoice_number: generateInvoiceNumber(),
+      total_amount: totalAmount,
+      status: "draft",
+    })
+    .select("id")
+    .single();
+
+  if (invoiceError) throw new Error(invoiceError.message);
+
+  if (lineItems.length > 0) {
+    const { error: lineItemsError } = await supabase
+      .from("invoice_line_items")
+      .insert(
+        lineItems.map((item) => ({
+          invoice_id: invoice.id,
+          description: item.description,
+          amount: item.amount,
+          category: item.category,
+        }))
+      );
+
+    if (lineItemsError) throw new Error(lineItemsError.message);
+  }
+
+  return invoice.id as string;
 }
 
 export async function getInvoice(invoiceId: string): Promise<InvoiceDetail> {

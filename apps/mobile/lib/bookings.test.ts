@@ -5,6 +5,7 @@ import {
   addCost,
   createBooking,
   getBooking,
+  getBookingPayments,
   getBookings,
   removeCost,
   updateCost,
@@ -71,6 +72,15 @@ describe("costs", () => {
     await expect(
       addCost(SEEDED.bookingId, { description: "sneaky", amount: 1 })
     ).rejects.toThrow();
+  });
+});
+
+describe("getBookingPayments", () => {
+  it("reads payments for an accessible booking", async () => {
+    await signInAs(SEEDED.agencyUser);
+
+    const payments = await getBookingPayments(SEEDED.bookingId);
+    expect(Array.isArray(payments)).toBe(true);
   });
 });
 

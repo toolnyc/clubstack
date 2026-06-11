@@ -121,6 +121,33 @@ export async function createBooking(input: CreateBookingInput): Promise<string> 
   return booking.id as string;
 }
 
+// --- Payments (read-only: charging goes through the API) ---
+
+export interface PaymentRecord {
+  id: string;
+  booking_id: string;
+  stripe_payment_intent_id: string | null;
+  type: "deposit" | "balance";
+  amount: number;
+  status: "pending" | "processing" | "succeeded" | "failed" | "refunded";
+  scheduled_date: string | null;
+  processed_at: string | null;
+  created_at: string;
+}
+
+export async function getBookingPayments(
+  bookingId: string
+): Promise<PaymentRecord[]> {
+  const { data, error } = await supabase
+    .from("payments")
+    .select("*")
+    .eq("booking_id", bookingId)
+    .order("created_at");
+
+  if (error) throw new Error(error.message);
+  return (data as PaymentRecord[]) ?? [];
+}
+
 // --- Costs ---
 
 export interface CostInput {

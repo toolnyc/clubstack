@@ -134,18 +134,6 @@ export async function getPayerPaymentStatus() {
 
 // --- Payment Capture ---
 
-export interface PaymentRecord {
-  id: string;
-  booking_id: string;
-  stripe_payment_intent_id: string | null;
-  type: "deposit" | "balance";
-  amount: number;
-  status: "pending" | "processing" | "succeeded" | "failed" | "refunded";
-  scheduled_date: string | null;
-  processed_at: string | null;
-  created_at: string;
-}
-
 export async function chargeDeposit(bookingId: string) {
   return apiFetch<{ success: boolean }>(
     `/api/mobile/bookings/${bookingId}/charge-deposit`,
@@ -160,19 +148,6 @@ export async function chargeBalance(bookingId: string) {
   );
 }
 
-export async function getBookingPayments(bookingId: string) {
-  return apiFetch<PaymentRecord[]>(
-    `/api/mobile/bookings/${bookingId}/payments`
-  );
-}
 
-// --- Invoices ---
-
-export async function generateInvoice(bookingId: string) {
-  return apiFetch<{ invoiceId: string }>(
-    `/api/mobile/bookings/${bookingId}/invoice`,
-    { method: "POST" }
-  );
-}
 
 

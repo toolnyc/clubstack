@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { generateInvoiceNumber } from "./invoice-number";
+import { generateInvoiceNumber } from "@clubstack/shared";
 import type {
   Invoice,
   InvoiceLineItem,

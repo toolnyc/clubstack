@@ -1,34 +1,10 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import { SEEDED, signInAs, signOut } from "../test/helpers";
-import { getAllInvoices, getInvoice } from "./invoices";
+import { generateInvoice, getAllInvoices, getInvoice } from "./invoices";
 import { supabase } from "./supabase";
 
 afterEach(signOut);
-
-async function insertTestInvoice(): Promise<string> {
-  const { data: invoice, error } = await supabase
-    .from("invoices")
-    .insert({
-      booking_id: SEEDED.bookingId,
-      invoice_number: `TEST-${Date.now()}`,
-      total_amount: 1500,
-      status: "draft",
-    })
-    .select("id")
-    .single();
-  if (error) throw new Error(error.message);
-
-  const { error: lineError } = await supabase.from("invoice_line_items").insert({
-    invoice_id: invoice.id,
-    description: "Performance fee — DJ Testwave",
-    amount: 1500,
-    category: "fee",
-  });
-  if (lineError) throw new Error(lineError.message);
-
-  return invoice.id as string;
-}
 
 async function deleteTestInvoice(invoiceId: string): Promise<void> {
   await supabase
@@ -39,20 +15,23 @@ async function deleteTestInvoice(invoiceId: string): Promise<void> {
 }
 
 describe("invoices", () => {
-  it("lists and reads an invoice for the booking creator", async () => {
+  it("generates, lists and reads an invoice for the booking creator", async () => {
     await signInAs(SEEDED.agencyUser);
-    const invoiceId = await insertTestInvoice();
+    const invoiceId = await generateInvoice(SEEDED.bookingId);
 
     try {
       const list = await getAllInvoices();
       const entry = list.find((i) => i.id === invoiceId);
       expect(entry).toBeDefined();
       expect(entry?.bookingId).toBe(SEEDED.bookingId);
+      // Seeded gig: DJ Testwave fee 1500, no extra costs
       expect(entry?.totalAmount).toBe(1500);
 
       const detail = await getInvoice(invoiceId);
       expect(detail.invoice.booking_id).toBe(SEEDED.bookingId);
+      expect(detail.invoice.invoice_number).toMatch(/^CS-\d{8}-[A-Z0-9]{4}$/);
       expect(detail.lineItems.length).toBe(1);
+      expect(detail.lineItems[0].description).toContain("DJ Testwave");
     } finally {
       await deleteTestInvoice(invoiceId);
     }

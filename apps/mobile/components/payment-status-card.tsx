@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import type { BookingStatus } from "@clubstack/shared";
-import type { PaymentRecord } from "@/lib/api";
+import type { PaymentRecord } from "@/lib/bookings";
 import { chargeDeposit, chargeBalance } from "@/lib/api";
 
 interface PaymentStatusCardProps {

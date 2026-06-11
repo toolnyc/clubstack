@@ -1,6 +1,7 @@
 export * from "./types";
 export { generateSlug } from "./slug";
 export { round2 } from "./math";
+export { generateInvoiceNumber } from "./invoice-number";
 export {
   calculateArtistBreakdown,
   calculateDealSummary,

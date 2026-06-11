@@ -16,13 +16,10 @@ import type {
   CostCategory,
   TravelType,
 } from "@clubstack/shared";
-import {
-  updateBookingStatus,
-  getBookingPayments,
-  type PaymentRecord,
-} from "@/lib/api";
+import { updateBookingStatus } from "@/lib/api";
 import {
   getBooking,
+  getBookingPayments,
   addCost,
   updateCost,
   removeCost,
@@ -30,6 +27,7 @@ import {
   updateTravel,
   removeTravel,
   type BookingDetail,
+  type PaymentRecord,
 } from "@/lib/bookings";
 import { calculateDealSummary, type DealSummary } from "@clubstack/shared";
 import { StatusBadge } from "@/components/booking/status-badge";
@@ -39,7 +37,7 @@ import { CostFormModal } from "@/components/booking/cost-form-modal";
 import { TravelFormModal } from "@/components/booking/travel-form-modal";
 import { PaymentStatusCard } from "@/components/payment-status-card";
 import { shareOfferPdf } from "@/lib/offer-pdf";
-import { generateInvoice } from "@/lib/api";
+import { generateInvoice } from "@/lib/invoices";
 import { useAuth } from "@/lib/auth-context";
 
 const OFFER_SHAREABLE_STATUSES: BookingStatus[] = ["draft", "contract_sent"];
@@ -98,8 +96,8 @@ export default function BookingDetailScreen() {
         calculateDealSummary(detailRes.value.artists, detailRes.value.costs)
       );
     }
-    if (paymentsRes.status === "fulfilled" && paymentsRes.value.data) {
-      setPayments(paymentsRes.value.data);
+    if (paymentsRes.status === "fulfilled") {
+      setPayments(paymentsRes.value);
     }
   }, [id]);
 
@@ -218,12 +216,13 @@ export default function BookingDetailScreen() {
   const handleGenerateInvoice = async () => {
     if (!id || generatingInvoice) return;
     setGeneratingInvoice(true);
-    const { data, error } = await generateInvoice(id);
-    setGeneratingInvoice(false);
-    if (error) {
-      Alert.alert("Error", error);
-    } else if (data?.invoiceId) {
-      router.push(`/invoices/${data.invoiceId}`);
+    try {
+      const invoiceId = await generateInvoice(id);
+      router.push(`/invoices/${invoiceId}`);
+    } catch (err) {
+      Alert.alert("Error", err instanceof Error ? err.message : "Failed");
+    } finally {
+      setGeneratingInvoice(false);
     }
   };
 

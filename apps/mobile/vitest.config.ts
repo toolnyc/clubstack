@@ -6,6 +6,15 @@ import { defineConfig } from "vitest/config";
 // EXPO_PUBLIC_* env vars the app uses (written by scripts/dev-local.sh).
 const env = loadEnv("development", __dirname, "EXPO_PUBLIC_");
 
+// The app env points at the machine's LAN IP for phones on the same WiFi;
+// that IP goes stale between sessions, so tests always use loopback.
+if (env.EXPO_PUBLIC_SUPABASE_URL) {
+  env.EXPO_PUBLIC_SUPABASE_URL = env.EXPO_PUBLIC_SUPABASE_URL.replace(
+    /\/\/[^:/]+:/,
+    "//127.0.0.1:"
+  );
+}
+
 export default defineConfig({
   test: {
     environment: "node",
