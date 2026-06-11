@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useFocusEffect, useRouter } from "expo-router";
 
-import { getAllInvoices, type InvoiceListEntry } from "@/lib/api";
+import { getAllInvoices, type InvoiceListEntry } from "@/lib/invoices";
 
 const STATUS_COLORS: Record<string, string> = {
   draft: "#888",
@@ -62,10 +62,10 @@ export default function InvoicesScreen() {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      getAllInvoices().then(({ data }) => {
-        if (data) setInvoices(data);
-        setLoading(false);
-      });
+      getAllInvoices()
+        .then(setInvoices)
+        .catch(() => setInvoices([]))
+        .finally(() => setLoading(false));
     }, [])
   );
 

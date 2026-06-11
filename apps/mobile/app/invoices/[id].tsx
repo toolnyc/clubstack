@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 
-import { getInvoice, type InvoiceDetail } from "@/lib/api";
+import { getInvoice, type InvoiceDetail } from "@/lib/invoices";
 
 const STATUS_COLORS: Record<string, string> = {
   draft: "#888",
@@ -26,10 +26,10 @@ export default function InvoiceDetailScreen() {
     useCallback(() => {
       if (!id) return;
       setLoading(true);
-      getInvoice(id).then(({ data }) => {
-        if (data) setDetail(data);
-        setLoading(false);
-      });
+      getInvoice(id)
+        .then(setDetail)
+        .catch(() => setDetail(null))
+        .finally(() => setLoading(false));
     }, [id])
   );
 
