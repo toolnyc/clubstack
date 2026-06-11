@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
+import type Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY || "");
-}
+import { getStripe } from "@/lib/stripe/client";
 
 function getServiceClient() {
   return createClient(

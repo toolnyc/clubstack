@@ -281,3 +281,32 @@ describe("security", () => {
     ).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// 7. Stripe is instantiated in exactly one place
+//
+//    The Stripe client must only be constructed in lib/stripe/client.ts so the
+//    pinned apiVersion and key check live in one spot. Everything else imports
+//    getStripe() from there.
+// ---------------------------------------------------------------------------
+
+describe("stripe instantiation", () => {
+  test("new Stripe(...) appears only in lib/stripe/client.ts", async () => {
+    const files = await globFiles("src/**/*.{ts,tsx}");
+    const allowlist = ["src/lib/stripe/client.ts"];
+    const violations: string[] = [];
+
+    for (const file of files) {
+      if (allowlist.includes(file)) continue;
+      // Don't scan this test file — it contains the pattern as a regex literal
+      if (file.includes("src/test/architecture")) continue;
+      const content = await readFile(file);
+      if (/new\s+Stripe\s*\(/.test(content)) violations.push(file);
+    }
+
+    expect(
+      violations,
+      `Stripe instantiated outside lib/stripe/client.ts — import getStripe():\n${violations.join("\n")}`
+    ).toEqual([]);
+  });
+});

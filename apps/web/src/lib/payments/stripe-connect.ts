@@ -1,13 +1,7 @@
 "use server";
 
-import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
-
-function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error("STRIPE_SECRET_KEY not set");
-  return new Stripe(key);
-}
+import { getStripe } from "@/lib/stripe/client";
 
 /**
  * Create a Stripe Connect Express account for a DJ.
