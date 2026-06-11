@@ -17,20 +17,21 @@ import type {
   TravelType,
 } from "@clubstack/shared";
 import {
-  getBooking,
-  getDealMath,
   updateBookingStatus,
+  getBookingPayments,
+  type PaymentRecord,
+} from "@/lib/api";
+import {
+  getBooking,
   addCost,
   updateCost,
   removeCost,
   addTravel,
   updateTravel,
   removeTravel,
-  getBookingPayments,
-  type PaymentRecord,
-} from "@/lib/api";
-import type { BookingDetail } from "@/lib/api";
-import type { DealSummary } from "@clubstack/shared";
+  type BookingDetail,
+} from "@/lib/bookings";
+import { calculateDealSummary, type DealSummary } from "@clubstack/shared";
 import { StatusBadge } from "@/components/booking/status-badge";
 import { DealMathCard } from "@/components/booking/deal-math-card";
 import { BookingStatusActions } from "@/components/booking/booking-status-actions";
@@ -87,14 +88,19 @@ export default function BookingDetailScreen() {
 
   const loadData = useCallback(async () => {
     if (!id) return;
-    const [bookingRes, dealRes, paymentsRes] = await Promise.all([
+    const [detailRes, paymentsRes] = await Promise.allSettled([
       getBooking(id),
-      getDealMath(id),
       getBookingPayments(id),
     ]);
-    if (bookingRes.data) setDetail(bookingRes.data);
-    if (dealRes.data) setDealMath(dealRes.data);
-    if (paymentsRes.data) setPayments(paymentsRes.data);
+    if (detailRes.status === "fulfilled") {
+      setDetail(detailRes.value);
+      setDealMath(
+        calculateDealSummary(detailRes.value.artists, detailRes.value.costs)
+      );
+    }
+    if (paymentsRes.status === "fulfilled" && paymentsRes.value.data) {
+      setPayments(paymentsRes.value.data);
+    }
   }, [id]);
 
   useFocusEffect(
@@ -124,10 +130,17 @@ export default function BookingDetailScreen() {
   }) => {
     if (!id) return;
     setCostModalVisible(false);
-    if (editingCost) {
-      await updateCost(id, editingCost.id, data);
-    } else {
-      await addCost(id, data);
+    try {
+      if (editingCost) {
+        await updateCost(editingCost.id, data);
+      } else {
+        await addCost(id, data);
+      }
+    } catch (err) {
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Could not save cost"
+      );
     }
     setEditingCost(null);
     await loadData();
@@ -146,7 +159,14 @@ export default function BookingDetailScreen() {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          await removeCost(id, cost.id);
+          try {
+            await removeCost(cost.id);
+          } catch (err) {
+            Alert.alert(
+              "Error",
+              err instanceof Error ? err.message : "Could not delete cost"
+            );
+          }
           await loadData();
         },
       },
@@ -157,10 +177,17 @@ export default function BookingDetailScreen() {
   const handleSaveTravel = async (data: Record<string, unknown>) => {
     if (!id) return;
     setTravelModalVisible(false);
-    if (editingTravel) {
-      await updateTravel(id, editingTravel.id, data);
-    } else {
-      await addTravel(id, data);
+    try {
+      if (editingTravel) {
+        await updateTravel(editingTravel.id, data);
+      } else {
+        await addTravel(id, data);
+      }
+    } catch (err) {
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Could not save travel"
+      );
     }
     setEditingTravel(null);
     await loadData();
@@ -211,7 +238,14 @@ export default function BookingDetailScreen() {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
-            await removeTravel(id, travel.id);
+            try {
+              await removeTravel(travel.id);
+            } catch (err) {
+              Alert.alert(
+                "Error",
+                err instanceof Error ? err.message : "Could not delete travel"
+              );
+            }
             await loadData();
           },
         },

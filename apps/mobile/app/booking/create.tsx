@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { createBooking } from "@/lib/api";
+import { createBooking } from "@/lib/bookings";
 import {
   StepArtists,
   type ArtistEntry,
@@ -59,35 +59,34 @@ export default function CreateBookingScreen() {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    const { data, error } = await createBooking({
-      booking: {
-        payer_type: event.payer_type,
-        notes: event.notes,
-      },
-      dates: dates.map((d) => ({
-        date: d.date,
-        set_time: d.set_time || undefined,
-        load_in_time: d.load_in_time || undefined,
-        event_name: d.event_name || undefined,
-      })),
-      artists: artists.map((a) => ({
-        dj_profile_id: a.dj_profile_id,
-        fee: a.fee,
-        commission_pct: a.commission_pct,
-        payment_split_pct: a.payment_split_pct,
-      })),
-      costs: [],
-    });
-
-    setSubmitting(false);
-
-    if (error) {
-      Alert.alert("Error", error);
-      return;
-    }
-
-    if (data?.bookingId) {
-      router.replace(`/booking/${data.bookingId}`);
+    try {
+      const bookingId = await createBooking({
+        booking: {
+          payer_type: event.payer_type,
+          notes: event.notes,
+        },
+        dates: dates.map((d) => ({
+          date: d.date,
+          set_time: d.set_time || undefined,
+          load_in_time: d.load_in_time || undefined,
+          event_name: d.event_name || undefined,
+        })),
+        artists: artists.map((a) => ({
+          dj_profile_id: a.dj_profile_id,
+          fee: a.fee,
+          commission_pct: a.commission_pct,
+          payment_split_pct: a.payment_split_pct,
+        })),
+        costs: [],
+      });
+      router.replace(`/booking/${bookingId}`);
+    } catch (err) {
+      Alert.alert(
+        "Error",
+        err instanceof Error ? err.message : "Could not create booking"
+      );
+    } finally {
+      setSubmitting(false);
     }
   };
 

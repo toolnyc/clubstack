@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import type { Booking, BookingStatus } from "@clubstack/shared";
-import { getBookings } from "@/lib/api";
+import { getBookings } from "@/lib/bookings";
 import { BookingListItem } from "@/components/booking/booking-list-item";
 
 type FilterKey = "all" | "active" | "completed" | "cancelled";
@@ -46,8 +46,11 @@ export default function BookingsScreen() {
   const [filter, setFilter] = useState<FilterKey>("all");
 
   const loadBookings = useCallback(async () => {
-    const { data } = await getBookings();
-    setBookings(data ?? []);
+    try {
+      setBookings(await getBookings());
+    } catch {
+      setBookings([]);
+    }
   }, []);
 
   useFocusEffect(
