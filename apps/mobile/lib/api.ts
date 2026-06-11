@@ -2,9 +2,7 @@ import { supabase } from "./supabase";
 import type {
   Contract,
   ContractClause,
-  Message,
   SignatureConfig,
-  Thread,
 } from "@clubstack/shared";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:3000";
@@ -52,28 +50,6 @@ export async function updateBookingStatus(id: string, status: string) {
     method: "PATCH",
     body: JSON.stringify({ status }),
   });
-}
-
-// --- Thread / Messages ---
-
-export type MessageWithSender = Message & {
-  sender: { full_name: string } | null;
-};
-
-export interface ThreadDetail {
-  thread: Thread;
-  messages: MessageWithSender[];
-}
-
-export async function getThread(bookingId: string) {
-  return apiFetch<ThreadDetail>(`/api/bookings/${bookingId}/thread`);
-}
-
-export async function sendMessage(bookingId: string, content: string) {
-  return apiFetch<MessageWithSender>(
-    `/api/bookings/${bookingId}/thread/messages`,
-    { method: "POST", body: JSON.stringify({ content }) }
-  );
 }
 
 // --- Contract ---

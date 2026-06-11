@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import type { MessageWithSender } from "@/lib/api";
+import type { MessageWithSender } from "@/lib/booking-thread";
 
 interface MessageBubbleProps {
   message: MessageWithSender;
@@ -31,8 +31,8 @@ export function MessageBubble({ message, isOwnMessage }: MessageBubbleProps) {
           isOwnMessage ? styles.ownBubble : styles.otherBubble,
         ]}
       >
-        {!isOwnMessage && message.sender?.full_name ? (
-          <Text style={styles.senderName}>{message.sender.full_name}</Text>
+        {!isOwnMessage && message.sender?.display_name ? (
+          <Text style={styles.senderName}>{message.sender.display_name}</Text>
         ) : null}
         <Text style={styles.messageText}>{message.content}</Text>
         <Text style={styles.timestamp}>{formatTime(message.created_at)}</Text>

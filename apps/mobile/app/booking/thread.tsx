@@ -7,8 +7,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
-import { getThread, sendMessage } from "@/lib/api";
-import type { MessageWithSender } from "@/lib/api";
+import {
+  getThread,
+  sendMessage,
+  type MessageWithSender,
+} from "@/lib/booking-thread";
 import { MessageBubble } from "@/components/messaging/message-bubble";
 import { MessageInput } from "@/components/messaging/message-input";
 import { supabase } from "@/lib/supabase";
@@ -43,9 +46,11 @@ export default function ThreadScreen() {
 
   const loadThread = useCallback(async () => {
     if (!bookingId) return;
-    const { data } = await getThread(bookingId);
-    if (data) {
-      setMessages(data.messages);
+    try {
+      const detail = await getThread(bookingId);
+      setMessages(detail.messages);
+    } catch {
+      setMessages([]);
     }
   }, [bookingId]);
 
@@ -72,19 +77,17 @@ export default function ThreadScreen() {
       content,
       is_system: false,
       created_at: new Date().toISOString(),
-      sender: { full_name: "You" },
+      sender: { display_name: "You" },
     };
     setMessages((prev) => [...prev, optimistic]);
 
-    const { data, error } = await sendMessage(bookingId, content);
-    if (error || !data) {
-      // Remove optimistic on failure
-      setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
-    } else {
-      // Replace optimistic with real message
+    try {
+      const sent = await sendMessage(bookingId, content);
       setMessages((prev) =>
-        prev.map((m) => (m.id === optimistic.id ? data : m))
+        prev.map((m) => (m.id === optimistic.id ? sent : m))
       );
+    } catch {
+      setMessages((prev) => prev.filter((m) => m.id !== optimistic.id));
     }
     setSending(false);
   };
