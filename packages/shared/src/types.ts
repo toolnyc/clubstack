@@ -148,6 +148,7 @@ export interface Booking {
   status: BookingStatus | "cancelled";
   payer_type: "venue" | "promoter" | null;
   payer_user_id: string | null;
+  deposit_pct: number | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

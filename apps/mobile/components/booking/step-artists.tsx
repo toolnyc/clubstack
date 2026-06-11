@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import type { RosterEntry } from "@clubstack/shared";
-import { getRoster } from "@/lib/api";
+import { getMyRoster } from "@/lib/agency-roster";
 
 export interface ArtistEntry {
   dj_profile_id: string;
@@ -29,10 +29,10 @@ export function StepArtists({ artists, onChange }: StepArtistsProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getRoster().then(({ data }) => {
-      setRoster(data ?? []);
-      setLoading(false);
-    });
+    getMyRoster()
+      .then(setRoster)
+      .catch(() => setRoster([]))
+      .finally(() => setLoading(false));
   }, []);
 
   const addArtist = (entry: RosterEntry) => {

@@ -8,7 +8,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "doctor": "npx expo-doctor",
-    "export:check": "npx expo export --platform web"
+    "export:check": "npx expo export --platform web",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@clubstack/shared": "workspace:*",
@@ -43,7 +45,8 @@
     "@types/react": "~19.1.0",
     "expo-doctor": "^1.12.0",
     "react-test-renderer": "19.1.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^3.0.5"
   },
   "private": true
 }

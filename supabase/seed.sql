@@ -7,29 +7,45 @@
 -- =============================================================================
 -- Local Supabase uses a special schema for auth. We insert directly.
 
-INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, aud, role)
+-- The empty-string token columns are required: GoTrue fails password logins
+-- with "Database error querying schema" when they are NULL.
+INSERT INTO auth.users (id, instance_id, email, encrypted_password, email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, aud, role, confirmation_token, recovery_token, email_change, email_change_token_new, email_change_token_current, phone_change, phone_change_token, reauthentication_token)
 VALUES
   -- DJ user
   ('a1111111-1111-1111-1111-111111111111', '00000000-0000-0000-0000-000000000000',
    'dj@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
-   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated'),
+   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated',
+   '', '', '', '', '', '', '', ''),
   -- Agency user
   ('a2222222-2222-2222-2222-222222222222', '00000000-0000-0000-0000-000000000000',
    'agency@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
-   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated'),
+   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated',
+   '', '', '', '', '', '', '', ''),
   -- Promoter user
   ('a3333333-3333-3333-3333-333333333333', '00000000-0000-0000-0000-000000000000',
    'promoter@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
-   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated'),
+   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated',
+   '', '', '', '', '', '', '', ''),
   -- Venue contact user
   ('a4444444-4444-4444-4444-444444444444', '00000000-0000-0000-0000-000000000000',
    'venue@test.local', extensions.crypt('testpass123', extensions.gen_salt('bf')),
    now(), now(), now(),
-   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated')
+   '{"provider": "email", "providers": ["email"]}'::jsonb, '{}'::jsonb, 'authenticated', 'authenticated',
+   '', '', '', '', '', '', '', '')
 ON CONFLICT (id) DO NOTHING;
+
+-- GoTrue expects an email identity per user for password sign-in.
+INSERT INTO auth.identities (id, user_id, provider_id, provider, identity_data, last_sign_in_at, created_at, updated_at)
+SELECT
+  u.id, u.id, u.id::text, 'email',
+  jsonb_build_object('sub', u.id::text, 'email', u.email, 'email_verified', true, 'phone_verified', false),
+  now(), now(), now()
+FROM auth.users u
+WHERE u.email LIKE '%@test.local'
+ON CONFLICT (provider_id, provider) DO NOTHING;
 
 -- =============================================================================
 -- Profiles

@@ -10,7 +10,6 @@ import type {
   CostCategory,
   CreateBookingInput,
   Message,
-  RosterEntry,
   SignatureConfig,
   Thread,
 } from "@clubstack/shared";
@@ -90,10 +89,6 @@ export async function updateBookingStatus(id: string, status: string) {
 
 export async function getDealMath(id: string) {
   return apiFetch<DealSummary>(`/api/bookings/${id}/deal-math`);
-}
-
-export async function getRoster() {
-  return apiFetch<RosterEntry[]>("/api/roster");
 }
 
 // --- Costs CRUD ---

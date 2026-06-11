@@ -31,6 +31,18 @@ export async function getRoster(agencyId: string): Promise<RosterEntry[]> {
   return (data as RosterEntry[]) ?? [];
 }
 
+export async function getMyRoster(): Promise<RosterEntry[]> {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) return [];
+
+  const agency = await getAgency(session.user.id);
+  if (!agency) return [];
+
+  return getRoster(agency.id);
+}
+
 export async function inviteArtist(
   agencyId: string,
   email: string,
