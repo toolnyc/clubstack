@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import type { EarningsSummary } from "@/lib/api";
+import type { EarningsSummary } from "@/lib/earnings";
 
 interface EarningsSummaryCardsProps {
   summary: EarningsSummary;

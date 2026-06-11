@@ -12,6 +12,8 @@ export default defineConfig({
     include: ["lib/**/*.test.ts"],
     env,
     testTimeout: 15_000,
+    // Test files share one local database; run them sequentially.
+    fileParallelism: false,
   },
   resolve: {
     alias: {

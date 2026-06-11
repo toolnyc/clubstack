@@ -13,7 +13,7 @@ import {
   getEarningsHistory,
   type EarningsSummary,
   type EarningsEntry,
-} from "@/lib/api";
+} from "@/lib/earnings";
 import { EarningsSummaryCards } from "@/components/earnings-summary";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -56,13 +56,16 @@ export default function EarningsScreen() {
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
-      Promise.all([getEarningsSummary(), getEarningsHistory()]).then(
-        ([summaryRes, historyRes]) => {
-          if (summaryRes.data) setSummary(summaryRes.data);
-          if (historyRes.data) setHistory(historyRes.data);
-          setLoading(false);
-        }
-      );
+      Promise.all([getEarningsSummary(), getEarningsHistory()])
+        .then(([summaryData, historyData]) => {
+          setSummary(summaryData);
+          setHistory(historyData);
+        })
+        .catch(() => {
+          setSummary(null);
+          setHistory([]);
+        })
+        .finally(() => setLoading(false));
     }, [])
   );
 
