@@ -239,36 +239,50 @@ Droids are **independent agents** — each has a focused purpose and its own sys
 
 Read before touching `apps/web/src/lib/booking/`, booking migrations, or booking-related native screens.
 
-#### State Machine
+**Canonical spec:** [docs/booking-state-model.md](docs/booking-state-model.md). Decision: [docs/adr/0003-booking-two-axis-state-model.md](docs/adr/0003-booking-two-axis-state-model.md). Vocabulary: [CONTEXT.md](CONTEXT.md). The summary below must stay consistent with those.
+
+A Booking has **three independent concerns**, never one status: its **Lifecycle State** (where the show is), its **Payment** progress (two Installments), and any **Resolution** (Cancellation / Force Majeure).
+
+#### Lifecycle State Machine (the show)
+
+One value at a time. Only the status machine writes it.
 
 ```
-Draft
-  └─▶ Offer Sent      (agency sends offer to promoter/venue)
-        └─▶ Offer Signed   (contract signed by both parties)
-              │
-              ├─▶ [auto-dispatch cascade — see below]
-              │
-              └─▶ Advancing   (advancing window, T−7 days)
-                    └─▶ Show Complete   (last set end time passed)
-                          └─▶ Settled   (balance released after T+14 working days)
-
-Any state ──▶ Cancelled   (before Show Complete)
-Any state ──▶ force_majeure_invoked   (structured resolution required)
+Draft ─▶ Negotiating ─▶ Partially Signed ─▶ Signed ─▶ Advancing ─▶ Show Complete ─▶ Settled
 ```
 
-#### State Transitions
+- "Offer" and "contract" are one artifact; sending it enters Negotiating.
+- `agency_only` deals skip Partially Signed (Negotiating → Signed).
+- Terms lock at Signed; a change needs a new contract.
+- Two **Gates**: `Signed → Advancing` requires Deposit Paid; `Show Complete → Settled` requires Balance Paid.
 
-| From          | To            | Trigger                                    | Who    |
-| ------------- | ------------- | ------------------------------------------ | ------ |
-| Draft         | Offer Sent    | Agency sends offer                         | Agency |
-| Offer Sent    | Offer Signed  | Both parties sign contract                 | System |
-| Offer Signed  | Advancing     | Cron: T−7 days before show                 | Cron   |
-| Advancing     | Show Complete | Cron: last `booking_dates.end_time` passes | Cron   |
-| Show Complete | Settled       | Cron: T+14 working days after show         | Cron   |
+#### Lifecycle Transitions
+
+| From | To | Trigger | Who |
+| ---- | -- | ------- | --- |
+| Draft | Negotiating | agency sends contract | Agency |
+| Negotiating | Partially Signed | first required signature | System |
+| Partially Signed | Signed | last required signature | System |
+| Signed | Advancing | T−7 **and** Deposit Paid | Cron |
+| Advancing | Show Complete | last set end time passes | Cron |
+| Show Complete | Settled | T+14 working days **and** Balance Paid | Cron |
+
+#### Payment (the money) — separate axis
+
+Two **Installments**, each a `payments` row with its own status `Scheduled → Invoiced → Paid → Refunded`. Never put payment progress on the Lifecycle State.
+
+| Installment | Scheduled | Amount (from Deal Math) |
+| ----------- | --------- | ----------------------- |
+| Deposit | T−30 | deposit_pct of the deal |
+| Balance | T+14 working days after Show Complete | remainder, minus logged expenses |
+
+#### Resolution (the exits) — separate axis
+
+Cancellation and Force Majeure are not Lifecycle States. They **freeze** the state they came from (`frozen_from`) and run `Invoked → Under Review → Resolved` with an outcome (`refunded`/`forfeited`/`postponed`/`renegotiated`/`terminated`). Force majeure suspends rather than cancels. Exact outcomes and refund rules need product/legal sign-off — see the spec.
 
 #### Auto-Dispatch on Signing
 
-When a booking moves to `Offer Signed`, the platform immediately sends all of the following:
+When a booking moves to `Signed`, the platform immediately sends all of the following:
 
 1. Deposit invoice (50% of artist fee + agency booking fee) — scheduled for T−30 days
 2. Booking fee invoice (agency commission)
