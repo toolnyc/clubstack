@@ -11,9 +11,8 @@
 
 - Table names: plural, snake_case (`dj_profiles`, `bookings`)
 - Primary keys: `id uuid default gen_random_uuid()`
-- Every table gets `created_at timestamptz default now()` and `updated_at timestamptz default now()`
+- **Primary entity tables** get `created_at` and `updated_at timestamptz default now()`, with a trigger to auto-update `updated_at` on row changes. Junction, cache, and append-only tables are exempt from `updated_at` (exempted by name in `architecture.test.ts`).
 - Foreign keys reference `auth.users(id)` for user ownership
-- Use a trigger to auto-update `updated_at` on row changes
 - Slugs must be unique and URL-safe (lowercase, hyphens only)
 
 ## Migration Pattern

@@ -14,17 +14,15 @@ This file is the **primary instruction source** for all AI coding agents.
 
 **Primary interface:** Factory Droid CLI (`droid` command). Invoke task-specific droids with `/task --droid <name>`.
 
-For other AI tools, create entry points by copying or symlinking this file:
+Other AI tools read this file via thin entry points that point back here:
 
-| Tool           | Entry Point                                |
-| -------------- | ------------------------------------------ |
-| Claude Code    | `CLAUDE.md` (exists - thin wrapper)        |
-| GitHub Copilot | `.github/copilot-instructions.md`          |
-| Cursor         | `.cursorrules`                             |
-| Windsurf       | `.windsurfrules`                           |
-| Other          | Check tool documentation, create as needed |
+| Tool           | Entry Point                       | Status        |
+| -------------- | --------------------------------- | ------------- |
+| GitHub Copilot | `.github/copilot-instructions.md` | Exists        |
+| Cursor         | `.cursorrules`                    | Run sync to create |
+| Windsurf       | `.windsurfrules`                  | Run sync to create |
 
-**Sync script:** Run `pnpm sync-instructions` to verify all entry points are consistent.
+**Sync script:** `pnpm sync-instructions` creates/refreshes the entry points above (and warns if `CLAUDE.md` is missing). It does not generate `CLAUDE.md` — add that by hand if you use Claude Code.
 
 ---
 
@@ -50,23 +48,15 @@ For other AI tools, create entry points by copying or symlinking this file:
 
 | Topic                         | Details                                                             |
 | ----------------------------- | ------------------------------------------------------------------- |
+| Glossary (canonical language) | [CONTEXT.md](CONTEXT.md)                                            |
+| Booking state model           | [docs/booking-state-model.md](docs/booking-state-model.md)          |
+| Stripe Connect                | [docs/stripe-connect.md](docs/stripe-connect.md)                    |
 | Architecture & conventions    | [docs/architecture.md](docs/architecture.md)                        |
 | Database & Supabase patterns  | [docs/database.md](docs/database.md)                                |
 | Testing patterns              | [docs/testing.md](docs/testing.md)                                  |
+| Operations (env, cron, local) | [docs/operations.md](docs/operations.md)                            |
+| Decisions (ADRs)              | [docs/adr/](docs/adr/)                                              |
 | Product direction (canonical) | Session Report 2026-03-31 in Obsidian: `Clubstack/Session Reports/` |
-| Build phases                  | See Session Report 2026-03-31 — Phase 1A/1B/1C/2/3                  |
-
-## Environments
-
-| Environment | Branch    | URL                                      | Purpose                  |
-| ----------- | --------- | ---------------------------------------- | ------------------------ |
-| Local       | any       | `localhost:3000`                         | Development              |
-| Preview     | `develop` | `clubstack-git-develop-*.vercel.app`     | Amelia testing + staging |
-| Production  | `main`    | `clubstack.xyz` (or current prod domain) | Live marketing site      |
-
-**Access model:** Supabase auth gates all `(app)` routes. Preview env has its own Supabase project or the same project with test users. Amelia gets a magic link invite to the preview URL.
-
-**Branch flow:** `feat/*` → `develop` (preview deploy + CI) → `main` (production deploy)
 
 ## Commands
 
@@ -91,70 +81,13 @@ Copy `.env.local.example` to `.env.local`. Key vars:
 - **Cron:** `CRON_SECRET` — random secret, validated by `Authorization: Bearer` header on cron routes
 - **Google:** `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI`
 
-## Local Development
-
-Two terminals:
-
-1. `pnpm dev:local:mobile` — Supabase (Docker) on the LAN IP + Stripe webhook listener; syncs all `.env.local` files. (Web-only work: `pnpm dev:local` for localhost URLs.)
-2. `pnpm dev:mobile` — Expo dev server; open the app in Expo Go on the phone (same WiFi).
-
-Auth emails (OTP codes) land in **Mailpit**, the fake local inbox at `http://127.0.0.1:54324` — nothing is sent externally in local dev. Real SMTP (Resend) is configured per-environment in the hosted Supabase dashboard. Stop everything with `pnpm dev:stop`.
-
-The app uses **Expo Go** until a custom native module forces a development build (likely Stripe native SDK or push notifications).
-
-## Cron Jobs
-
-Defined in `apps/web/vercel.json`. Both routes validate `Authorization: Bearer $CRON_SECRET`.
-
-| Route                     | Schedule     | Purpose                                                                 |
-| ------------------------- | ------------ | ----------------------------------------------------------------------- |
-| `/api/cron/calendar-sync` | Every 30 min | Refresh Google OAuth tokens, sync free/busy to `calendar_cache`         |
-| `/api/cron/fund-release`  | Every hour   | Auto-release escrowed funds N hours after last `booking_dates.end_time` |
-
-## Monitoring
-
-| Tool                  | What it shows                                | Where                             |
-| --------------------- | -------------------------------------------- | --------------------------------- |
-| Vercel Analytics      | Page views, unique visitors, referrers       | Vercel Dashboard → Analytics      |
-| Vercel Speed Insights | Core Web Vitals per page                     | Vercel Dashboard → Speed Insights |
-| Sentry                | Runtime errors, stack traces, release health | sentry.io                         |
-| Vercel Logs           | Function logs, request logs                  | Vercel Dashboard → Logs           |
-
-## Notifications (Knock)
-
-All booking event notifications go through Knock. Single call: `knock.notify(workflowKey, { userId, data })`. Knock routes to email (via Resend) and/or SMS.
-
-**Do not** call Resend directly for booking events. Resend is only called directly for marketing emails (waitlist confirmations).
-
 ## Git Conventions
 
 - Branches: `feat/`, `fix/`, `chore/`
 - Commits: imperative mood, lowercase, no period (`add dj profile page`)
 - PRs target `develop`. `develop` → `main` for production releases.
 - Always `pnpm build` before opening a PR (enforced in CI)
-
-### Pre-commit Verification Gate
-
-A pre-commit hook runs automated verification on staged files in `apps/web/src/` before allowing commits:
-
-- **Prettier**: Format staged files (via `lint-staged`)
-- **ESLint + TypeScript**: Lint and type-check staged files
-- **Unit tests**: Run affected tests
-- **Build check**: Verify full app builds
-
-**Skip verification if no files in `apps/web/src/` staged.** Target performance: <30s for 10 files.
-
-**Bypass hook in emergencies** (not recommended):
-```bash
-git commit --no-verify
-```
-
-**Reinstall hooks** if they're out of date:
-```bash
-pnpm hooks:install
-```
-
-The hook config lives in `.simple-git-hooks.json`. The verification script is `scripts/pre-commit.sh`.
+- A pre-commit hook verifies staged `apps/web/src/` files — see [docs/operations.md](docs/operations.md#pre-commit-verification-gate)
 
 ## Obsidian Notes
 
@@ -235,170 +168,23 @@ Droids are **independent agents** — each has a focused purpose and its own sys
 ---
 
 
-### Domain Reference: Booking Workflow
+### Domain Reference
 
-Read before touching `apps/web/src/lib/booking/`, booking migrations, or booking-related native screens.
+The product's two deep domains have canonical docs. Read them before touching the
+related code; do not duplicate their detail here.
 
-**Canonical spec:** [docs/booking-state-model.md](docs/booking-state-model.md). Decision: [docs/adr/0003-booking-two-axis-state-model.md](docs/adr/0003-booking-two-axis-state-model.md). Vocabulary: [CONTEXT.md](CONTEXT.md). The summary below must stay consistent with those.
+| Domain | Read before touching | Canonical doc |
+| ------ | -------------------- | ------------- |
+| **Booking state model** — three concerns (Lifecycle, Payment, Resolution), the status machine, gates, transitions | `apps/web/src/lib/booking/`, `packages/shared/src/status-machine.ts`, booking migrations, booking screens | [docs/booking-state-model.md](docs/booking-state-model.md) · decision [adr/0003](docs/adr/0003-booking-two-axis-state-model.md) |
+| **Stripe Connect** — Express onboarding, Installments, PaymentIntent lifecycle, fee math, webhooks | `apps/web/src/lib/payments/`, `apps/web/src/lib/stripe/`, `apps/web/src/app/api/stripe/` | [docs/stripe-connect.md](docs/stripe-connect.md) |
 
-A Booking has **three independent concerns**, never one status: its **Lifecycle State** (where the show is), its **Payment** progress (two Installments), and any **Resolution** (Cancellation / Force Majeure).
+Vocabulary for both is defined in [CONTEXT.md](CONTEXT.md). The non-negotiable rules
+that the canonical docs expand on:
 
-#### Lifecycle State Machine (the show)
-
-One value at a time. Only the status machine writes it.
-
-```
-Draft ─▶ Negotiating ─▶ Partially Signed ─▶ Signed ─▶ Advancing ─▶ Show Complete ─▶ Settled
-```
-
-- "Offer" and "contract" are one artifact; sending it enters Negotiating.
-- `agency_only` deals skip Partially Signed (Negotiating → Signed).
-- Terms lock at Signed; a change needs a new contract.
-- Two **Gates**: `Signed → Advancing` requires Deposit Paid; `Show Complete → Settled` requires Balance Paid.
-
-#### Lifecycle Transitions
-
-| From | To | Trigger | Who |
-| ---- | -- | ------- | --- |
-| Draft | Negotiating | agency sends contract | Agency |
-| Negotiating | Partially Signed | first required signature | System |
-| Partially Signed | Signed | last required signature | System |
-| Signed | Advancing | T−7 **and** Deposit Paid | Cron |
-| Advancing | Show Complete | last set end time passes | Cron |
-| Show Complete | Settled | T+14 working days **and** Balance Paid | Cron |
-
-#### Payment (the money) — separate axis
-
-Two **Installments**, each a `payments` row with its own status `Scheduled → Invoiced → Paid → Refunded`. Never put payment progress on the Lifecycle State.
-
-| Installment | Scheduled | Amount (from Deal Math) |
-| ----------- | --------- | ----------------------- |
-| Deposit | T−30 | deposit_pct of the deal |
-| Balance | T+14 working days after Show Complete | remainder, minus logged expenses |
-
-#### Resolution (the exits) — separate axis
-
-Cancellation and Force Majeure are not Lifecycle States. They **freeze** the state they came from (`frozen_from`) and run `Invoked → Under Review → Resolved` with an outcome (`refunded`/`forfeited`/`postponed`/`renegotiated`/`terminated`). Force majeure suspends rather than cancels. Exact outcomes and refund rules need product/legal sign-off — see the spec.
-
-#### Auto-Dispatch on Signing
-
-When a booking moves to `Signed`, the platform immediately sends all of the following:
-
-1. Deposit invoice (50% of artist fee + agency booking fee) — scheduled for T−30 days
-2. Booking fee invoice (agency commission)
-3. Artist EPK
-4. Advancing details form (pre-filled where ClubStack has data)
-5. Artist technical rider
-
-#### Payment Schedule
-
-Payments are **not captured at signing**. Two scheduled tasks are created at signing:
-
-| Task    | When                         | Amount                                 |
-| ------- | ---------------------------- | -------------------------------------- |
-| Deposit | T−30 days before show        | 50% of artist fee + agency booking fee |
-| Balance | T+14 working days after show | Remaining 50%, minus logged expenses   |
-
-The expense window is open from Show Complete until the balance task fires.
-
-#### Advancing Form Schema
-
-```
-advancing_requests
-├── rider_confirmed (bool + notes)
-├── contacts
-│   ├── promoter_contact (name, phone, email)
-│   ├── dos_liaison (name, phone, email)
-│   └── transport_contact (name, phone)
-├── accommodation
-│   ├── hotel_name, hotel_address
-│   ├── reservation_number, reservation_name
-│   └── checkin_time, checkout_time
-└── schedule
-    ├── dinner_time (nullable)
-    ├── soundcheck_time
-    ├── doors_open_time
-    ├── curfew_time
-    └── running_order (jsonb array: [{artist, set_start, set_end}])
-```
-
-#### Automated Reminders (Cron)
-
-| Item                              | When sent  |
-| --------------------------------- | ---------- |
-| Promotional assets (EPK, photos)  | T−30 days  |
-| Tech rider (flag if needs update) | T−7 days   |
-| Guest list deadline reminder      | T−12 hours |
-
-#### Rules
-
-- State transitions must go through `status-machine.ts` — never update `status` directly
-- Every transition fires the corresponding Knock notification
-- Payment operations are server-only — no client mutations to payment tables
-- RLS on `transfers` is `false` — enforced at DB level
-
----
-
-### Domain Reference: Stripe Connect
-
-Read before touching `apps/web/src/lib/payments/`, `apps/web/src/lib/stripe/`, or `apps/web/src/app/api/stripe/`.
-
-#### Account Type
-
-**Express accounts (v1)** — Stripe hosts the onboarding UX and handles KYC compliance.
-Clubstack controls payout timing. ~5 min DJ onboarding.
-
-Custom accounts are the v2 migration path (when Clubstack owns the full tax doc UI).
-
-#### Express Onboarding Flow
-
-```
-1. DJ completes profile and initiates payout setup
-2. stripe.accounts.create({ type: 'express', country, capabilities: { transfers: { requested: true } } })
-3. stripe.accountLinks.create({ account: id, type: 'account_onboarding', refresh_url, return_url })
-4. Redirect DJ to accountLink.url (Stripe-hosted)
-5. Stripe calls return_url when complete
-6. Check account.details_submitted + account.payouts_enabled before allowing bookings
-```
-
-#### Payment Intent Lifecycle
-
-```
-1. Booking signed → two PaymentIntents created (capture_method: 'manual')
-   - Deposit PI: amount = (50% artist fee + booking fee), scheduled charge T−30 days
-   - Balance PI: amount = (50% artist fee), scheduled capture T+14 working days post-show
-
-2. T−30 days → Deposit PI confirmed/captured
-   application_fee_amount = platform fee
-   transfer_data.destination = dj_stripe_account_id
-
-3. T+14 working days → Balance PI captured
-   amount adjusted down for any logged expenses
-   transfer_data handles agency commission split automatically
-```
-
-#### Fee Math
-
-- DJ receives: `artist_fee − agency_commission − platform_fee − logged_expenses`
-- Agency receives: `agency_commission` (destination charge split)
-- Platform receives: `application_fee_amount`
-- Stripe fee: ~2.9% + $0.30, deducted from platform share
-
-#### Key Rules
-
-- Stripe client only instantiated in `apps/web/src/lib/stripe/client.ts`
-- Secret key never in client-side code
-- TIN/SSN never stored — passed directly to Stripe only
-- All Stripe API calls that create resources use idempotency keys: `booking_${bookingId}_deposit`
-- Webhook handler uses `STRIPE_WEBHOOK_SECRET` for signature verification
-
-#### Key Webhook Events
-
-| Event                      | Handler action                                       |
-| -------------------------- | ---------------------------------------------------- |
-| `payment_intent.succeeded` | Update booking payment status                        |
-| `account.updated`          | Check onboarding completion, enable booking if ready |
-| `transfer.created`         | Log to `transfers` table                             |
-| `payout.paid`              | Notify DJ via Knock                                  |
+- A Booking has **three concerns, never one status**: Lifecycle State, Payment (two Installments), Resolution.
+- All Lifecycle writes go through the status machine — never write `status` directly. Every Transition fires its Knock notification.
+- **Deal Math (`@clubstack/shared`) is the single authority for money** — never hardcode a split (e.g. "50%") in payment code.
+- Payment and transfer operations are **server-only**; RLS on `transfers` is `false`.
+- **TIN/SSN is never stored** — passed directly to Stripe and vaulted there.
 
 

@@ -20,10 +20,13 @@ apps/web/src/
 │   ├── (app)/                        # Legacy web app scaffold — reference only, not developed
 │   ├── (auth)/                       # Auth routes (login, onboarding)
 │   ├── (marketing)/                  # Public marketing pages (landing, pricing, waitlist)
-│   ├── api/                          # API route handlers
+│   ├── api/                          # API route handlers — secrets/orchestration only (ADR 0002)
+│   │   ├── agency/                   # Agency operations needing server orchestration
+│   │   ├── bookings/[id]/            # Booking status transitions (state machine + notifications)
 │   │   ├── calendar/                 # Google Calendar OAuth (connect/callback/disconnect)
 │   │   ├── cron/                     # Cron jobs (calendar-sync, fund-release)
-│   │   ├── stripe/webhook/           # Stripe webhook handler
+│   │   ├── mobile/                   # Mobile-specific endpoints (bookings, stripe) — bearer auth
+│   │   ├── stripe/                   # Stripe onboarding + webhook handler
 │   │   └── waitlist/                 # Waitlist signup endpoint
 │   ├── auth/                         # Supabase auth callbacks
 │   ├── dj/[slug]/                    # Public DJ profile page (SEO)
@@ -34,7 +37,7 @@ apps/web/src/
 ├── lib/                              # Web-layer backend; native uses it only via the thin API (ADR 0002)
 │   ├── agency/                       # Agency server actions + availability logic
 │   ├── auth/                         # Auth server actions
-│   ├── booking/                      # Booking actions, status machine, deal math
+│   ├── booking/                      # Booking server actions (itinerary, travel). State machine + deal math live in @clubstack/shared
 │   ├── calendar/                     # Calendar actions, ICS parser, Google API client
 │   ├── contract/                     # Contract actions, clause defaults, signatures
 │   ├── dj/                           # DJ profile + rider server actions
@@ -122,7 +125,7 @@ Three font families loaded via `next/font` in `apps/web/src/app/fonts.ts`:
 Each domain gets its own directory under `lib/`:
 
 - **`actions.ts`** -- Server Actions (form handlers, mutations). These are the primary interface between components and the database.
-- **Domain-specific modules** -- Pure logic that doesn't touch the network (e.g., `deal-math.ts`, `status-machine.ts`, `clause-defaults.ts`, `invoice-number.ts`, `ics-parser.ts`).
+- **Domain-specific modules** -- Pure logic that doesn't touch the network (e.g., `clause-defaults.ts`, `ics-parser.ts`). Money and state-machine logic shared with the native app lives in `@clubstack/shared` (`deal-math.ts`, `status-machine.ts`, `invoice-number.ts`), not in `lib/`.
 - **External service wrappers** -- `lib/supabase/` (DB), `lib/stripe/` (payments), `lib/google/` (calendar), `lib/resend/` (marketing email), `lib/notifications/` (Knock).
 
 ### `app/` -- Routes and pages only

@@ -1,6 +1,8 @@
 # Clubstack
 
-DJ booking platform for underground clubs. DJs get free profiles + calendar sync. Venues pay subscription for booking tools. Escrow payments guarantee DJs get paid.
+DJ booking platform for underground clubs. **Agency-first MVP:** booking agencies manage rosters, run the full offer-to-settlement workflow, and guarantee DJs get paid. DJs keep 100% of fees. Venue subscriptions are v2.
+
+The **product is a React Native + Expo app** (`apps/mobile/`). A Next.js layer (`apps/web/`) serves the marketing site, public DJ profiles, and the API routes that need server secrets. Both share a Supabase backend.
 
 ## Quick Start
 
@@ -29,19 +31,25 @@ pnpm dev
 
 ## Tech Stack
 
-- **Framework:** Next.js 16 (App Router)
+- **Main app:** React Native + Expo (iOS/Android — the product)
+- **Web layer:** Next.js 16 (App Router) — marketing site + public DJ profiles
 - **Database:** Supabase (Postgres + RLS + Auth)
-- **Payments:** Stripe Connect
-- **Notifications:** Knock
+- **Payments:** Stripe Connect (Express accounts)
+- **Notifications:** Knock (email + SMS)
 - **Calendar:** Google Calendar API
-- **Deployment:** Vercel
+- **Deployment:** Vercel (web) + EAS Build (native)
 
 ## Documentation
 
+- [AGENTS.md](AGENTS.md) — Primary instruction source for AI coding agents
+- [CONTEXT.md](CONTEXT.md) — Canonical domain language
+- [Booking State Model](docs/booking-state-model.md) — The spine of the product
+- [Stripe Connect](docs/stripe-connect.md) — How money moves
 - [Architecture & Conventions](docs/architecture.md)
 - [Database Patterns](docs/database.md)
 - [Testing Patterns](docs/testing.md)
-- [AGENTS.md](AGENTS.md) — Primary instruction source for AI coding agents
+- [Operations](docs/operations.md) — Environments, cron, local dev
+- [Decisions (ADRs)](docs/adr/)
 
 ## Environment Variables
 
