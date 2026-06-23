@@ -12,22 +12,23 @@ This glossary names the parts; the model doc details them.
 ## Language
 
 **Booking**:
-A show engagement. It carries three independent concerns, not one status: its **Lifecycle State** (where the show is), its **Payment** progress (two Installments), and, if things go wrong, a **Resolution**. The aggregate's children (dates, artists, costs, travel) are accessed through the Booking's interface, never as standalone concepts.
+A show engagement. It carries two independent concerns, not one status: its **Lifecycle State** (where the show is) and its **Payment** progress (two Installments). Cancellation is a guarded terminal Lifecycle transition, not a third axis. The aggregate's children (dates, artists, costs, travel) are accessed through the Booking's interface, never as standalone concepts.
 _Avoid_: gig, event, show (as a noun for the record). Never collapse Lifecycle and Payment into a single status.
 
 **Lifecycle State**:
 Where a Booking is in the life of the show. One value at a time, moving in order:
-`Draft → Negotiating → Partially Signed → Signed → Advancing → Show Complete → Settled`.
-This is the only thing the status machine governs. Payment progress and Resolution are separate axes.
+`Draft → Negotiating → Signed → Advancing → Show Complete → Settled`.
+`Cancelled` is a guarded terminal state reachable only from `Signed` or `Advancing`; disallowed at or after `Show Complete`.
+This is the only thing the status machine governs. Payment progress is a separate axis.
 _Avoid_: status (ambiguous — say Lifecycle State), stage.
 
 - **Draft**: being assembled by the agency.
-- **Negotiating**: the contract has been sent; terms may counter back and forth; awaiting signatures. (There is one artifact, the contract; "offer" and "contract" are the same thing.)
-- **Partially Signed**: at least one required party has signed, others outstanding.
-- **Signed**: all required parties have signed. Terms are now locked; a change requires a new contract.
+- **Negotiating**: the contract has been sent; terms may counter back and forth; awaiting all required signatures. (There is one artifact, the contract; "offer" and "contract" are the same thing.) When `signature_config = agency_only`, transitions directly to Signed.
+- **Signed**: all required parties have signed. Terms are now locked into a `terms_snapshot`; a material change requires a new contract. Triggers Invoice materialization and payment schedule derivation.
 - **Advancing**: pre-show logistics window (opens T−7). Gated: cannot enter until the Deposit is Paid.
 - **Show Complete**: the last set end time has passed.
-- **Settled**: the balance has been released. Gated: cannot enter until the Balance is Paid.
+- **Settled**: the balance has been paid. Gated: cannot enter until the Balance is Paid.
+- **Cancelled**: guarded terminal state. Allowed only from `Signed`/`Advancing`; requires explicit confirmation, kind, and reason. Records a `cancellations` audit row with a computed statement. Money path is determined by payment progress at cancel time, not by the source state.
 
 **Transition**:
 A validated move between Lifecycle States. Only happens through the status machine, fires its notification, and runs any side effects (e.g. scheduling Payment Installments on Signed). Never write the Lifecycle State directly.
@@ -38,22 +39,28 @@ A cross-axis rule blocking a Transition until a Payment condition holds. Two gat
 _Avoid_: guard, precondition (when you specifically mean the Payment-to-Lifecycle rule).
 
 **Payment**:
-A Booking's money progress, modeled as two **Installments**, not as Lifecycle States. Each Installment moves `Scheduled → Invoiced → Paid → Refunded` on its own.
+A Booking's money progress, modeled as two **Installments**, not as Lifecycle States. Each Installment moves `Scheduled → Invoiced → Paid → Refunded` on its own. Money moves pay-on-collection: distributions fire immediately on `payment_intent.succeeded`; there is no hold-then-release step.
 _Avoid_: putting payment progress on the Lifecycle State (no more `deposit_paid` / `balance_paid` states).
 
 **Installment**:
-One of a Booking's two scheduled payments: the **Deposit** (scheduled T−30) and the **Balance** (invoiced at Show Complete, minus logged expenses, due T+14 working days). Each has its own status and Stripe PaymentIntent.
+One of a Booking's two scheduled payments: the **Deposit** (scheduled T−30) and the **Balance** (due T+14 working days after Show Complete). Amounts are derived from the **Invoice** materialized at Signed. Each Installment has its own status and Stripe PaymentIntent.
 _Avoid_: charge (that is the Stripe mechanics), payment (ambiguous with the axis).
 
-**Resolution**:
-The structured handling of a Booking that goes wrong. A Resolution **freezes** the Lifecycle State it came from (records `frozen_from`) rather than replacing it, and runs its own sub-flow `Invoked → Under Review → Resolved` with an `outcome`. Two kinds:
-- **Cancellation**: a party ends the booking. Outcome typically `refunded` or `forfeited` (per the cancellation clause).
-- **Force Majeure**: an extraordinary event beyond control (disaster, war, government action, pandemic) excuses performance. It does not auto-cancel; it suspends obligations and resolves to `postponed`, `renegotiated`, or `terminated` per the force majeure clause.
-_Avoid_: treating Cancellation/Force Majeure as ordinary Lifecycle States.
+**Invoice**:
+The frozen money record derived from the `terms_snapshot` at the Signed transition. It is the single source of truth for amounts, the payment schedule, and payee distribution. Line items are fee lines plus comped extras; each fee line distributes to one or more **payees** (`{recipient, entitlement, priority}`). Pure derivation functions live in `@clubstack/shared`.
+_Avoid_: recalculating amounts from live contract fields after Signed; never re-derive a split inline.
 
-**Deal Math**:
-The pure fee calculation for a Booking: per-artist breakdown (fee, split, commission, net) and the deal summary (gross, costs, owed). Lives in `@clubstack/shared`. It is the single authority for money: what a DJ is shown, charged, and paid all derive from it.
-_Avoid_: fee calc, pricing; never re-derive commission inline.
+**Resolution**: _(retired — no Resolution axis)_
+The old "third axis" concept is retired. The platform is a payment facilitator, not an arbiter; disputes settle offline. What replaces it:
+
+- **Cancellation**: a guarded terminal Lifecycle transition (see Lifecycle State). Records a thin immutable `cancellations` audit row with `cancelled_from`, `kind` (`cancellation | force_majeure`), and a computed statement. Postpone or renegotiate = a new contract.
+- **Force Majeure**: follows the same guarded terminal transition path as Cancellation, with `kind = force_majeure`.
+- Money moved is governed by **payment progress at cancel time**: nothing collected → statement only; deposit stage (deposit paid, balance not yet collected) → auto-refund fast-path eligible via `reverse_transfer`; past deposit stage → offline only.
+
+_Avoid_: a `resolutions` table, `frozen_from`, or `Invoked → Under Review → Resolved` sub-flow.
+
+**Deal Math**: _(retired — superseded by Invoice)_
+The old concept of a shared fee-calculation helper. Replaced by the **Contract → Invoice** model: the Contract is the source of truth for terms; the Invoice (derived at Signed) is the single authority for money. Pure derivation functions remain in `@clubstack/shared` under the Invoice model.
 
 **Roster**:
 The set of DJs an agency represents, with invite status and sort order.
@@ -72,5 +79,5 @@ The pre-show logistics window and its Lifecycle State (opens T−7): contacts, a
 _Avoid_: pre-production, logistics.
 
 **Settlement**:
-The release of the Balance Installment T+14 working days after Show Complete, minus logged expenses. Reaching the Settled state requires the Balance to be Paid.
-_Avoid_: payout (that is the Stripe transfer mechanics, not the domain event).
+The Booking reaching the `Settled` Lifecycle State after the Balance Installment is Paid. Money moved pay-on-collection at the time of each `payment_intent.succeeded`; there is no separate held-then-released step. Reaching `Settled` requires the Balance to be Paid (the Gate).
+_Avoid_: payout (that is the Stripe transfer mechanics, not the domain event); "releasing" the balance (there is nothing held to release).
