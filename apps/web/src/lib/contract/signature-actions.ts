@@ -1,11 +1,13 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { buildTermsSnapshot } from "@clubstack/shared";
 import type {
   ContractSignature,
   SignerRole,
   SignatureType,
 } from "@clubstack/shared";
+import { getContractTerms } from "./terms-actions";
 
 interface SignInput {
   contractId: string;
@@ -45,7 +47,7 @@ export async function signContract(input: SignInput) {
   // Check if contract is fully signed
   const { data: contract } = await supabase
     .from("contracts")
-    .select("id, signature_config")
+    .select("id, signature_config, terms_snapshot")
     .eq("id", input.contractId)
     .single();
 
@@ -68,9 +70,20 @@ export async function signContract(input: SignInput) {
   }
 
   if (fullySignedCheck) {
+    // Freeze the structured terms into terms_snapshot once, at the Signed
+    // transition. The frozen copy is the money source of truth from here on.
+    const updates: Record<string, unknown> = { status: "signed" };
+    if (contract.terms_snapshot === null) {
+      const feeLines = await getContractTerms(input.contractId);
+      updates.terms_snapshot = buildTermsSnapshot(
+        feeLines,
+        new Date().toISOString()
+      );
+    }
+
     await supabase
       .from("contracts")
-      .update({ status: "signed" })
+      .update(updates)
       .eq("id", input.contractId);
   }
 

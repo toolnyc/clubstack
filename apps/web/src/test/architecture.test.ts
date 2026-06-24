@@ -188,6 +188,8 @@ describe("database migrations", () => {
       "booking_costs",
       "calendar_cache",
       "contract_signatures",
+      "contract_fee_lines", // replace-all on edit, frozen at Signed — never row-updated
+      "contract_fee_line_payees", // replace-all on edit, frozen at Signed — never row-updated
       "invoice_line_items",
       "venue_contacts",
       "transfers",

@@ -13,6 +13,14 @@ export {
   getNextStatuses,
 } from "./status-machine";
 export type { BookingStatusOrCancelled } from "./status-machine";
+export { buildTermsSnapshot } from "./contract-terms";
+export type {
+  Entitlement,
+  EntitlementKind,
+  FeeLine,
+  Payee,
+  TermsSnapshot,
+} from "./contract-terms";
 export type { Database, Json } from "./database";
 export type {
   Tables,
