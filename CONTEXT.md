@@ -12,7 +12,7 @@ This glossary names the parts; the model doc details them.
 ## Language
 
 **Booking**:
-A show engagement. It carries two independent concerns, not one status: its **Lifecycle State** (where the show is) and its **Payment** progress (two Installments). Cancellation is a guarded terminal Lifecycle transition, not a third axis. The aggregate's children (dates, artists, costs, travel) are accessed through the Booking's interface, never as standalone concepts.
+A show engagement, and the **aggregate root** of the domain. It carries two independent concerns, not one status: its **Lifecycle State** (where the show is) and its **Payment** progress (two Installments). Cancellation is a guarded terminal Lifecycle transition, not a third axis. It is the **source of truth for all live, editable structured terms** (financial and non-financial); the **Contract** is a child instrument that renders and freezes them. The aggregate's children (dates, artists, costs, travel, structured terms, the contract) are accessed through the Booking's interface, never as standalone concepts.
 _Avoid_: gig, event, show (as a noun for the record). Never collapse Lifecycle and Payment into a single status.
 
 **Lifecycle State**:
@@ -50,6 +50,14 @@ _Avoid_: charge (that is the Stripe mechanics), payment (ambiguous with the axis
 The frozen money record derived from the `terms_snapshot` at the Signed transition. It is the single source of truth for amounts, the payment schedule, and payee distribution. Line items are fee lines plus comped extras; each fee line distributes to one or more **payees** (`{recipient, entitlement, priority}`). Pure derivation functions live in `@clubstack/shared`.
 _Avoid_: recalculating amounts from live contract fields after Signed; never re-derive a split inline.
 
+**Structured Terms**:
+The canonical, machine-readable record of the deal, **owned by the Booking** while live. Financial terms = fee lines + payees (`booking_fee_lines` / `booking_fee_line_payees`, each payee `{recipient, entitlement, priority}`). Non-financial terms = dates, parties, `cancellation_schedule`, `collection_mode`, `balance_due_timing`, `deposit_pct`. The guiding principle: **structure every fact a system other than the contract document consumes; leave invariant legal language as toggleable prose.** Frozen into `terms_snapshot` at Signed.
+_Avoid_: storing a deal fact only as prose inside a clause; `payment_split_pct` (removed).
+
+**Contract**:
+The legalese instrument **within** a Booking. It is a **projection** of the Booking's structured terms — it renders them into prose, collects e-signatures, and **freezes** them into `terms_snapshot` at Signed. Before signing it is a live projection; after signing it is the immutable, binding record (SoT for the *frozen* terms). A Booking may have **several contracts over its life, one active at a time** (renegotiate = void the active + a new contract). Clauses are either **generated** (interpolate terms: parties, compensation, cancellation, pay-or-play, rider) or **boilerplate toggles** (force majeure, recording rights, independent contractor, modifications). "Offer" and "contract" are the same artifact.
+_Avoid_: treating the contract as the owner of live terms (the Booking owns them); hardcoding facts in clause prose.
+
 **Resolution**: _(retired — no Resolution axis)_
 The old "third axis" concept is retired. The platform is a payment facilitator, not an arbiter; disputes settle offline. What replaces it:
 
@@ -60,7 +68,7 @@ The old "third axis" concept is retired. The platform is a payment facilitator, 
 _Avoid_: a `resolutions` table, `frozen_from`, or `Invoked → Under Review → Resolved` sub-flow.
 
 **Deal Math**: _(retired — superseded by Invoice)_
-The old concept of a shared fee-calculation helper. Replaced by the **Contract → Invoice** model: the Contract is the source of truth for terms; the Invoice (derived at Signed) is the single authority for money. Pure derivation functions remain in `@clubstack/shared` under the Invoice model.
+The old concept of a shared fee-calculation helper. Replaced by the **Contract → Invoice** model: the **Booking** owns the live structured terms, the **Contract** renders and freezes them at Signed (SoT for the *frozen* terms), and the **Invoice** (derived from that snapshot) is the single authority for money. Pure derivation functions remain in `@clubstack/shared` under the Invoice model.
 
 **Roster**:
 The set of DJs an agency represents, with invite status and sort order.

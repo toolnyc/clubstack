@@ -180,9 +180,10 @@ so it is sequenced for safety and must be verified against a running DB
 (`pnpm db:migrate`, `pnpm db:types`, `pnpm lint`, `pnpm test`).
 
 **Phase 0 — Terms + snapshot (C2 Phase 0).**
-- Structured negotiable terms on contracts (`cancellation_schedule`, `collection_mode`, per-line payees/priority, mandate language); OOB defaults aligned to the priority waterfall.
-- Add `contracts.terms_snapshot` jsonb; add `contracts.collection_mode`.
-- Remove `booking_artists.payment_split_pct`; drop `deals` table.
+- **Live structured terms are booking-owned** (the Booking is SoT for live terms; the Contract renders + freezes them). Add policy terms to `bookings`: `cancellation_schedule` (jsonb tiers), `collection_mode`, `balance_due_timing`; OOB defaults aligned to the priority waterfall.
+- Booking-scoped fee lines + payees: `booking_fee_lines` / `booking_fee_line_payees` (`recipient`, `entitlement`, `priority`, role label); per-line payees, one fee line per performer. _(The first migration `f502c71` keyed these to `contract_id`; the model-correction bullet re-keys them to `booking_id`.)_
+- Add `contracts.terms_snapshot` jsonb (the **frozen** copy, on `contracts`).
+- Remove `booking_artists.payment_split_pct` (and its other money columns; `booking_artists` becomes the performer roster); drop `deals` table.
 - Drop `Partially Signed` from Lifecycle + status machine.
 
 **Phase 1 — Lifecycle vocabulary (DB + shared).**

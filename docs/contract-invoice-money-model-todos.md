@@ -137,3 +137,53 @@ These refine or correct the parent spec; fold back into it when it's revised.
   into generic line items; this interacts with the expenses question above.
 - **Whether `clause_snapshot` should move to `contracts`** alongside
   `terms_snapshot`, or stay per-signature (§A.4).
+
+## E. Model refinement (2026-06-24 grill) — supersedes the §C scoping decisions
+
+A second grill backed out of "which screen do we build" to settle the
+information model first. Full write-up folded into the spec under
+[contract-invoice-money-model.md → "Mental model & information flow"](contract-invoice-money-model.md#mental-model--information-flow-refined-2026-06-24).
+Headline decisions:
+
+- **Booking is the aggregate root + SoT for all _live_ terms; the contract is
+  the legalese instrument within it that renders + freezes them.** "Booking owns
+  live, contract owns frozen." This refines §C's "terms live on the contract" —
+  live terms are **booking-owned**, only the frozen `terms_snapshot` is
+  contract-owned.
+- **Projection model:** the rendered contract is a projection of structured
+  terms. Clauses split into **generated** (parties, compensation, cancellation,
+  pay-or-play, rider) and **boilerplate toggles** (force majeure, recording
+  rights, independent contractor, modifications).
+- **Structure principle:** structure every fact a system _other than the
+  document_ consumes; leave invariant legal language as toggleable prose.
+- **Contracts are 1:N over a booking's life, one active at a time** (today's
+  `.single()` read becomes "active contract").
+- **New booking-owned policy fields:** `balance_due_timing`, `collection_mode`,
+  `cancellation_schedule` (jsonb tiers).
+
+### Re-sequencing (this changes what comes next)
+
+The handoff queued **B.8** next. It is no longer next. New order:
+
+1. **Model correction (NEXT):** re-key the live terms tables
+   `contract_fee_lines` / `contract_fee_line_payees` → **booking-scoped**
+   (`booking_fee_lines` / `booking_fee_line_payees`); add `balance_due_timing`,
+   `collection_mode`, `cancellation_schedule` to `bookings`. Additive, no
+   consumer yet. **Revises migration `f502c71`** while nothing reads those tables.
+   `terms_snapshot` stays on `contracts` (placement was correct).
+2. **Wiring tracer:** seed live terms + render one generated clause (e.g.
+   `compensation`) from the structured terms — first real producer + consumer.
+3. **B.8 — `payment_split_pct` + deal-math teardown** (§B.8): now safe, the new
+   path exists and is exercised. `booking_artists` keeps `dj_profile_id` (the
+   performer roster / parties fact) and loses its money columns.
+4. **Phase 1+** (invoice authority) per the spec.
+
+### Carried implications
+
+- `booking_artists` demotes to a money-free **performer roster** (who plays);
+  money lives entirely in fee lines + payees.
+- `booking_costs` is **left as-is** this pass — folded into generic invoice line
+  items in Phase 1, gated by the open expenses question (§D).
+- The structured-terms **authoring editor** (the original "screen" question) is a
+  later bullet, after the model correction lands and `payment_split_pct` is gone,
+  so the editor never has to straddle both money models.

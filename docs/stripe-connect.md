@@ -36,7 +36,7 @@ axis**, not the Lifecycle State — see [booking-state-model.md §3](booking-sta
 
 **Amounts come from the Invoice only.** The Invoice is materialized at the Signed transition
 from the frozen `terms_snapshot`. Never hardcode a split (e.g. "50%") in payment code;
-never re-derive amounts from live contract fields after Signed. Derivation functions live in
+never re-derive amounts from the live booking terms after Signed. Derivation functions live in
 `@clubstack/shared`.
 
 | Installment | Scheduled | Amount (from Invoice) |
@@ -50,7 +50,7 @@ Payments are **pay-on-collection** — no hold, no manual capture. On `Signed`, 
 Installment records are scheduled; each PaymentIntent is confirmed when its schedule fires,
 and distributions execute immediately on `payment_intent.succeeded`.
 
-**Collection mode** is a per-contract toggle (set in `terms_snapshot`):
+**Collection mode** is a **booking term** (`bookings.collection_mode`), frozen into `terms_snapshot` at Signed:
 - **Manual invoice** (primary): the agency issues an invoice; the payer pays it.
 - **Auto-charge** (`off_session`): card-on-file is charged automatically when the schedule fires.
 
@@ -79,8 +79,9 @@ Distribution uses a **generic payee model** — no hardcoded roles. Each Invoice
 has one or more payees `{recipient_account, entitlement (fixed amount | % of line), priority}`.
 On collection, the payment is allocated across the line's payees in ascending priority order.
 
-"Performer" and "commissioned party" are labels on payee rows configured per contract,
-not special types in the code. Multi-artist bookings = multiple fee lines.
+"Performer" and "commissioned party" are labels on payee rows authored as booking-owned
+terms (`booking_fee_line_payees`), not special types in the code. Multi-artist bookings =
+multiple fee lines.
 
 Typical single-artist configuration:
 - Priority 1: platform (`application_fee_amount`)

@@ -175,15 +175,16 @@ related code; do not duplicate their detail here.
 
 | Domain | Read before touching | Canonical doc |
 | ------ | -------------------- | ------------- |
-| **Booking state model** — three concerns (Lifecycle, Payment, Resolution), the status machine, gates, transitions | `apps/web/src/lib/booking/`, `packages/shared/src/status-machine.ts`, booking migrations, booking screens | [docs/booking-state-model.md](docs/booking-state-model.md) · decision [adr/0003](docs/adr/0003-booking-two-axis-state-model.md) |
+| **Booking state model** — two concerns (Lifecycle, Payment) plus guarded terminal cancellation, the status machine, gates, transitions | `apps/web/src/lib/booking/`, `packages/shared/src/status-machine.ts`, booking migrations, booking screens | [docs/booking-state-model.md](docs/booking-state-model.md) · decision [adr/0003](docs/adr/0003-booking-two-axis-state-model.md) |
+| **Contract → Invoice money model** — booking-owned live structured terms, the Contract as projection + freeze (`terms_snapshot`), Invoice as money SoT, generic payee/priority distribution | `packages/shared/src/contract-terms.ts`, `apps/web/src/lib/contract/`, `apps/web/src/lib/invoice/`, `apps/web/src/lib/payments/` | [docs/contract-invoice-money-model.md](docs/contract-invoice-money-model.md) |
 | **Stripe Connect** — Express onboarding, Installments, PaymentIntent lifecycle, fee math, webhooks | `apps/web/src/lib/payments/`, `apps/web/src/lib/stripe/`, `apps/web/src/app/api/stripe/` | [docs/stripe-connect.md](docs/stripe-connect.md) |
 
 Vocabulary for both is defined in [CONTEXT.md](CONTEXT.md). The non-negotiable rules
 that the canonical docs expand on:
 
-- A Booking has **three concerns, never one status**: Lifecycle State, Payment (two Installments), Resolution.
+- A Booking has **two concerns, never one status**: Lifecycle State and Payment (two Installments). Cancellation is a guarded terminal Lifecycle transition, not a third axis (the Resolution axis is retired).
 - All Lifecycle writes go through the status machine — never write `status` directly. Every Transition fires its Knock notification.
-- **Deal Math (`@clubstack/shared`) is the single authority for money** — never hardcode a split (e.g. "50%") in payment code.
+- The **Booking owns the live structured terms**; the **Contract** renders + freezes them into `terms_snapshot` at Signed; the **Invoice** (derived from that snapshot) is the single authority for money. Derivation lives in `@clubstack/shared`. Never hardcode a split (e.g. "50%") in payment code; never re-derive money from live terms after Signed. ("Deal Math" is retired; `payment_split_pct` is removed.)
 - Payment and transfer operations are **server-only**; RLS on `transfers` is `false`.
 - **TIN/SSN is never stored** — passed directly to Stripe and vaulted there.
 

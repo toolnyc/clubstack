@@ -1,5 +1,16 @@
 # A Booking has three concerns (Lifecycle, Payment, Resolution), not one status
 
+> **Amended (2026-06-24) — the Resolution axis is retired and "Partially Signed" is dropped.**
+> The two-axis core stands (Lifecycle + Payment), but the third concern below
+> (**Resolution** as a `frozen_from` + `Invoked → Under Review → Resolved` sub-flow) was
+> superseded: cancellation is now a **guarded terminal Lifecycle transition** (no
+> `resolutions` table, no sub-flow), and **Partially Signed** is no longer a Lifecycle
+> State (signing progress is a contract/signature detail). The body below is the original
+> 2026-06-19 record, kept for history. For the current model see
+> [contract-invoice-money-model.md](../contract-invoice-money-model.md) and
+> [booking-state-model.md](../booking-state-model.md); vocabulary in
+> [CONTEXT.md](../../CONTEXT.md).
+
 The Booking's `status` column conflated two unrelated facts: where the show was in
 its life (drafted, offered, signed, advancing, done) and how much money had moved
 (deposit in, balance in). Jammed into one enum

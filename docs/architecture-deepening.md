@@ -83,15 +83,18 @@ the signed contract's terms — is never frozen: terms live mutably on booking t
 materializes them. There is also no single notion of what the venue owes, who each collected payment is
 distributed to, or when.
 
-**Solution (the seam):** The **Contract** is the source of truth for terms, **frozen into a `terms_snapshot`
-at the Signed transition**. The **Invoice** is a frozen snapshot derived from it and is the single source of
-truth for money. One pure derivation module (contract terms → invoice + schedule + payee distribution) in
-`@clubstack/shared` replaces "Deal Math"; charge, displayed numbers, distribution, and cancellation
-statements all read from it. Distribution is a **generic payee model**: each invoice fee line allocates each
-collected payment across its payees `{recipient, entitlement, priority}` in priority order (the waterfall) —
-no special-cased roles. Money moves **pay-on-collection** (no escrow): the webhook distributes on
-`payment_intent.succeeded`. Collection mode is a per-contract toggle (manual invoice — primary — and
-auto-charge).
+**Solution (the seam):** The **Booking** owns the live structured terms (financial fee lines + payees and
+non-financial policy fields); the **Contract** is the legalese instrument that **renders** them (a projection —
+one fact, one home) and **freezes** them into a `terms_snapshot` at the Signed transition. The contract is
+thus SoT for the *frozen* terms; live terms are booking-owned. The **Invoice** is a frozen snapshot derived
+from `terms_snapshot` and is the single source of truth for money. One pure derivation module (terms →
+invoice + schedule + payee distribution) in `@clubstack/shared` replaces "Deal Math"; charge, displayed
+numbers, distribution, and cancellation statements all read from it. Distribution is a **generic payee model**:
+the booking-scoped fee lines (`booking_fee_lines` / `booking_fee_line_payees`) allocate each collected
+payment across their payees `{recipient, entitlement, priority}` in priority order (the waterfall) — no
+special-cased roles. Money moves **pay-on-collection** (no escrow): the webhook distributes on
+`payment_intent.succeeded`. Collection mode is a **booking term** (`bookings.collection_mode`: manual
+invoice — primary — and auto-charge), frozen into the snapshot at Signed.
 
 **Wins:** locality (all money rules in one derivation) · leverage (one snapshot drives shown, invoiced,
 charged, distributed) · the Invoice is the test surface · `payment_split_pct` + divergent split fns deleted ·
