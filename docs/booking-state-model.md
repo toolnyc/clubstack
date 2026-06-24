@@ -173,50 +173,10 @@ What already exists and what is missing, as of the initial schema
 
 ---
 
-## 6. Migration plan (phased, each independently shippable)
+## 6. Build scope
 
-This is a schema-and-code change touching a shipped client contract (ADR-0002),
-so it is sequenced for safety and must be verified against a running DB
-(`pnpm db:migrate`, `pnpm db:types`, `pnpm lint`, `pnpm test`).
-
-**Phase 0 — Terms + snapshot (C2 Phase 0).**
-- **Live structured terms are booking-owned** (the Booking is SoT for live terms; the Contract renders + freezes them). Add policy terms to `bookings`: `cancellation_schedule` (jsonb tiers), `collection_mode`, `balance_due_timing`; OOB defaults aligned to the priority waterfall.
-- Booking-scoped fee lines + payees: `booking_fee_lines` / `booking_fee_line_payees` (`recipient`, `entitlement`, `priority`, role label); per-line payees, one fee line per performer. _(The first migration `f502c71` keyed these to `contract_id`; the model-correction bullet re-keys them to `booking_id`.)_
-- Add `contracts.terms_snapshot` jsonb (the **frozen** copy, on `contracts`).
-- Remove `booking_artists.payment_split_pct` (and its other money columns; `booking_artists` becomes the performer roster); drop `deals` table.
-- Drop `Partially Signed` from Lifecycle + status machine.
-
-**Phase 1 — Lifecycle vocabulary (DB + shared).**
-- Migration: widen `bookings_status_check` to the new Lifecycle States; backfill existing rows (`contract_sent → negotiating`, `deposit_paid/balance_paid → derive from payments`, `completed → settled`). Drop `partially_signed`.
-- Regenerate types (`pnpm db:types`).
-- Rewrite `packages/shared/src/status-machine.ts` `VALID_TRANSITIONS` to the new edges; update `BookingStatus` in `types.ts`.
-
-**Phase 2 — Deepen the Transition (the keystone, C1).**
-- Add `transitionBooking(client, id, to)` owning: validate (status machine) → check Gate → persist → fire notification.
-- Replace the five direct writers:
-  - `apps/web/src/lib/booking/actions.ts:200` (`updateBookingStatus`)
-  - `apps/web/src/app/api/bookings/[id]/status/route.ts`
-  - `apps/web/src/lib/payments/payment-api.ts:90`
-  - `apps/web/src/app/api/stripe/webhook/route.ts:60`
-  - `apps/web/src/app/api/cron/fund-release/route.ts:163`
-
-**Phase 3 — Invoice authority (C2 Phase 1–2).**
-- Single contract→invoice+schedule derivation fn in `@clubstack/shared`; materialize Invoice at Signed; retire Deal Math naming.
-- Stop writing `deposit_paid`/`balance_paid` to the booking. Payment progress lives on `payments` rows.
-- Add the two Gates (Deposit Paid → Advancing; Balance Paid → Settled).
-- Generic payee/priority distribution engine; both collection modes; distribute on `payment_intent.succeeded`; repurpose `fund-release` cron → charge-scheduler.
-
-**Phase 4 — Cancellation + refunds (C1 guarded terminal + C2 Phase 3).**
-- Guarded `Cancelled` edges in `transitionBooking` (friction: confirm + kind + reason).
-- Halt pending charges on cancel; fire notification; write `cancellations` audit row with computed statement.
-- `refunds` table (RLS write = false); `transfers.reversal_refund_id`.
-- Payment-progress-driven money path; deposit-stage `reverse_transfer` fast-path.
-
-**Phase 5 — Notifications (C5).**
-- Make `transitionBooking` the single caller of the notification module; resolve Knock-vs-Resend.
-
-Each phase regenerates types, updates mobile (`apps/mobile/lib`), the earnings SQL
-function (`supabase/migrations/...earnings_functions.sql`), and RLS as needed.
+Full scope of schema changes, code changes, and deletions is in **[docs/scope.md](scope.md)**.
+Verify each change with: `pnpm db:migrate && pnpm db:types && pnpm lint && pnpm test && pnpm build`.
 
 ---
 

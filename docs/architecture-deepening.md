@@ -100,14 +100,11 @@ invoice — primary — and auto-charge), frozen into the snapshot at Signed.
 charged, distributed) · the Invoice is the test surface · `payment_split_pct` + divergent split fns deleted ·
 "Deal Math" retires as a concept.
 
-**Steps** (phased — see spec)
-- [ ] **Phase 0** — structured negotiable terms (`cancellation_schedule`, `collection_mode`, per-line
-  payees/priority, mandate); OOB defaults aligned to the waterfall; capture `terms_snapshot` at Signed;
-  remove `payment_split_pct`; drop `deals`; drop `Partially Signed` from Lifecycle + status machine
-- [ ] **Phase 1** — single contract→invoice+schedule derivation fn; materialize Invoice at Signed; retire
-  "Deal Math" naming
-- [ ] **Phase 2** — derive schedule; generic payee/priority distribution engine; both collection modes;
-  distribute on `payment_intent.succeeded`; repurpose/retire `fund-release` cron (→ charge-scheduler)
+**Steps** — see [docs/scope.md](scope.md) §2–5 for the full build scope.
+- [ ] Structured terms re-keyed to booking (scope.md §2)
+- [ ] `terms_snapshot` frozen at Signed; generated clauses render from structured fields (scope.md §3)
+- [ ] `deriveInvoice(termsSnapshot)` in `@clubstack/shared`; materialized at Signed (scope.md §4)
+- [ ] Generic payee distribution engine; both collection modes (scope.md §5)
 - [ ] Parity tests: shown == invoiced == charged == distributed
 - [ ] `pnpm db:migrate && pnpm db:types && pnpm lint && pnpm test && pnpm build`
 

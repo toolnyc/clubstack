@@ -95,7 +95,7 @@ Booking facts (dates, parties, fees)
   → payment schedule → distribution
 ```
 
-### Re-sequenced build (supersedes the Phase 0 ordering below)
+### Re-sequenced build
 
 1. **Model correction (next bullet):** re-key `contract_fee_lines` / payees →
    booking-scoped; add `balance_due_timing`, `collection_mode`,
@@ -154,30 +154,13 @@ Booking facts (dates, parties, fees)
 - **`contracts`**: add `terms_snapshot` jsonb (frozen copy; lives on `contracts`, **not** the signature).
 - **`bookings`**: add `collection_mode`, `balance_due_timing`, and `cancellation_schedule` (jsonb tiers `{ days_before, payer_owes_pct }[]`) — the policy terms the contract renders from.
 - **Payees/fee lines**: **booking-scoped** tables `booking_fee_lines` / `booking_fee_line_payees` (a generic **fee-line → payees** structure: `recipient`, `entitlement`, `priority`, role label); each performer is an independent fee line. `booking_artists` keeps `dj_profile_id` (performer roster) and loses its money columns (`fee`, `commission_pct`, `payment_split_pct`). _(The first migration `f502c71` keyed these to `contract_id`; the model-correction bullet re-keys them to `booking_id` — see the todos doc §E.)_
-- **Drop `deals`**; **`booking_costs`** → generic invoice line items (interacts with the open expenses item below).
-- **`bookings.status`**: drop `Partially Signed`; `Cancelled` is a legitimate terminal Lifecycle state.
-
-## Phased build
-
-- **Phase 0 - terms + snapshot:** structured negotiable terms (incl. `cancellation_schedule` days_before→payer_owes_pct, `collection_mode`, per-line payees/priority, the mandate language); OOB defaults aligned to the priority waterfall; capture `terms_snapshot` at Signed; remove `payment_split_pct`; drop `deals`; drop `Partially Signed` from the Lifecycle + status machine.
-- **Phase 1 - Invoice authority:** single derivation fn (contract → invoice + schedule) in `@clubstack/shared`; materialize at Signed; retire "Deal Math".
-- **Phase 2 - schedule + distribution:** derive schedule; generic payee/priority allocation engine; both collection modes (manual invoice primary, auto-charge); distribute on `payment_intent.succeeded`; repurpose/retire `fund-release` cron (→ charge-scheduler, no hold/release).
-- **Phase 3 - cancellation + refunds (built together, since they're one mechanism):** guarded terminal `Cancelled` edges (state guard + friction); halt charges; `cancellations` audit + statement; payment-progress-driven money path; `refunds` table + `reverse_transfer` deposit-stage fast-path; `transfers.reversal_refund_id`; retire Resolution axis.
-- **Phase 4 - docs reconciliation** (below).
-- Each phase: `pnpm db:migrate && pnpm db:types && pnpm lint && pnpm test && pnpm build`.
-
-## Doc reconciliation
-
-- **CONTEXT.md**: retire "Deal Math"; rewrite "Resolution" (guarded terminal Cancelled); revise "Installment"/"Settlement" (no escrow); **drop "Partially Signed"**; revisit "logged expenses" pending the open item.
-- **stripe-connect.md**: rewrite PaymentIntent lifecycle (no manual-capture hold), payout timing (pay-on-collection); leave fee/expense math open pending research.
-- **booking-state-model.md**: Lifecycle drops Partially Signed; replace Resolution-axis §4 with guarded terminal Cancelled + the payment-progress refund relationship; mark "balance minus logged expenses" unresolved.
-- **architecture-deepening.md**: rewrite C2 → "Contract → Invoice money model"; mark **C4 retired**; note C1 gains the guarded Cancelled transition + the distribution seam.
-- **booking-workflow skill**: mark "balance reduced by logged expenses" unresolved.
+- **`booking_costs`** → generic invoice line items (interacts with the open expenses item below).
+- **`bookings.status`**: `Cancelled` is a legitimate terminal Lifecycle state.
 
 ## Open research item (does NOT block the spine)
 
-- **DJ expenses ↔ money chain (needs Amelia / research).** Purpose certainly includes tax-liability reduction, but **whether/how uploaded expenses affect the balance owed is unresolved - do not assume off-chain.** May add an **expense adjustment to the balance computation** (an explicit invoice revision, never a silent recompute). The contract→invoice→schedule→distribution→cancellation→refund spine stands independently; only the balance-amount step is affected if expenses turn out to reduce it.
+- **DJ expenses ↔ money chain (needs Amelia / research).** Purpose certainly includes tax-liability reduction, but **whether/how uploaded expenses affect the balance owed is unresolved — do not assume off-chain.** May add an **expense adjustment to the balance computation** (an explicit invoice revision, never a silent recompute). The contract→invoice→schedule→distribution→cancellation→refund spine stands independently; only the balance-amount step is affected if expenses turn out to reduce it.
 
-## Suggested next step
+## Build scope
 
-Start with **Phase 0** (terms + `terms_snapshot`), and rewrite `architecture-deepening.md` C2/C4 first so the living plan matches this model.
+Full scope of what needs to be built, changed, and deleted is in **[docs/scope.md](scope.md)**.

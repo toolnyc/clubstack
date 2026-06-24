@@ -37,7 +37,7 @@ apps/web/src/
 ├── lib/                              # Web-layer backend; native uses it only via the thin API (ADR 0002)
 │   ├── agency/                       # Agency server actions + availability logic
 │   ├── auth/                         # Auth server actions
-│   ├── booking/                      # Booking server actions (itinerary, travel). State machine + deal math live in @clubstack/shared
+│   ├── booking/                      # Booking server actions (itinerary, travel). Status machine + money derivation live in @clubstack/shared
 │   ├── calendar/                     # Calendar actions, ICS parser, Google API client
 │   ├── contract/                     # Contract actions, clause defaults, signatures
 │   ├── dj/                           # DJ profile + rider server actions
@@ -125,7 +125,7 @@ Three font families loaded via `next/font` in `apps/web/src/app/fonts.ts`:
 Each domain gets its own directory under `lib/`:
 
 - **`actions.ts`** -- Server Actions (form handlers, mutations). These are the primary interface between components and the database.
-- **Domain-specific modules** -- Pure logic that doesn't touch the network (e.g., `clause-defaults.ts`, `ics-parser.ts`). Money and state-machine logic shared with the native app lives in `@clubstack/shared` (`deal-math.ts`, `status-machine.ts`, `invoice-number.ts`), not in `lib/`.
+- **Domain-specific modules** -- Pure logic that doesn't touch the network (e.g., `clause-defaults.ts`, `ics-parser.ts`). Money derivation and state-machine logic shared with the native app lives in `@clubstack/shared` (`contract-terms.ts`, `status-machine.ts`, `invoice-number.ts`), not in `lib/`.
 - **External service wrappers** -- `lib/supabase/` (DB), `lib/stripe/` (payments), `lib/google/` (calendar), `lib/resend/` (marketing email), `lib/notifications/` (Knock).
 
 ### `app/` -- Routes and pages only
