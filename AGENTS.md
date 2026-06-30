@@ -170,7 +170,7 @@ Droids are **independent agents** — each has a focused purpose and its own sys
 
 ### Domain Reference
 
-The product's two deep domains have canonical docs. Read them before touching the
+The product's deep domains have canonical docs. Read them before touching the
 related code; do not duplicate their detail here.
 
 | Domain | Read before touching | Canonical doc |
@@ -178,8 +178,9 @@ related code; do not duplicate their detail here.
 | **Booking state model** — two concerns (Lifecycle, Payment) plus guarded terminal cancellation, the status machine, gates, transitions | `apps/web/src/lib/booking/`, `packages/shared/src/status-machine.ts`, booking migrations, booking screens | [docs/booking-state-model.md](docs/booking-state-model.md) · decision [adr/0003](docs/adr/0003-booking-two-axis-state-model.md) |
 | **Contract → Invoice money model** — booking-owned live structured terms, the Contract as projection + freeze (`terms_snapshot`), Invoice as money SoT, generic payee/priority distribution | `packages/shared/src/contract-terms.ts`, `apps/web/src/lib/contract/`, `apps/web/src/lib/invoice/`, `apps/web/src/lib/payments/` | [docs/contract-invoice-money-model.md](docs/contract-invoice-money-model.md) |
 | **Stripe Connect** — Express onboarding, Installments, PaymentIntent lifecycle, fee math, webhooks | `apps/web/src/lib/payments/`, `apps/web/src/lib/stripe/`, `apps/web/src/app/api/stripe/` | [docs/stripe-connect.md](docs/stripe-connect.md) |
+| **Profiles & Access model** — actors (Artist/Agent/Booker), the shared Organization+Member+Administrator primitive, the Agent↔Artist Management relationship, the two permission surfaces (grant + visibility), invites, subscriptions, dashboards | `profiles`/`organizations`/membership + `agency_artists` migrations, profile/onboarding/permission/dashboard code | [docs/profiles-access-model.md](docs/profiles-access-model.md) · decision [adr/0004](docs/adr/0004-organizations-members-management-model.md) · build [scope.md §11–§15](docs/scope.md) |
 
-Vocabulary for both is defined in [CONTEXT.md](CONTEXT.md). The non-negotiable rules
+Vocabulary is defined in [CONTEXT.md](CONTEXT.md). The non-negotiable rules
 that the canonical docs expand on:
 
 - A Booking has **two concerns, never one status**: Lifecycle State and Payment (two Installments). Cancellation is a guarded terminal Lifecycle transition, not a third axis (the Resolution axis is retired).
@@ -187,5 +188,6 @@ that the canonical docs expand on:
 - The **Booking owns the live structured terms**; the **Contract** renders + freezes them into `terms_snapshot` at Signed; the **Invoice** (derived from that snapshot) is the single authority for money. Derivation lives in `@clubstack/shared`. Never hardcode a split (e.g. "50%") in payment code; never re-derive money from live terms after Signed. ("Deal Math" is retired; `payment_split_pct` is removed.)
 - Payment and transfer operations are **server-only**; RLS on `transfers` is `false`.
 - **TIN/SSN is never stored** — passed directly to Stripe and vaulted there.
+- The bookable talent actor is canonically the **Artist**; `dj_profiles`/`dj_profile_id` are legacy schema names (rename deferred). **Agency** and **Club/Venue** are Organizations (admin + billing), not the people — the people are **Agents** and **Bookers** (Members). Permissions are two surfaces: the mutually-approved **Management grant** (Agent↔Artist) and Artist-controlled **Visibility settings**. The e-signature is never delegable. **Subscription** (platform fee) is distinct from booking fees — Artists keep 100%.
 
 

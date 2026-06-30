@@ -7,6 +7,7 @@ _why_; this doc is the _what_.
 Design specs:
 - [contract-invoice-money-model.md](contract-invoice-money-model.md) — money/terms model, mental model, locked decisions
 - [booking-state-model.md](booking-state-model.md) — lifecycle, payment axis, gates, cancellation
+- [profiles-access-model.md](profiles-access-model.md) — actors, organizations, permissions, onboarding, dashboards
 - [architecture-deepening.md](architecture-deepening.md) — architectural rationale (C1–C5)
 - [CONTEXT.md](../CONTEXT.md) — canonical vocabulary
 
@@ -201,6 +202,13 @@ All table changes in one place.
 | `transfers` | Add nullable `reversal_refund_id` |
 | `cancellations` | New — see §6 |
 | `refunds` | New — see §6; RLS write = `false` |
+| `profiles` | `user_type` re-map to `artist, agent, booker` (Agency/Club-Venue become Organizations, not user_types) — see §11 |
+| `organizations` | New — shared org primitive, `kind: agency \| club_venue` (subsumes `agencies`) — see §11 |
+| `organization_members` | New — `organization_id`, `profile_id`, `role: administrator \| member` — see §11 |
+| `agency_artists` | Becomes the Management relationship: add `managing_agent_profile_id`, `grant JSONB`, `fee_transparency`, `state: proposed \| active \| revoked` — see §12 |
+| `artist_visibility` | New — per-audience exposure + `direct_outreach` flag — see §12 |
+| `subscriptions` | New — tier/rate on the subscribing entity; enforcement deferred — see §13 |
+| `invites` | New — encodes proposed relationship + proposed scopes — see §12/§14 |
 
 Note: there is no `deals` table to drop. "Deal Math" was a TypeScript module
 (`deal-math.ts`), not a database table.
@@ -226,3 +234,170 @@ Decisions not yet made that affect scope. Do not code assumptions around these.
 
 - **`transfers.recipient_type`** (`'dj' | 'agency'`) — relic of the old role model.
   Reconcile when distribution is built (§5).
+
+---
+
+## 11. Profiles & Organizations
+
+**What:** Build the actor/identity layer above the Booking spine. Every user is a
+**Profile**; Agents and Bookers operate inside a shared **Organization** primitive
+(admin + billing boundary with Member profiles, one Administrator). Specialized as
+**Agency** (Agents → manage Artists) and **Club/Venue** (Bookers → book Artists).
+Read the model first: [profiles-access-model.md](profiles-access-model.md).
+
+**Schema:**
+- `profiles.user_type` — re-map enum to actors `artist, agent, booker` (drop
+  `dj, agency, venue_contact, promoter`; Agency/Club-Venue are Organizations, not
+  user_types). Backfill: `dj → artist`, `venue_contact / promoter → booker`,
+  `agency → an Organization + an Administrator agent Member`.
+- `organizations` — new: `id`, `kind ('agency' | 'club_venue')`, `name`, `location`,
+  `image`, timestamps. Subsumes `agencies`.
+- `organization_members` — new: `organization_id`, `profile_id`,
+  `role ('administrator' | 'member')`, unique `(organization_id, profile_id)`.
+- `dj_profiles` — unchanged (legacy name = Artist profile detail; rename deferred).
+- RLS: org data readable by its Members; Administrator-only writes for membership/billing.
+
+**Code:**
+- Migration to split `agencies` (one `user_id`) into `organizations` + a founding
+  `organization_members` row (Administrator). Existing `agencies.user_id` becomes the
+  Administrator Member.
+- Profile creation/onboarding paths set `user_type` to the new actor values.
+- `apps/web/src/test/architecture.test.ts` — reconcile any `user_type` assertions.
+
+**Mobile:**
+- `apps/mobile/` — profile reads keyed to the new `user_type` values + org membership.
+
+**Defer:** multi-Booker Club/Venue feature set is lowest priority; the org primitive
+supports it but the back-office features land last.
+
+---
+
+## 12. Permissions (two surfaces) & the Management relationship
+
+**What:** Two distinct permission surfaces, never merged: the mutually-approved
+**Management grant** (Agent↔Artist) and the Artist-controlled **Visibility settings**
+(outward to public/clubs). The Agency owns the Roster; each Artist is attributed to a
+managing Agent.
+
+**Schema:**
+- `agency_artists` becomes the **Management relationship**: add
+  `managing_agent_profile_id` (FK `profiles`), `grant JSONB`
+  (`{ calendar, advancing, rider, bookings, files }`, each `none|read|write`),
+  `fee_transparency BOOLEAN`, and `state TEXT CHECK ('proposed','active','revoked')`.
+  Keep `agency_id`, `dj_profile_id`. (Rename to `management_relationships` optional;
+  re-keying is the substance.)
+- `organizations` (agency kind) — add `default_fee_transparency BOOLEAN` (seeds new
+  relationships; per-relationship override above).
+- `artist_visibility` — new: `dj_profile_id`, `audience ('public' | 'clubs')`,
+  exposure fields (e.g. `calendar_exposure ('dates' | 'busy_free' | 'none')`),
+  `direct_outreach BOOLEAN` (off by default). Or columns on `dj_profiles` if simpler.
+- RLS: grant scopes gate Agent access to the Artist's calendar/advancing/rider/files;
+  Visibility gates public/club reads.
+
+**Code:**
+- A permission-resolution helper (read the grant for an Agent↔Artist pair; enforce
+  per-scope `none|read|write`). Server-side checks on all agent-acting-on-artist paths.
+- Grant lifecycle: propose (via invite §14), allow/deny per scope on accept, mutual
+  approval for expansion, **unilateral Artist revocation** (notify Agent).
+- E-signature path stays Artist-only — no delegation, even at max grant.
+- Fee transparency: Invoice/payee display filters the Agent commission line per the
+  relationship's `fee_transparency`.
+
+**Hard rules:**
+- Signing is never delegable.
+- Visibility is Artist-only (not bi-directional); direct-outreach lives here.
+
+---
+
+## 13. Subscriptions
+
+**What:** Model the platform-access fee — **distinct from booking fees** (Artists keep
+100%; an Agent's commission is a payee line, not a platform skim). Tier/rate modeled
+now; **billing enforcement deferred** (rates TBC).
+
+**Schema:**
+- `subscriptions` — new: `subscriber_type ('artist' | 'agency' | 'club_venue')`,
+  `subscriber_id` (profile or organization id), `tier`, `seat_count` (derived from
+  `organization_members` for orgs; 1 for an Artist), `rate NUMERIC NULL`,
+  `status TEXT`, `promo_code NULL`.
+- Payment-only Bookers have **no** subscription row (free).
+
+**Pricing structure (rates TBC):**
+- Artist — small individual rate.
+- Agency — per-Agent seat (solo = 1 seat = cheaper).
+- Managed Club/Venue — per-Booker seat (most expensive).
+- Payment-only Booker — free.
+
+**Code:**
+- Seat count derived from member count; no paywall/enforcement yet (a field + display).
+- Invite/discount-code path may carry a promotional rate onto the subscription.
+
+**Defer:** billing enforcement, paywalls, Stripe billing integration.
+
+---
+
+## 14. Onboarding & capability connection
+
+**What:** Invite-driven onboarding that seeds the management graph; least-invasive
+capability connection.
+
+**Invite mechanism:**
+- `invites` — new: `kind ('agent_to_artist' | 'booker')`, `inviter_profile_id`,
+  `organization_id`, `proposed_grant JSONB NULL` (agent→artist only), `token`,
+  `status ('sent' | 'accepted' | 'expired')`, `claimed_profile_id NULL`.
+- Accepting an `agent_to_artist` invite creates the Management relationship in
+  `proposed` state with the proposed grant (resolved per scope by the Artist).
+- Booker invites carry no scopes — just the connection.
+
+**Flows:**
+- **Artist:** invite → OTP/magic-link (phone preferred) → basics (name, home city,
+  image) → divergence: **managed** resolves the proposed grant then sets Visibility;
+  **unmanaged** sets Visibility directly.
+- **Agent/Agency:** sign up as the Agency org → create Agent Member → batch-invite
+  Roster → connect Calendar + Stripe.
+- **Booker:** payment-only materialized from the invoice link (grows
+  `booking_access_tokens` payer flow); upgrade = create a Club/Venue org.
+
+**Capability timing:**
+- **Calendar:** Google Calendar preferred (always-connected, two-way sync via existing
+  `calendar_connections`/`calendar_cache`); non-Google users fall back to
+  `manual_availability` (busy/free). No Apple/Outlook in MVP.
+- **Stripe:** deferred — prompt with skip at onboarding; **hard-gate receiving a
+  distribution** until the Express account is connected. Per-payee
+  (`stripe_account_status` pending → active). Flags §10 open item (non-DJ payee Stripe
+  resolution by `recipient_user_id`).
+
+---
+
+## 15. Dashboards
+
+**What:** Per-actor dashboard views. Parity priority: **Artist = full desktop↔mobile
+parity** (highest); Agent = mobile-friendly; **Booker/Club = lowest**. Full view spec
+in [profiles-access-model.md](profiles-access-model.md) §8.
+
+**Artist** (scheduling / logistics / messaging):
+- **Upcoming confirmed show** — expandable item ("X days until Y"): show-night
+  contacts (cell/email, distinct from in-app Threads), advancing (flight/lodging +
+  maps), venue info (maps + leave-by hint), payment recap (deposit/balance timing),
+  expense upload, contract detail (comms + signed PDF).
+- **Agent negotiating** — view-and-sign per the Management grant; fee transparency
+  governs whether the Agent's cut shows; notify-to-sign (signature non-delegable).
+- **Post-show / idle** — payment-pending recap + missing-receipt nudge; else calendar
+  view / next booked show; else blank "book your next show" state.
+
+**Agent/Agency:**
+- Activity task-board (negotiating contracts, action items, unsigned bookings, active
+  Threads) at top.
+- Roster management: Artist list → detail (upcoming/past shows, pending connections,
+  active negotiations) → **grant management** (bi-directional Management grant).
+
+**Booker/Club:**
+- **Payment-only:** invoice wrapper (paid/unpaid/past) + pay.
+- **Managed:** ResyOS-style back office (message, request availability, initiate/
+  negotiate/sign, tax docs).
+
+**Code:** new dashboard surfaces in `apps/mobile/` (Artist parity first) and
+`apps/web/src/` where applicable; reads derive from Booking Lifecycle/Payment (§1–§7)
+and the permission surfaces (§12).
+
+

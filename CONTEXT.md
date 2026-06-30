@@ -1,7 +1,7 @@
 # Clubstack
 
 Domain language for the DJ booking platform. Agencies manage rosters and run the
-offer-to-settlement workflow; DJs keep 100% of fees. Use these terms in code,
+offer-to-settlement workflow; Artists keep 100% of their booking fees. Use these terms in code,
 migrations, and docs.
 
 The Booking state model is the spine of the product. It is specified in full in
@@ -70,8 +70,56 @@ _Avoid_: a `resolutions` table, `frozen_from`, or `Invoked → Under Review → 
 **Deal Math**: _(retired — superseded by Invoice)_
 The old concept of a shared fee-calculation helper. Replaced by the **Contract → Invoice** model: the **Booking** owns the live structured terms, the **Contract** renders and freezes them at Signed (SoT for the *frozen* terms), and the **Invoice** (derived from that snapshot) is the single authority for money. Pure derivation functions remain in `@clubstack/shared` under the Invoice model.
 
+**Artist**:
+The bookable talent actor — the performer an agency represents and a Booking is for. Canonical term for this actor across product and docs. The physical schema is still DJ-keyed (`dj_profiles`, `dj_profile_id`); that naming is legacy and a rename is deferred, not a second concept.
+_Avoid_: DJ (as the domain term — reserve for the legacy schema names only), talent, act.
+
+**Organization**:
+The shared admin-and-billing boundary primitive that contains Member profiles, one of which holds the **Administrator** role. Specialized two ways: an **Agency** (sell side) and a **Club/Venue** (buy side). Built once and reused; the two specializations differ only in feature set.
+_Avoid_: modeling the sell-side and buy-side orgs as unrelated structures.
+
+**Agency**:
+The sell-side Organization that owns a Roster and runs the offer-to-settlement workflow. It is the billing entity and admin boundary, and it contains one or more Agents (e.g. "House of Ill Fame").
+_Avoid_: collapsing Agency into Agent (the org is not the person).
+
+**Agent**:
+A Member of an Agency who manages Artists. An Agency has at least one Agent (its founder) and may have many.
+_Avoid_: agency (the org), manager (reserve for the generic role lens).
+
+**Booker**:
+The buy-side Member who books Artists. Exists in two tiers: a **payment-only** bare profile (free, materialized frictionlessly from an invoice link — club info + payments register + pay invoices) and a **managed** profile inside a Club/Venue Organization (the paid back office: initiate, negotiate, sign, message, request availability, manage tax docs). Payment-only upgrades to managed by creating a Club/Venue.
+_Avoid_: venue_contact, promoter (legacy types, collapsed into Booker); two separate identities for the two tiers.
+
+**Club/Venue**:
+The buy-side Organization that contains Bookers; the managed tier's admin-and-billing boundary, and the place whose info (name, location, image) attaches to bookings.
+_Avoid_: treating Club/Venue as the actor (the Booker is the actor/Member).
+
+**Administrator**:
+A role a Member profile holds over its Organization: manages the Organization's Members and billing. The founding Member is the Administrator; a single login carries both the Administrator role and the Member profile (Agent or Booker).
+_Avoid_: owner, super-admin.
+
+**Subscription**:
+The recurring platform-access fee, carried by the subscribing actor: an Artist (small individual rate), an Agency (per-Agent seat), or a managed Club/Venue (per-Booker seat, the most expensive tier). Payment-only Bookers are free. It is **distinct from booking fees** — Artists keep 100% of their booking fees; the Subscription is how the platform monetizes, never a commission skimmed from a booking. Tier and rate are modeled now; billing enforcement is deferred.
+_Avoid_: commission, platform fee taken out of a booking.
+
+**Management relationship**:
+The link between an Agent and an Artist, carrying a permissions grant (what the Agent may read and write on the Artist's behalf). It also carries a **fee-transparency** setting — whether the Artist sees the Agent's commission payee line on their bookings — defaulted at the Agency level and overridable per relationship. The Agency owns the Roster; each Artist is attributed to a managing Agent, and oversight flows up to the Agency. "Manager/managee" is the generic lens for this link, not a stored type.
+_Avoid_: hardcoding the link at the Agency level (it is Agent↔Artist with Agency oversight).
+
+**Management grant**:
+The mutually-approved permission set carried on a Management relationship. Scopes — `calendar, advancing, rider, bookings, files` — are each set to `none | read | write`. The Agent's invite proposes a scope set; the Artist allow/denies per scope on accept; expanding a grant needs both parties; the Artist may revoke unilaterally (Agent is notified). E-signature is never delegable: the Agent negotiates, the Artist always signs.
+_Avoid_: a single relationship-wide access level; a "sign" scope.
+
+**Visibility settings**:
+The Artist-controlled, outward-facing surface governing what each audience (public, clubs) can see (e.g. full calendar dates vs. busy/free only). Includes the **Direct outreach** flag. Unlike a Management grant, it is not bi-directional — the Artist sets it.
+_Avoid_: routing outward privacy through the Management grant's approval machinery.
+
+**Direct outreach**:
+A Visibility flag letting clubs contact a managed Artist directly, bypassing the Agent. Off by default for managed Artists.
+_Avoid_: treating it as an Agent-consented permission (it lives under Visibility, Artist-controlled).
+
 **Roster**:
-The set of DJs an agency represents, with invite status and sort order.
+The set of Artists an Agency owns, each attributed to a managing Agent, with invite status and sort order.
 _Avoid_: artist list, lineup.
 
 **Thread**:
@@ -79,7 +127,7 @@ The per-Booking message conversation between the parties.
 _Avoid_: chat, conversation.
 
 **Earnings**:
-A DJ's aggregated payment totals (earned, pending, upcoming) across Bookings. Derived from Payment Installments in Postgres under RLS, not in application code.
+An Artist's aggregated payment totals (earned, pending, upcoming) across Bookings. Derived from Payment Installments in Postgres under RLS, not in application code.
 _Avoid_: revenue, income.
 
 **Advancing**:
